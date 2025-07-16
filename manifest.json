@@ -1,0 +1,25 @@
+{
+  "name": "Resource Allocation Tool",
+  "short_name": "Resource Tool",
+  "description": "A tool for resource allocation and performance tracking",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#007bff",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMwMDdiZmYiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxN2gtMnYtMmgydjJ6bTIuMDctNy43NWwtLjkuOTJDMTEuNDUgMTIuNzkgMTEgMTMuMjUgMTEgMTVoLTJ2LS41YzAtMS4yNS40NS0yLjM5IDEuMjktMy4yNWwxLjI5LTEuMjVjLjMxLS4zMS4zMS0uODEgMC0xLjEycy0uODEtLjMxLTEuMTIgMGMtLjMxLjMxLS4zMS44MS0uMDEgMS4xMmwtLjAxLjAxYzAtLjAxLS4wMS0uMDEtLjAxLS4wMWwxLjQxLTEuNDFjLjc4LS43OCAyLjA0LS43OCAyLjgyIDBzLjc4IDIuMDQgMCAyLjgyeiIvPgo8L3N2Zz4KPC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiMwMDdiZmYiLz4KPHN2ZyB4PSIxMjgiIHk9IjEyOCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyNTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTEgMTdoLTJ2LTJoMnYyem0yLjA3LTcuNzVsLS45LjkyQzExLjQ1IDEyLjc5IDExIDEzLjI1IDExIDE1aC0ydi0uNWMwLTEuMjUuNDUtMi4zOSAxLjI5LTMuMjVsMS4yOS0xLjI1Yy4zMS0uMzEuMzEtLjgxIDAtMS4xMnMtLjgxLS4zMS0xLjEyIDBjLS4zMS4zMS0uMzEuODEtLjAxIDEuMTJsLS4wMS4wMWMwLS4wMS0uMDEtLjAxLS4wMS0uMDFsMS40MS0xLjQxYy43OC0uNzggMi4wNC0uNzggMi44MiAwcy43OCAyLjA0IDAgMi44MnoiLz4KPC9zdmc+Cjwvc3ZnPg==",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["research", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
+  "orientation": "portrait-primary"
+}
