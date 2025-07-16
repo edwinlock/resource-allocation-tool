@@ -2,7 +2,7 @@
   "name": "Resource Allocation Tool",
   "short_name": "Resource Tool",
   "description": "A tool for resource allocation and performance tracking",
-  "start_url": "/index.html",
+  "start_url": "/resource-allocation-tool/",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#007bff",
