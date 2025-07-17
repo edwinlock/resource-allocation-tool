@@ -64,14 +64,40 @@ function updateDisplay() {
     const earnings2 = calculateEarnings(allocation2, CHILD2_PERFORMANCE, scenario);
     const totalEarnings = earnings1 + earnings2;
     
-    // Update earnings displays
-    const child1EarningsElement = document.getElementById('child1-earnings');
-    const child2EarningsElement = document.getElementById('child2-earnings');
-    const combinedEarningsElement = document.getElementById('combined-earnings');
+    // Update bar values
+    const child1BarValue = document.getElementById('child1-bar-value');
+    const child2BarValue = document.getElementById('child2-bar-value');
+    const combinedBarValue = document.getElementById('combined-bar-value');
     
-    if (child1EarningsElement) child1EarningsElement.textContent = `${earnings1.toLocaleString()}`;
-    if (child2EarningsElement) child2EarningsElement.textContent = `${earnings2.toLocaleString()}`;
-    if (combinedEarningsElement) combinedEarningsElement.textContent = `${totalEarnings.toLocaleString()}`;
+    if (child1BarValue) child1BarValue.textContent = `$${earnings1.toLocaleString()}`;
+    if (child2BarValue) child2BarValue.textContent = `$${earnings2.toLocaleString()}`;
+    if (combinedBarValue) combinedBarValue.textContent = `$${totalEarnings.toLocaleString()}`;
+    
+    // Update bar heights
+    const child1Bar = document.getElementById('child1-bar');
+    const child2Bar = document.getElementById('child2-bar');
+    const combinedBar = document.getElementById('combined-bar');
+    
+    // Calculate maximum possible earnings for scaling
+    let maxEarnings = 0;
+    for (let testAlloc = 0; testAlloc <= 100; testAlloc++) {
+        const testEarnings1 = calculateEarnings(testAlloc, CHILD1_PERFORMANCE, scenario);
+        const testEarnings2 = calculateEarnings(100 - testAlloc, CHILD2_PERFORMANCE, scenario);
+        const testTotal = testEarnings1 + testEarnings2;
+        maxEarnings = Math.max(maxEarnings, testEarnings1, testEarnings2, testTotal);
+    }
+    
+    // Scale bars to fit container (300px max height)
+    const maxHeight = 300;
+    const scale = maxHeight / maxEarnings;
+    
+    const height1 = Math.max(earnings1 * scale, 20);
+    const height2 = Math.max(earnings2 * scale, 20);
+    const heightCombined = Math.max(totalEarnings * scale, 20);
+    
+    if (child1Bar) child1Bar.style.height = `${height1}px`;
+    if (child2Bar) child2Bar.style.height = `${height2}px`;
+    if (combinedBar) combinedBar.style.height = `${heightCombined}px`;
 }
 
 function onSliderChange() {

@@ -52,32 +52,34 @@
             </div>
         </div>
 
-        <div class="metrics-section">
-            <h2>Human capital & earnings</h2>
+        <div class="chart-section">
+            <h2>Earnings Distribution</h2>
             
-            <div class="metrics-grid">
-                <div id="child1" class="metric-card child1-bg">
-                    <h4>Child 1</h4>
-                    <div class="metric-label fixed">Human capital</div>
-                    <div class="metric-value child1-color fixed" id="child1-performance">42</div>
-                    <div class="metric-label">Earnings</div>
-                    <div class="metric-value child1-color variable" id="child1-earnings">$2,500</div>
-                </div>
+            <div class="chart-container">
+                <div class="chart-title">Earnings by Child</div>
                 
-                <div id="child2" class="metric-card child2-bg">
-                    <h4>Child 2</h4>
-                    <div class="metric-label fixed">Human capital</div>
-                    <div class="metric-value fixed" id="child2-performance">78</div>
-                    <div class="metric-label">Earnings</div>
-                    <div class="metric-value variable" id="child2-earnings">$2,500</div>
-                </div>
-                
-                <div id="combined" class="metric-card">
-                    <h4>Combined Total</h4>
-                    <div class="metric-label fixed">Avg human capital</div>
-                    <div class="metric-value combined-color fixed" id="combined-performance">60</div>
-                    <div class="metric-label">Total Earnings</div>
-                    <div class="metric-value combined-color variable" id="combined-earnings">$5,000</div>
+                <div class="bars-container">
+                    <div class="bar-group">
+                        <div class="bar-value" id="child1-bar-value">$0.00</div>
+                        <div class="bar bar-child1" id="child1-bar">
+                            <div class="performance-score-box" id="child1-performance-box">42</div>
+                        </div>
+                        <div class="bar-label">Child 1</div>
+                    </div>
+                    
+                    <div class="bar-group">
+                        <div class="bar-value" id="child2-bar-value">$0.00</div>
+                        <div class="bar bar-child2" id="child2-bar">
+                            <div class="performance-score-box" id="child2-performance-box">78</div>
+                        </div>
+                        <div class="bar-label">Child 2</div>
+                    </div>
+                    
+                    <div class="bar-group">
+                        <div class="bar-value" id="combined-bar-value">$0.00</div>
+                        <div class="bar bar-combined" id="combined-bar"></div>
+                        <div class="bar-label">Combined</div>
+                    </div>
                 </div>
             </div>
         </div>
