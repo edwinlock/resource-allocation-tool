@@ -20,7 +20,7 @@
        - 
          $H_i^{CES} = \left[\gamma \cdot a_i^{\sigma} + (1 - \gamma) \cdot x_i^{\sigma}\right]^{1/\sigma}$; $\sigma \in [-4,-3,-2,0.5]\: \text{excl.}\: 0$
          
-    - where:
+      where:
        - $a_i \in [0,1]$ represents child $i$'s ability, transformed into sessions 6-1, or 5-2 for a_high, a_low given the size of the difference between the two. For now, any threshold (i.e. 0.06 difference in scores) returns 'large' 6-1 gap.
 
        - $x_i \in [0,1]$ denotes the fraction of total allocable budget invested in child $i$ (9 sessions)
@@ -29,8 +29,8 @@
 
        - $\sigma \in [-4, 0.5]$ is the CES substitution parameter, where values closer to 1 represent near-perfect substitutability between ability and investment, and negative values indicate strong beliefs in complementarity
 
-- Human capital translates into earnings through a convex relationship:
-   - $E_i = \alpha \cdot H_i^{\theta}$, where:
-      - $\alpha = 1$ is a scaling factor to keep all scenarios within the same range (16 sessions at most)
-      - $H_i \in [0,1]$ is the human capital level from the production function
-      - $\theta \in [1, 2]$ represents the convexity of returns to human capital in the labor market, with 1 indicating linear returns and 2 convex returns.
+   - Human capital translates into earnings through a convex relationship:
+      - $E_i = \alpha \cdot H_i^{\theta}$, where:
+         - $\alpha = 1$ is a scaling factor to keep all scenarios within the same range (16 sessions at most)
+         - $H_i \in [0,1]$ is the human capital level from the production function
+         - $\theta \in [1, 2]$ represents the convexity of returns to human capital in the labor market, with 1 indicating linear returns and 2 convex returns.
