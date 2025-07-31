@@ -2,7 +2,10 @@
 
 0. Log-in for the interviewer (such that when it saves the answer, we know who got took it).
 1. Survey/Questionnaire structure
-2. Sigma-theta slider
+2. Slider:
+   i. Line graph: displays lines in pastel colors, when you move the slider, the dot that corresponds to the slider, highlights with the non-pastel color and displays the earnings.
+   ii. Bar chart: add all allocation bars. Highlight bar that corresponds to slider number.
+   iii. Bar chart: Only show one data point at a time (current design) instead of all bars. 
 
 **Baseline input from Michelle:**
 
