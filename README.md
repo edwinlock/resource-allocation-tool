@@ -1,6 +1,6 @@
 # Resource Allocation Tool
 
-A Progressive Web App (PWA) for visualizing resource allocation scenarios and their impact on performance and earnings outcomes.
+A Progressive Web App (PWA) for visualizing educational resource allocation scenarios and their impact on earnings outcomes.
 
 ## Project Overview
 
@@ -28,18 +28,24 @@ This is a client-side web application built with vanilla HTML, CSS, and JavaScri
 ## Application Features
 
 ### Resource Allocation System
-- **Interactive Slider**: Allocates 100 resources between two children
+- **Interactive Slider**: Allocates 15 resources between two children
 - **Real-time Updates**: Live calculation of earnings based on allocation
-- **Scenario Selection**: Four different calculation models
-- **Performance Metrics**: Fixed performance values with variable earnings
+- **Scenario Selection**: Eight different calculation models
+- **Performance Metrics**: Fixed `performance' values with variable earnings
 
 ### Scenario Types
 Each scenario has distinct parameters affecting earnings calculation:
 
-- **Balanced**: Moderate returns, 50% diminishing point
-- **Competitive**: High initial returns, steep diminishing returns at 40%
-- **Collaborative**: Steady returns, less punitive diminishing returns at 60%
-- **Specialized**: Rewards focused investment, diminishing returns at 70%
+- **Additive Linear**: Linear earnings with additive human capital production function
+- **Additive Convex**: High initial returns, steep diminishing returns at 40%
+- **Cobb-Douglas Linear**: Steady returns, less punitive diminishing returns at 60%
+- **Cobb-Douglas Convex**: Rewards focused investment, diminishing returns at 70%
+- **CES -2 Linear**: Rewards focused investment, diminishing returns at 70%
+- **CES -2 Convex**: Rewards focused investment, diminishing returns at 70%
+- **CES -4 Linear**: Rewards focused investment, diminishing returns at 70%
+- **CES -4 Convex**: Rewards focused investment, diminishing returns at 70%
+
+
 
 ### Calculation Engine
 Located in `script.js`, the earnings calculation uses:
