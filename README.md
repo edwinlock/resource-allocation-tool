@@ -37,13 +37,13 @@ This is a client-side web application built with vanilla HTML, CSS, and JavaScri
 Each scenario has distinct parameters affecting earnings calculation:
 
 - **Additive Linear**: Linear earnings with additive human capital production function
-- **Additive Convex**: High initial returns, steep diminishing returns at 40%
-- **Cobb-Douglas Linear**: Steady returns, less punitive diminishing returns at 60%
-- **Cobb-Douglas Convex**: Rewards focused investment, diminishing returns at 70%
-- **CES -2 Linear**: Rewards focused investment, diminishing returns at 70%
-- **CES -2 Convex**: Rewards focused investment, diminishing returns at 70%
-- **CES -4 Linear**: Rewards focused investment, diminishing returns at 70%
-- **CES -4 Convex**: Rewards focused investment, diminishing returns at 70%
+- **Additive Convex**: Convex (^2) earnings with additive human capital production function
+- **Cobb-Douglas Linear**: Linear earnings with Cobb-Douglas (log form) human capital production function
+- **Cobb-Douglas Convex**: Convex (^2) earnings with Cobb-Douglas (log form) human capital production function
+- **CES -2 Linear**: Linear earnings with Constant Elasticity of Substitution (CES, sigma -2) human capital production function
+- **CES -2 Convex**: Convex (^2) earnings with Constant Elasticity of Substitution (CES, sigma -2) human capital production function
+- **CES -3 Linear**: Linear earnings with Constant Elasticity of Substitution (CES, sigma -3) human capital production function
+- **CES -3 Convex**: Convex (^2) earnings with Constant Elasticity of Substitution (CES, sigma -4) human capital production function
 
 
 
