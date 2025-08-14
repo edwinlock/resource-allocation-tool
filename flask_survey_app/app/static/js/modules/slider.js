@@ -120,6 +120,7 @@ const outcomes = {
     maximumEarnings: 0,  // upper bound on aggregate earnings across all choices
     maximumEarningsRounded: 0,  // upper bound on rounded aggregate earnings
     selectedInvestment: 0,
+    alpha: 0,
 }
 
 // Mapping ability scores to 'performance ratios':
@@ -141,35 +142,6 @@ function computePreEarnings(ability1, ability2) {
     }
 }
 
-function compute_alpha(ability1, ability2, scenario) {
-    const amax = Math.max(ability1, ability2)
-    alpha = MAX_SESSIONS * human_capital(amax, ALLOCATABLE_BUDGET, scenario)**(-scenario.theta)
-}
-
-
-function compute_outcomes(session, scenario) {
-    const pre = computePreEarnings(session.ability1, session.ability2);
-    outcomes.preEarnings1 = pre[0];
-    outcomes.preEarnings2 = pre[1];
-    for (let i=0; i <= ALLOCATABLE_BUDGET; i++) {
-        outcomes.investments1[i] = i;
-        outcomes.investments2[i] = ALLOCATABLE_BUDGET - i;
-        outcomes.postEarnings1[i] = outcomes.preEarnings1 + 
-                                    earnings(session.ability1, outcomes.investments1[i], scenario);
-        outcomes.postEarnings2[i] = outcomes.preEarnings2 + 
-                                    earnings(session.ability2, outcomes.investments2[i], scenario);
-        outcomes.aggrEarnings[i] = outcomes.postEarnings1[i] + outcomes.postEarnings2[i];
-        
-        // Calculate rounded versions
-        outcomes.postEarnings1Rounded[i] = Math.round(outcomes.postEarnings1[i]);
-        outcomes.postEarnings2Rounded[i] = Math.round(outcomes.postEarnings2[i]);
-        outcomes.aggrEarningsRounded[i] = outcomes.postEarnings1Rounded[i] + outcomes.postEarnings2Rounded[i];
-    }
-    outcomes.maximumEarnings = Math.max(...outcomes.aggrEarnings);
-    outcomes.maximumEarningsRounded = Math.max(...outcomes.aggrEarningsRounded);
-    console.log(outcomes)
-}
-
 // Compute child-specific human capital, as a combination of ability and parental investment
 function human_capital(ability, investment, scenario) {
     // define local constants, for readibility
@@ -186,7 +158,40 @@ function human_capital(ability, investment, scenario) {
 
 // Compute earnings for specific investment using the human capital function and scenario parameter theta
 function earnings(ability, investment, scenario) {
-    return human_capital(ability, investment, scenario)**scenario.theta
+    return outcomes.alpha * human_capital(ability, investment, scenario)**scenario.theta
+}
+
+function compute_alpha(ability1, ability2, scenario) {
+    const amax = Math.max(ability1, ability2)
+    return MAX_SESSIONS / (human_capital(amax, ALLOCATABLE_BUDGET, scenario)**scenario.theta)
+}
+
+
+function compute_outcomes(session, scenario) {
+    const pre = computePreEarnings(session.ability1, session.ability2);
+    outcomes.preEarnings1 = pre[0];
+    outcomes.preEarnings2 = pre[1];
+    
+    // Compute alpha first since earnings depend on it
+    outcomes.alpha = compute_alpha(session.ability1, session.ability2, scenario);
+    
+    for (let i=0; i <= ALLOCATABLE_BUDGET; i++) {
+        outcomes.investments1[i] = i;
+        outcomes.investments2[i] = ALLOCATABLE_BUDGET - i;
+        outcomes.postEarnings1[i] = outcomes.preEarnings1 + 
+                                    earnings(session.ability1, outcomes.investments1[i], scenario);
+        outcomes.postEarnings2[i] = outcomes.preEarnings2 + 
+                                    earnings(session.ability2, outcomes.investments2[i], scenario);
+        outcomes.aggrEarnings[i] = outcomes.postEarnings1[i] + outcomes.postEarnings2[i];
+        
+        // Calculate rounded versions
+        outcomes.postEarnings1Rounded[i] = Math.round(outcomes.postEarnings1[i]);
+        outcomes.postEarnings2Rounded[i] = Math.round(outcomes.postEarnings2[i]);
+        outcomes.aggrEarningsRounded[i] = outcomes.postEarnings1Rounded[i] + outcomes.postEarnings2Rounded[i];
+    }
+    outcomes.maximumEarnings = Math.max(...outcomes.aggrEarnings);
+    outcomes.maximumEarningsRounded = Math.max(...outcomes.aggrEarnings);
+    console.log(outcomes)
 }
 
 function onSliderChange() {
