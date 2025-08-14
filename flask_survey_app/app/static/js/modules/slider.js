@@ -1,6 +1,7 @@
 // Global constants
 const ALLOCATABLE_BUDGET = 9
 const GAP_THRESHOLD = 6
+const MAX_SESSIONS = 15
 
 // DOM elements
 // For development purposes
@@ -112,7 +113,12 @@ const outcomes = {
     postEarnings1: Array(ALLOCATABLE_BUDGET+1).fill(0),
     postEarnings2: Array(ALLOCATABLE_BUDGET+1).fill(0),
     aggrEarnings: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    // rounded versions for charts and display
+    postEarnings1Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    postEarnings2Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    aggrEarningsRounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
     maximumEarnings: 0,  // upper bound on aggregate earnings across all choices
+    maximumEarningsRounded: 0,  // upper bound on rounded aggregate earnings
     selectedInvestment: 0,
 }
 
@@ -122,17 +128,24 @@ const outcomes = {
 // need to distinguish between child 1 being better than child 2 and vice versa
 
 function computePreEarnings(ability1, ability2) {
-    let gap = ability1 - ability2
+    let gap = ability1 - ability2;
+    console.log(gap)
     if (gap > GAP_THRESHOLD) {  // child1 is much better
-        return [6, 1]
-    } else if (0 <= gap <= GAP_THRESHOLD) { // child1 is slightly better
-        return [5, 2]
-    } else if (-GAP_THRESHOLD <= gap <= 0) { // child2 is slightly better
-        return [2, 5]
+        return [6, 1];
+    } else if (gap >= 0 && gap <= GAP_THRESHOLD) { // child1 is slightly better
+        return [5, 2];
+    } else if (gap >= -GAP_THRESHOLD && gap < 0) { // child2 is slightly better
+        return [2, 5];
     } else { // child2 is much better
-        return [1, 6]
+        return [1, 6];
     }
 }
+
+function compute_alpha(ability1, ability2, scenario) {
+    const amax = Math.max(ability1, ability2)
+    alpha = MAX_SESSIONS * human_capital(amax, ALLOCATABLE_BUDGET, scenario)**(-scenario.theta)
+}
+
 
 function compute_outcomes(session, scenario) {
     const pre = computePreEarnings(session.ability1, session.ability2);
@@ -146,8 +159,14 @@ function compute_outcomes(session, scenario) {
         outcomes.postEarnings2[i] = outcomes.preEarnings2 + 
                                     earnings(session.ability2, outcomes.investments2[i], scenario);
         outcomes.aggrEarnings[i] = outcomes.postEarnings1[i] + outcomes.postEarnings2[i];
+        
+        // Calculate rounded versions
+        outcomes.postEarnings1Rounded[i] = Math.round(outcomes.postEarnings1[i]);
+        outcomes.postEarnings2Rounded[i] = Math.round(outcomes.postEarnings2[i]);
+        outcomes.aggrEarningsRounded[i] = outcomes.postEarnings1Rounded[i] + outcomes.postEarnings2Rounded[i];
     }
     outcomes.maximumEarnings = Math.max(...outcomes.aggrEarnings);
+    outcomes.maximumEarningsRounded = Math.max(...outcomes.aggrEarningsRounded);
     console.log(outcomes)
 }
 
@@ -227,6 +246,8 @@ function updateDebugDisplay() {
         document.getElementById(`debug-post1-${i}`).textContent = outcomes.postEarnings1[i].toFixed(1);
         document.getElementById(`debug-post2-${i}`).textContent = outcomes.postEarnings2[i].toFixed(1);
         document.getElementById(`debug-total-${i}`).textContent = outcomes.aggrEarnings[i].toFixed(1);
+        document.getElementById(`debug-post1r-${i}`).textContent = outcomes.postEarnings1Rounded[i];
+        document.getElementById(`debug-post2r-${i}`).textContent = outcomes.postEarnings2Rounded[i];
     }
 }
 
@@ -335,7 +356,7 @@ function create_single_bar_chart() {
                         display: false
                     },
                     beginAtZero: true,
-                    max: outcomes.maximumEarnings
+                    max: outcomes.maximumEarningsRounded
                 }
             },
             layout: {
@@ -356,7 +377,7 @@ function create_line_chart() {
             datasets: [
                 {
                     label: 'Child 1',
-                    data: outcomes.postEarnings1,
+                    data: outcomes.postEarnings1Rounded,
                     borderColor: '#81c784',
                     backgroundColor: '#a8e6cf',
                     borderWidth: 3,
@@ -369,7 +390,7 @@ function create_line_chart() {
                 },
                 {
                     label: 'Child 2', 
-                    data: outcomes.postEarnings2,
+                    data: outcomes.postEarnings2Rounded,
                     borderColor: '#ffb74d',
                     backgroundColor: '#ffd3a5',
                     borderWidth: 3,
@@ -382,7 +403,7 @@ function create_line_chart() {
                 },
                 {
                     label: 'Combined',
-                    data: outcomes.aggrEarnings,
+                    data: outcomes.aggrEarningsRounded,
                     borderColor: '#9575cd',
                     backgroundColor: '#c7ceea',
                     borderWidth: 3,
@@ -417,9 +438,9 @@ function create_line_chart() {
                         const datasetIndex = context.datasetIndex;
                         
                         // Get values at selected point for all datasets
-                        const child1Value = outcomes.postEarnings1[selectedIndex];
-                        const child2Value = outcomes.postEarnings2[selectedIndex];
-                        const combinedValue = outcomes.aggrEarnings[selectedIndex];
+                        const child1Value = outcomes.postEarnings1Rounded[selectedIndex];
+                        const child2Value = outcomes.postEarnings2Rounded[selectedIndex];
+                        const combinedValue = outcomes.aggrEarningsRounded[selectedIndex];
                         
                         // Sort by value to determine positioning
                         const values = [
@@ -441,9 +462,9 @@ function create_line_chart() {
                         const datasetIndex = context.datasetIndex;
                         
                         // Get values at selected point for all datasets
-                        const child1Value = outcomes.postEarnings1[selectedIndex];
-                        const child2Value = outcomes.postEarnings2[selectedIndex];
-                        const combinedValue = outcomes.aggrEarnings[selectedIndex];
+                        const child1Value = outcomes.postEarnings1Rounded[selectedIndex];
+                        const child2Value = outcomes.postEarnings2Rounded[selectedIndex];
+                        const combinedValue = outcomes.aggrEarningsRounded[selectedIndex];
                         
                         // Sort by value to determine positioning
                         const values = [
@@ -494,7 +515,7 @@ function create_line_chart() {
                         color: '#f0f0f0'
                     },
                     beginAtZero: true,
-                    max: outcomes.maximumEarnings * 1.1
+                    max: outcomes.maximumEarningsRounded * 1.1
                 }
             },
             layout: {
@@ -517,7 +538,7 @@ function create_multi_bar_chart() {
             datasets: [
                 {
                     label: 'Child 1',
-                    data: outcomes.postEarnings1,
+                    data: outcomes.postEarnings1Rounded,
                     backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#a8e6cf'),
                     borderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#81c784'),
                     borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
@@ -526,7 +547,7 @@ function create_multi_bar_chart() {
                 },
                 {
                     label: 'Child 2',
-                    data: outcomes.postEarnings2,
+                    data: outcomes.postEarnings2Rounded,
                     backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffd3a5'),
                     borderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffb74d'),
                     borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
@@ -619,7 +640,7 @@ function create_multi_bar_chart() {
                         display: false
                     },
                     beginAtZero: true,
-                    max: outcomes.maximumEarnings * 1.1,
+                    max: outcomes.maximumEarningsRounded * 1.1,
                     stacked: true
                 }
             },
@@ -640,9 +661,9 @@ function updateLineChartData() {
         const selectedIndex = outcomes.selectedInvestment;
         
         // Update all data arrays
-        lineChart.data.datasets[0].data = [...outcomes.postEarnings1];
-        lineChart.data.datasets[1].data = [...outcomes.postEarnings2];
-        lineChart.data.datasets[2].data = [...outcomes.aggrEarnings];
+        lineChart.data.datasets[0].data = [...outcomes.postEarnings1Rounded];
+        lineChart.data.datasets[1].data = [...outcomes.postEarnings2Rounded];
+        lineChart.data.datasets[2].data = [...outcomes.aggrEarningsRounded];
         
         // Reset all points to normal size and style
         const normalRadius = Array(ALLOCATABLE_BUDGET + 1).fill(4);
@@ -667,7 +688,7 @@ function updateLineChartData() {
         });
         
         // Update y-axis max
-        lineChart.options.scales.y.max = outcomes.maximumEarnings * 1.1;
+        lineChart.options.scales.y.max = outcomes.maximumEarningsRounded * 1.1;
         
         lineChart.update();
     }
@@ -676,15 +697,15 @@ function updateLineChartData() {
 function updateChartData() {
     if (barChart) {
         const i = outcomes.selectedInvestment;
-        const earnings1 = outcomes.postEarnings1[i];
-        const earnings2 = outcomes.postEarnings2[i];
-        const totalEarnings = outcomes.aggrEarnings[i];
+        const earnings1 = outcomes.postEarnings1Rounded[i];
+        const earnings2 = outcomes.postEarnings2Rounded[i];
+        const totalEarnings = outcomes.aggrEarningsRounded[i];
         
         // Update data
         barChart.data.datasets[0].data = [earnings1, earnings2, totalEarnings];
         
         // Update y-axis max to current maximum earnings with 10% buffer
-        barChart.options.scales.y.max = outcomes.maximumEarnings * 1.1;
+        barChart.options.scales.y.max = outcomes.maximumEarningsRounded * 1.1;
         
         barChart.update();
     }
@@ -699,8 +720,8 @@ function updateMultiBarChartData() {
         const selectedIndex = outcomes.selectedInvestment;
         
         // Update data arrays
-        multiBarChart.data.datasets[0].data = [...outcomes.postEarnings1];
-        multiBarChart.data.datasets[1].data = [...outcomes.postEarnings2];
+        multiBarChart.data.datasets[0].data = [...outcomes.postEarnings1Rounded];
+        multiBarChart.data.datasets[1].data = [...outcomes.postEarnings2Rounded];
         
         // Create arrays with normal styling for all bars
         const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#a8e6cf');
@@ -729,7 +750,7 @@ function updateMultiBarChartData() {
         multiBarChart.data.datasets[1].borderWidth = borderWidths;
         
         // Update y-axis max
-        multiBarChart.options.scales.y.max = outcomes.maximumEarnings * 1.1;
+        multiBarChart.options.scales.y.max = outcomes.maximumEarningsRounded * 1.1;
         
         multiBarChart.update();
     }
