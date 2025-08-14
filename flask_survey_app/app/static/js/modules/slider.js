@@ -3,17 +3,27 @@ const ALLOCATABLE_BUDGET = 9;
 const GAP_THRESHOLD = 6;
 const MAX_SESSIONS = 15;
 
-// Chart colors
-const CHILD1_COLOR = '#81c784';        // Green border
-const CHILD1_BG_COLOR = '#a8e6cf';     // Light green background
-const CHILD1_DARK_COLOR = '#2e7d32';   // Dark green for highlighting/text
-const CHILD2_COLOR = '#ffb74d';        // Orange/peach border
-const CHILD2_BG_COLOR = '#ffd3a5';     // Light orange/peach background
-const CHILD2_DARK_COLOR = '#e65100';   // Dark orange for highlighting/text
-const COMBINED_COLOR = '#9575cd';      // Purple border
-const COMBINED_BG_COLOR = '#c7ceea';   // Light purple background
+// Chart colors - colorblind-friendly matplotlib-style palette
+const CHILD1_COLOR = '#1f77b4';        // Matplotlib blue border
+const CHILD1_BG_COLOR = '#aecbea';     // Light blue background
+const CHILD1_DARK_COLOR = '#0f4c75';   // Dark blue for highlighting/text
+const CHILD2_COLOR = '#ff7f0e';        // Matplotlib orange border
+const CHILD2_BG_COLOR = '#ffc788';     // Light orange background
+const CHILD2_DARK_COLOR = '#cc5500';   // Dark orange for highlighting/text
+const COMBINED_COLOR = '#2ca02c';      // Matplotlib green border
+const COMBINED_BG_COLOR = '#a8d4a8';   // Light green background
 const LABEL_BG_COLOR = 'rgba(255, 255, 255, 0.9)';  // Semi-transparent white for labels
 const LABEL_BORDER_COLOR = '#ccc';     // Light gray for label borders
+
+// Previous color scheme (kept for reference)
+// const CHILD1_COLOR = '#81c784';        // Green border
+// const CHILD1_BG_COLOR = '#a8e6cf';     // Light green background
+// const CHILD1_DARK_COLOR = '#2e7d32';   // Dark green for highlighting/text
+// const CHILD2_COLOR = '#ffb74d';        // Orange/peach border
+// const CHILD2_BG_COLOR = '#ffd3a5';     // Light orange/peach background
+// const CHILD2_DARK_COLOR = '#e65100';   // Dark orange for highlighting/text
+// const COMBINED_COLOR = '#9575cd';      // Purple border
+// const COMBINED_BG_COLOR = '#c7ceea';   // Light purple background
 
 // DOM elements
 // For development purposes
