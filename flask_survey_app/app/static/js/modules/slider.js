@@ -26,6 +26,7 @@ const debugPre1 = document.getElementById('debug-pre1');
 const debugPre2 = document.getElementById('debug-pre2');
 const debugSelected = document.getElementById('debug-selected');
 const debugMax = document.getElementById('debug-max');
+const debugAlpha = document.getElementById('debug-alpha');
 const debugPost1 = document.getElementById('debug-post1');
 const debugPost2 = document.getElementById('debug-post2');
 const debugTotal = document.getElementById('debug-total');
@@ -34,8 +35,8 @@ let lineChart = null;
 let multiBarChart = null;
 
 const session = {
-    ability1: 5,
-    ability2: 1,
+    abilityScore1: 5,
+    abilityScore2: 1,
 }
 
 // Scenario configurations
@@ -112,10 +113,14 @@ const outcomes = {
     // individual and total allocation of lessons to children for each choice of investment
     postEarnings1: Array(ALLOCATABLE_BUDGET+1).fill(0),
     postEarnings2: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    totalEarnings1: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    totalEarnings2: Array(ALLOCATABLE_BUDGET+1).fill(0),
     aggrEarnings: Array(ALLOCATABLE_BUDGET+1).fill(0),
     // rounded versions for charts and display
     postEarnings1Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
     postEarnings2Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    totalEarnings1Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    totalEarnings2Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
     aggrEarningsRounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
     maximumEarnings: 0,  // upper bound on aggregate earnings across all choices
     maximumEarningsRounded: 0,  // upper bound on rounded aggregate earnings
@@ -128,8 +133,8 @@ const outcomes = {
 // There are two kinds of gap: *medium* and *large*
 // need to distinguish between child 1 being better than child 2 and vice versa
 
-function computePreEarnings(ability1, ability2) {
-    let gap = ability1 - ability2;
+function computePreEarnings(abilityScore1, abilityScore2) {
+    let gap = abilityScore1 - abilityScore2;
     console.log(gap)
     if (gap > GAP_THRESHOLD) {  // child1 is much better
         return [6, 1];
@@ -145,15 +150,20 @@ function computePreEarnings(ability1, ability2) {
 // Compute child-specific human capital, as a combination of ability and parental investment
 function human_capital(ability, investment, scenario) {
     // define local constants, for readibility
-    const a = ability
-    const x = investment
-    const sigma = scenario.sigma
-    const gamma = scenario.gamma
+    const a = ability;
+    const x = investment;
+    const sigma = scenario.sigma;
+    const gamma = scenario.gamma;
     if (sigma == 0) {
-        return a**gamma * x**(1-gamma)
+        return a**gamma * x**(1-gamma);
     } else {
-        return (gamma * a**sigma + (1-gamma) * x**sigma)**(1/sigma)
+        return (gamma * a**sigma + (1-gamma) * x**sigma)**(1/sigma);
     }
+}
+
+function compute_alpha(preEarnings1, preEarnings2, scenario) {
+    const amax = Math.max(preEarnings1, preEarnings2)
+    return MAX_SESSIONS / (human_capital(amax, ALLOCATABLE_BUDGET, scenario)**scenario.theta)
 }
 
 // Compute earnings for specific investment using the human capital function and scenario parameter theta
@@ -161,36 +171,39 @@ function earnings(ability, investment, scenario) {
     return outcomes.alpha * human_capital(ability, investment, scenario)**scenario.theta
 }
 
-function compute_alpha(ability1, ability2, scenario) {
-    const amax = Math.max(ability1, ability2)
-    return MAX_SESSIONS / (human_capital(amax, ALLOCATABLE_BUDGET, scenario)**scenario.theta)
-}
-
 
 function compute_outcomes(session, scenario) {
-    const pre = computePreEarnings(session.ability1, session.ability2);
+    const pre = computePreEarnings(session.abilityScore1, session.abilityScore2);
     outcomes.preEarnings1 = pre[0];
     outcomes.preEarnings2 = pre[1];
     
     // Compute alpha first since earnings depend on it
-    outcomes.alpha = compute_alpha(session.ability1, session.ability2, scenario);
+    outcomes.alpha = compute_alpha(outcomes.preEarnings1, outcomes.preEarnings2, scenario);
     
     for (let i=0; i <= ALLOCATABLE_BUDGET; i++) {
         outcomes.investments1[i] = i;
         outcomes.investments2[i] = ALLOCATABLE_BUDGET - i;
-        outcomes.postEarnings1[i] = outcomes.preEarnings1 + 
-                                    earnings(session.ability1, outcomes.investments1[i], scenario);
-        outcomes.postEarnings2[i] = outcomes.preEarnings2 + 
-                                    earnings(session.ability2, outcomes.investments2[i], scenario);
-        outcomes.aggrEarnings[i] = outcomes.postEarnings1[i] + outcomes.postEarnings2[i];
+        
+        // Separate investment-only earnings from total earnings
+        outcomes.postEarnings1[i] = earnings(outcomes.preEarnings1, outcomes.investments1[i], scenario);
+        outcomes.postEarnings2[i] = earnings(outcomes.preEarnings2, outcomes.investments2[i], scenario);
+        
+        // Total earnings = pre-earnings + post-earnings
+        outcomes.totalEarnings1[i] = outcomes.preEarnings1 + outcomes.postEarnings1[i];
+        outcomes.totalEarnings2[i] = outcomes.preEarnings2 + outcomes.postEarnings2[i];
+        
+        // Aggregate earnings based on total earnings
+        outcomes.aggrEarnings[i] = outcomes.totalEarnings1[i] + outcomes.totalEarnings2[i];
         
         // Calculate rounded versions
         outcomes.postEarnings1Rounded[i] = Math.round(outcomes.postEarnings1[i]);
         outcomes.postEarnings2Rounded[i] = Math.round(outcomes.postEarnings2[i]);
-        outcomes.aggrEarningsRounded[i] = outcomes.postEarnings1Rounded[i] + outcomes.postEarnings2Rounded[i];
+        outcomes.totalEarnings1Rounded[i] = Math.round(outcomes.totalEarnings1[i]);
+        outcomes.totalEarnings2Rounded[i] = Math.round(outcomes.totalEarnings2[i]);
+        outcomes.aggrEarningsRounded[i] = outcomes.totalEarnings1Rounded[i] + outcomes.totalEarnings2Rounded[i];
     }
     outcomes.maximumEarnings = Math.max(...outcomes.aggrEarnings);
-    outcomes.maximumEarningsRounded = Math.max(...outcomes.aggrEarnings);
+    outcomes.maximumEarningsRounded = Math.max(...outcomes.aggrEarningsRounded);
     console.log(outcomes)
 }
 
@@ -244,7 +257,8 @@ function updateDebugDisplay() {
     debugPre1.textContent = outcomes.preEarnings1;
     debugPre2.textContent = outcomes.preEarnings2;
     debugSelected.textContent = outcomes.selectedInvestment;
-    debugMax.textContent = outcomes.maximumEarnings.toFixed(1);
+    debugMax.textContent = outcomes.maximumEarningsRounded;
+    debugAlpha.textContent = outcomes.alpha.toFixed(3);
     
     // Update table cells
     for (let i = 0; i <= ALLOCATABLE_BUDGET; i++) {
@@ -253,34 +267,16 @@ function updateDebugDisplay() {
         document.getElementById(`debug-total-${i}`).textContent = outcomes.aggrEarnings[i].toFixed(1);
         document.getElementById(`debug-post1r-${i}`).textContent = outcomes.postEarnings1Rounded[i];
         document.getElementById(`debug-post2r-${i}`).textContent = outcomes.postEarnings2Rounded[i];
+        document.getElementById(`debug-total1-${i}`).textContent = outcomes.totalEarnings1[i].toFixed(1);
+        document.getElementById(`debug-total2-${i}`).textContent = outcomes.totalEarnings2[i].toFixed(1);
     }
 }
 
 function onAbilityChange() {
-    let ability1 = parseInt(child1Ability.value);
-    let ability2 = parseInt(child2Ability.value);
-    
-    // Validate ability1
-    if (isNaN(ability1) || ability1 < 0 || ability1 > 100) {
-        child1Ability.setCustomValidity('Please enter a number between 0 and 100');
-        child1Ability.reportValidity();
-        return;
-    } else {
-        child1Ability.setCustomValidity('');
-    }
-    
-    // Validate ability2
-    if (isNaN(ability2) || ability2 < 0 || ability2 > 100) {
-        child2Ability.setCustomValidity('Please enter a number between 0 and 100');
-        child2Ability.reportValidity();
-        return;
-    } else {
-        child2Ability.setCustomValidity('');
-    }
-    
-    // Only update if both values are valid
-    session.ability1 = ability1;
-    session.ability2 = ability2;
+    let abilityScore1 = parseInt(child1Ability.value);
+    let abilityScore2 = parseInt(child2Ability.value);
+    session.abilityScore1 = abilityScore1;
+    session.abilityScore2 = abilityScore2;
     const scenario = SCENARIOS[parseInt(scenarioSelect.value)];
     compute_outcomes(session, scenario);
     updateChartData();
@@ -382,7 +378,7 @@ function create_line_chart() {
             datasets: [
                 {
                     label: 'Child 1',
-                    data: outcomes.postEarnings1Rounded,
+                    data: outcomes.totalEarnings1Rounded,
                     borderColor: '#81c784',
                     backgroundColor: '#a8e6cf',
                     borderWidth: 3,
@@ -395,7 +391,7 @@ function create_line_chart() {
                 },
                 {
                     label: 'Child 2', 
-                    data: outcomes.postEarnings2Rounded,
+                    data: outcomes.totalEarnings2Rounded,
                     borderColor: '#ffb74d',
                     backgroundColor: '#ffd3a5',
                     borderWidth: 3,
@@ -443,8 +439,8 @@ function create_line_chart() {
                         const datasetIndex = context.datasetIndex;
                         
                         // Get values at selected point for all datasets
-                        const child1Value = outcomes.postEarnings1Rounded[selectedIndex];
-                        const child2Value = outcomes.postEarnings2Rounded[selectedIndex];
+                        const child1Value = outcomes.totalEarnings1Rounded[selectedIndex];
+                        const child2Value = outcomes.totalEarnings2Rounded[selectedIndex];
                         const combinedValue = outcomes.aggrEarningsRounded[selectedIndex];
                         
                         // Sort by value to determine positioning
@@ -467,8 +463,8 @@ function create_line_chart() {
                         const datasetIndex = context.datasetIndex;
                         
                         // Get values at selected point for all datasets
-                        const child1Value = outcomes.postEarnings1Rounded[selectedIndex];
-                        const child2Value = outcomes.postEarnings2Rounded[selectedIndex];
+                        const child1Value = outcomes.totalEarnings1Rounded[selectedIndex];
+                        const child2Value = outcomes.totalEarnings2Rounded[selectedIndex];
                         const combinedValue = outcomes.aggrEarningsRounded[selectedIndex];
                         
                         // Sort by value to determine positioning
@@ -543,7 +539,7 @@ function create_multi_bar_chart() {
             datasets: [
                 {
                     label: 'Child 1',
-                    data: outcomes.postEarnings1Rounded,
+                    data: outcomes.totalEarnings1Rounded,
                     backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#a8e6cf'),
                     borderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#81c784'),
                     borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
@@ -552,7 +548,7 @@ function create_multi_bar_chart() {
                 },
                 {
                     label: 'Child 2',
-                    data: outcomes.postEarnings2Rounded,
+                    data: outcomes.totalEarnings2Rounded,
                     backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffd3a5'),
                     borderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffb74d'),
                     borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
@@ -666,8 +662,8 @@ function updateLineChartData() {
         const selectedIndex = outcomes.selectedInvestment;
         
         // Update all data arrays
-        lineChart.data.datasets[0].data = [...outcomes.postEarnings1Rounded];
-        lineChart.data.datasets[1].data = [...outcomes.postEarnings2Rounded];
+        lineChart.data.datasets[0].data = [...outcomes.totalEarnings1Rounded];
+        lineChart.data.datasets[1].data = [...outcomes.totalEarnings2Rounded];
         lineChart.data.datasets[2].data = [...outcomes.aggrEarningsRounded];
         
         // Reset all points to normal size and style
@@ -702,8 +698,8 @@ function updateLineChartData() {
 function updateChartData() {
     if (barChart) {
         const i = outcomes.selectedInvestment;
-        const earnings1 = outcomes.postEarnings1Rounded[i];
-        const earnings2 = outcomes.postEarnings2Rounded[i];
+        const earnings1 = outcomes.totalEarnings1Rounded[i];
+        const earnings2 = outcomes.totalEarnings2Rounded[i];
         const totalEarnings = outcomes.aggrEarningsRounded[i];
         
         // Update data
@@ -725,8 +721,8 @@ function updateMultiBarChartData() {
         const selectedIndex = outcomes.selectedInvestment;
         
         // Update data arrays
-        multiBarChart.data.datasets[0].data = [...outcomes.postEarnings1Rounded];
-        multiBarChart.data.datasets[1].data = [...outcomes.postEarnings2Rounded];
+        multiBarChart.data.datasets[0].data = [...outcomes.totalEarnings1Rounded];
+        multiBarChart.data.datasets[1].data = [...outcomes.totalEarnings2Rounded];
         
         // Create arrays with normal styling for all bars
         const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#a8e6cf');
@@ -766,8 +762,8 @@ function updateMultiBarChartData() {
 // Initialize and export the initialization function
 function initializeApp() {
     // Initialize session values from input fields
-    session.ability1 = parseInt(child1Ability.value);
-    session.ability2 = parseInt(child2Ability.value);
+    session.abilityScore1 = parseInt(child1Ability.value);
+    session.abilityScore2 = parseInt(child2Ability.value);
     
     updateScenarioOptions();
     const scenario = SCENARIOS[0];
