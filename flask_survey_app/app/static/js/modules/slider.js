@@ -254,7 +254,7 @@ function updateDebugDisplay() {
     for (let i = 0; i <= ALLOCATABLE_BUDGET; i++) {
         document.getElementById(`debug-post1-${i}`).textContent = outcomes.postEarnings1[i].toFixed(1);
         document.getElementById(`debug-post2-${i}`).textContent = outcomes.postEarnings2[i].toFixed(1);
-        document.getElementById(`debug-total-${i}`).textContent = outcomes.aggrEarnings[i].toFixed(1);
+        document.getElementById(`debug-total-${i}`).textContent = outcomes.aggrEarningsRounded[i];
         document.getElementById(`debug-post1r-${i}`).textContent = outcomes.postEarnings1Rounded[i];
         document.getElementById(`debug-post2r-${i}`).textContent = outcomes.postEarnings2Rounded[i];
     }
