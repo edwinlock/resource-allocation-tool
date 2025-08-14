@@ -243,6 +243,14 @@ function onGraphTypeChange() {
     updateChartVisibility();
 }
 
+function toggleDebugInfo() {
+    const debugContent = document.getElementById('debug-content');
+    const debugArrow = document.getElementById('debug-arrow');
+    
+    debugContent.classList.toggle('collapsed');
+    debugArrow.classList.toggle('collapsed');
+}
+
 function updateDebugDisplay() {
     debugPre1.textContent = outcomes.preEarnings1;
     debugPre2.textContent = outcomes.preEarnings2;

@@ -43,8 +43,11 @@
         </div>
         
         <div class="debug-section">
-            <h4>Debug Info</h4>
-            <div class="debug-content">
+            <h4 class="debug-header" onclick="toggleDebugInfo()">
+                <span class="debug-arrow" id="debug-arrow">▼</span>
+                Debug Info
+            </h4>
+            <div class="debug-content" id="debug-content">
                 <small>
                     <strong>Pre-earnings:</strong> Child1=<span id="debug-pre1">0</span>, Child2=<span id="debug-pre2">0</span> | 
                     <strong>Selected:</strong> <span id="debug-selected">0</span> | 
@@ -124,5 +127,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
         });
+        
+        // Make toggleDebugInfo globally accessible
+        window.toggleDebugInfo = function() {
+            const debugContent = document.getElementById('debug-content');
+            const debugArrow = document.getElementById('debug-arrow');
+            
+            debugContent.classList.toggle('collapsed');
+            debugArrow.classList.toggle('collapsed');
+        };
     </script>
 {% endblock %}

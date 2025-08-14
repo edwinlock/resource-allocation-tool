@@ -50,12 +50,43 @@
     margin-bottom: 20px;
 }
 
+.debug-header {
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.debug-header:hover {
+    color: #007bff;
+}
+
+.debug-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.debug-arrow.collapsed {
+    transform: rotate(-90deg);
+}
+
 .debug-content {
     background: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
     border: 2px solid #e9ecef;
     font-family: monospace;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+}
+
+.debug-content.collapsed {
+    max-height: 0;
+    padding: 0 15px;
+    opacity: 0;
 }
 
 .debug-table {
