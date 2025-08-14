@@ -127,7 +127,7 @@ function computePreEarnings(ability1, ability2) {
         return [6, 1]
     } else if (0 <= gap <= GAP_THRESHOLD) { // child1 is slightly better
         return [5, 2]
-    } else if (0 <= -gap <= GAP_THRESHOLD) { // child2 is slightly better
+    } else if (-GAP_THRESHOLD <= gap <= 0) { // child2 is slightly better
         return [2, 5]
     } else { // child2 is much better
         return [1, 6]
