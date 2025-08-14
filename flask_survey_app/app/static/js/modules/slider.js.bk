@@ -1,0 +1,165 @@
+// Global constants
+const ALLOCATABLE_BUDGET = 9
+
+// DOM elements
+// For development purposes
+const child1Ability = document.getElementById('child1-ability')
+const child2Ability = document.getElementById('child2-ability')
+// Permanent
+const investmentSlider = document.getElementById('investment-slider');
+const child1Display = document.getElementById('child1-display');
+const child2Display = document.getElementById('child2-display');
+const scenarioSelect = document.getElementById('scenario-select');
+const scenarioDesc = document.getElementById('scenario-desc');
+const child1Bar = document.getElementById('child1-bar');
+const child2Bar = document.getElementById('child2-bar');
+const child1BarValue = document.getElementById('child1-bar-value');
+const child2BarValue = document.getElementById('child2-bar-value');
+
+// Scenario configurations
+// We have a total of 8 scenarios:
+// gamma = 0.5 always
+// sigma is 1 (additive), 0.5 (CES), 0 (Cobb-Douglas) or -2 (CES)
+// theta is 1 or 2
+const SCENARIOS = {
+    One: {
+        description: "Bla bla",
+        gamma: 0.5,
+        sigma: 0.0,
+        theta: 1.0,
+    },
+};
+
+// Global variables to make life easier
+let initialEarnings1 = 1.0;
+let initialEarnings2 = 5.0;
+let earnings1 = 0.0;
+let earnings2 = 0.0;
+let totalEarnings = 0.0;
+let maximumEarnings = 20.0;
+
+// Compute child-specific human capital, as a combination of ability and parental investment
+function human_capital(ability, investment, scenario) {
+    // define local constants, for readibility
+    const a = ability
+    const x = investment
+    const sigma = scenario.sigma
+    const gamma = scenario.gamma
+    if (sigma == 0) {
+        return a**gamma * x**(1-gamma)
+    } else {
+        return (gamma * a**sigma + (1-gamma) * x**sigma)**(1/sigma)
+    }
+}
+
+// Compute earnings for specific investment using the human capital function and scenario parameter theta
+function earnings(ability, investment, scenario) {
+    return human_capital(ability, investment, scenario)**scenario.theta
+}
+
+// Compute earnings for all possible investments
+function all_earnings(ability1, ability2, scenario) {
+    let investments = []
+    let earnings1 = []
+    let earnings2 = []
+    for (alloc = 0; alloc <= ALLOCATABLE_BUDGET; alloc++) {
+        let investment1 = alloc
+        let investment2 = ALLOCATABLE_BUDGET - alloc
+        investments.push(alloc)
+        earnings1.push(earnings(ability1, investment1, scenario))
+        earnings2.push(earnings(ability2, investment2, scenario))
+    }
+    return [investments, earnings1, earnings2]
+}
+
+function updateLessonAllocation() {
+    const investment1 = parseInt(investmentSlider.value);
+    const investment2 = ALLOCATABLE_BUDGET - investment1;
+    // Update investment displays
+    child1Display.textContent = investment1;
+    child2Display.textContent = investment2;
+}
+
+function updateEarnings() {
+    const ability1 = parseInt(child1Ability.value);
+    const ability2 = parseInt(child2Ability.value);
+    const investment1 = parseInt(investmentSlider.value);
+    const investment2 = ALLOCATABLE_BUDGET - investment1;
+    const scenario = SCENARIOS[scenarioSelect.value];
+
+    // Calculate earnings
+    earnings1 = initialEarnings1 + earnings(ability1, investment1, scenario);
+    earnings2 = initialEarnings2 + earnings(ability2, investment2, scenario);
+    totalEarnings = earnings1 + earnings2;
+}
+
+function updateBarGraph() {
+
+    // Update bar values
+    const combinedBarValue = document.getElementById('combined-bar-value');
+    
+    if (child1BarValue) child1BarValue.textContent = `$${earnings1.toLocaleString()}`;
+    if (child2BarValue) child2BarValue.textContent = `$${earnings2.toLocaleString()}`;
+    if (combinedBarValue) combinedBarValue.textContent = `$${totalEarnings.toLocaleString()}`;
+    
+    // Update bar heights
+    const combinedBar = document.getElementById('combined-bar');
+    
+    // Scale bars to fit container (300px max height)
+    const maxHeight = 300;
+    const scale = maxHeight / maximumEarnings;
+    
+    const height1 = earnings1 * scale;
+    const height2 = earnings2 * scale;
+    const heightCombined = totalEarnings * scale;
+    
+    if (child1Bar) child1Bar.style.height = `${height1}px`;
+    if (child2Bar) child2Bar.style.height = `${height2}px`;
+    if (combinedBar) combinedBar.style.height = `${heightCombined}px`;
+}
+
+function onSliderChange() {
+    console.log("Slider value has changed.")
+    updateEverything();
+}
+
+function updateEverything() {
+    updateEarnings();
+    updateLessonAllocation();
+    updateBarGraph();
+}
+
+function onScenarioChange() {
+    const selectedScenario = scenarioSelect.value;
+    scenarioDesc.textContent = SCENARIOS[selectedScenario].description;
+    updateEverything();
+}
+
+function updateScenarioOptions() {
+    scenarioSelect.innerHTML = '';
+    
+    for (const [key] of Object.entries(SCENARIOS)) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key;
+        scenarioSelect.appendChild(option);
+    }
+    
+    if (scenarioSelect.options.length > 0) {
+        scenarioSelect.value = scenarioSelect.options[0].value;
+        onScenarioChange();
+    }
+}
+
+// Initialize and export the initialization function
+function initializeSlider() {
+    updateScenarioOptions();
+    updateEverything();
+    
+    // Add event listeners
+    investmentSlider.addEventListener('input', onSliderChange);
+    scenarioSelect.addEventListener('change', onScenarioChange);
+}
+
+// Export the initialization function for use as a module
+export { initializeSlider };

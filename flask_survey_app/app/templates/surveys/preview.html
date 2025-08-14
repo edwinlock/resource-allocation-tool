@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% set title = "Preview Survey" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Preview: {{ survey.title }}</h2>
+            <div>
+                <a href="{{ url_for('surveys.edit_survey', survey_id=survey.id) }}" class="btn btn-outline-primary">Edit Survey</a>
+                <a href="{{ url_for('surveys.index') }}" class="btn btn-secondary">Back to Surveys</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ survey.title }}</h5>
+                {% if survey.description %}
+                    <p class="card-text">{{ survey.description }}</p>
+                {% endif %}
+                
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">Survey Preview</h6>
+                    <p>This is how your survey will appear to respondents. The preview functionality is currently under development and will include:</p>
+                    <ul>
+                        <li>Real-time survey rendering</li>
+                        <li>Interactive question previews</li>
+                        <li>Logic flow testing</li>
+                        <li>Mobile responsiveness preview</li>
+                        <li>Test response simulation</li>
+                    </ul>
+                </div>
+                
+                <div class="border rounded p-4 bg-light">
+                    <h6 class="text-muted">Survey Content Preview</h6>
+                    
+                    <div class="mb-4">
+                        <h4>{{ survey.title }}</h4>
+                        {% if survey.description %}
+                            <p class="lead">{{ survey.description }}</p>
+                        {% endif %}
+                        <hr>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Sample Question Section</h5>
+                        <div class="mb-3">
+                            <label class="form-label">1. This is an example question</label>
+                            <input type="text" class="form-control" placeholder="Text response" disabled>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">2. Multiple choice example</label>
+                            <div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" disabled>
+                                    <label class="form-check-label">Option A</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" disabled>
+                                    <label class="form-check-label">Option B</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" disabled>
+                                    <label class="form-check-label">Option C</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">3. Rating scale example</label>
+                            <input type="range" class="form-range" min="1" max="5" disabled>
+                            <div class="d-flex justify-content-between">
+                                <small>Strongly Disagree</small>
+                                <small>Strongly Agree</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="btn btn-primary" disabled>Submit Survey</button>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>Survey Metadata</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>Created:</strong> {{ survey.created_at.strftime('%B %d, %Y at %I:%M %p') }}</li>
+                        <li><strong>Last Modified:</strong> {{ survey.updated_at.strftime('%B %d, %Y at %I:%M %p') }}</li>
+                        <li><strong>Status:</strong> 
+                            {% if survey.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Author:</strong> {{ survey.created_by.full_name }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

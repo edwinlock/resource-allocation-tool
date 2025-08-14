@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% set title = "Session Management" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Session Management</h1>
+            {% if current_user.has_role('enumerator') %}
+                <a href="{{ url_for('session_mgmt.create_session') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> New Session
+                </a>
+            {% endif %}
+        </div>
+        
+        {% if sessions %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Research Sessions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>Participant</th>
+                                    <th>Enumerator</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for session in sessions %}
+                                <tr>
+                                    <td>#{{ session.id }}</td>
+                                    <td>{{ session.participant_number }}</td>
+                                    <td>{{ session.enumerator.full_name }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if session.session_status == 'active' %}primary{% elif session.session_status == 'completed' %}success{% else %}secondary{% endif %}">
+                                            {{ session.session_status.title() }}
+                                        </span>
+                                    </td>
+                                    <td>{{ session.created_on.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ session.last_updated_on.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('session_mgmt.view_session', session_id=session.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No Sessions Found</h4>
+                <p>{% if current_user.has_role('enumerator') %}Create a new session to get started with participant data collection.{% else %}No research sessions have been created yet.{% endif %}</p>
+                {% if current_user.has_role('enumerator') %}
+                    <a href="{{ url_for('session_mgmt.create_session') }}" class="btn btn-primary">Create First Session</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

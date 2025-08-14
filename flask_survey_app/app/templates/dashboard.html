@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set title = "Dashboard" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Welcome to your Dashboard, {{ current_user.full_name }}!</h2>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Role</h5>
+                        <p class="card-text">
+                            {% for role in current_user.roles %}
+                                <span class="badge bg-primary me-1">{{ role.name.title() }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('slider.index') }}" class="btn btn-outline-primary">Resource Allocation Tool</a>
+                            <a href="{{ url_for('session_mgmt.index') }}" class="btn btn-outline-primary">View Sessions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

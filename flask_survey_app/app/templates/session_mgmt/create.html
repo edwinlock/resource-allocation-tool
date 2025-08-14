@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% set title = "Create New Session" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 col-lg-6 mx-auto">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Create New Research Session</h2>
+        
+        
+        {{ render_form(form) }}
+        
+        <div class="mt-3">
+          <a href="{{ url_for('session_mgmt.index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% set title = "Edit Survey" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Edit Survey: {{ survey.title }}</h2>
+            <a href="{{ url_for('surveys.index') }}" class="btn btn-secondary">Back to Surveys</a>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Survey Editor</h5>
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">Development in Progress</h6>
+                    <p>The survey editor interface is currently under development. This will include:</p>
+                    <ul>
+                        <li>Visual survey editor with drag-and-drop</li>
+                        <li>Question type selection and configuration</li>
+                        <li>Logic branching and skip patterns</li>
+                        <li>Real-time preview capabilities</li>
+                        <li>Save/publish workflow</li>
+                    </ul>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Current Survey Details</h6>
+                        <dl class="row">
+                            <dt class="col-sm-4">Title:</dt>
+                            <dd class="col-sm-8">{{ survey.title }}</dd>
+                            
+                            <dt class="col-sm-4">Description:</dt>
+                            <dd class="col-sm-8">{{ survey.description or 'No description' }}</dd>
+                            
+                            <dt class="col-sm-4">Created:</dt>
+                            <dd class="col-sm-8">{{ survey.created_at.strftime('%B %d, %Y') }}</dd>
+                            
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8">
+                                {% if survey.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-4">Created By:</dt>
+                            <dd class="col-sm-8">{{ survey.created_by.full_name }}</dd>
+                        </dl>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6>Quick Actions</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('surveys.preview_survey', survey_id=survey.id) }}" 
+                               class="btn btn-outline-primary">Preview Survey</a>
+                            <button class="btn btn-outline-secondary" disabled>Add Question</button>
+                            <button class="btn btn-outline-secondary" disabled>Edit Settings</button>
+                            <button class="btn btn-outline-warning" disabled>
+                                {% if survey.is_active %}Deactivate{% else %}Activate{% endif %} Survey
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

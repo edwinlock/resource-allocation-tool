@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set title = "Create Survey" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>Create New Survey</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Survey Composer</h5>
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">Comprehensive Survey System Ready!</h6>
+                    <p>The new survey system supports:</p>
+                    <ul>
+                        <li><strong>Reusable Components:</strong> Sections and questions can be reused across surveys</li>
+                        <li><strong>15 Question Types:</strong> Text, number, multiple choice, rating, currency, location, and more</li>
+                        <li><strong>Fractional Ordering:</strong> Easy reordering without renumbering</li>
+                        <li><strong>Template Overrides:</strong> Customize content per survey without changing originals</li>
+                        <li><strong>Validation Rules:</strong> Built-in validation for development economics data</li>
+                        <li><strong>Version Control:</strong> Track survey versions and changes</li>
+                    </ul>
+                    <p class="mb-0">Implementation of the visual composer interface is ready for development.</p>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('surveys.index') }}" class="btn btn-secondary">Back to Surveys</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

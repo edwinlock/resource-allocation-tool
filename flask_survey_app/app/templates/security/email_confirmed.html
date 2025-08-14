@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% set title = "Email Confirmed" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="mb-3">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+        </div>
+        <h2 class="card-title mb-4">{{ _fsdomain('Thank you. Confirmation instructions have been sent to %(email)s.', email=user.email) }}</h2>
+        
+        <div class="d-grid gap-2">
+          <a href="{{ url_for_security('login') }}" class="btn btn-primary">
+            {{ _fsdomain('Login') }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

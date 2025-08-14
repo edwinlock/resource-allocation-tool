@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% set title = "Session Details" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Session #{{ session.id }}</h1>
+            <a href="{{ url_for('session_mgmt.index') }}" class="btn btn-secondary">Back to Sessions</a>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Participant {{ session.participant_number }}</h5>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Enumerator:</strong> {{ session.enumerator.full_name }}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge bg-{% if session.session_status == 'active' %}primary{% elif session.session_status == 'completed' %}success{% else %}secondary{% endif %}">
+                                {{ session.session_status.title() }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Created:</strong> {{ session.created_on.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        <p><strong>Last Updated:</strong> {{ session.last_updated_on.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                    </div>
+                </div>
+                
+                <!-- Session Notes -->
+                <div class="mb-4">
+                    <h6>Session Notes</h6>
+                    {% if session.notes %}
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                {{ session.notes | replace('\n', '<br>') | safe }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No notes recorded for this session.</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Update Session Form (only for enumerators) -->
+                {% if current_user.id == session.enumerator_id %}
+                    <div class="mt-4">
+                        <h6>Update Session</h6>
+                        <form method="POST" action="{{ url_for('session_mgmt.update_session', session_id=session.id) }}">
+                            {{ render_form(form) }}
+                        </form>
+                    </div>
+                {% endif %}
+                
+                <!-- Placeholder for future integration -->
+                <div class="mt-4">
+                    <h6>Survey & Slider Results</h6>
+                    <div class="alert alert-info">
+                        <p><strong>Coming Soon:</strong> This area will display survey responses and slider app results for this session.</p>
+                        <ul>
+                            <li>Survey question responses</li>
+                            <li>Slider allocation decisions and outcomes</li>
+                            <li>Economic calculations and results</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

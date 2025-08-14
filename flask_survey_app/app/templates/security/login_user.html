@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% set title = "Login" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">{{ _fsdomain('Login') }}</h2>
+        
+        <form action="{{ url_for_security('login') }}" method="post" name="login_user_form">
+          {{ login_user_form.hidden_tag() }}
+          
+          <div class="mb-3">
+            {{ render_field_with_errors(login_user_form.email) }}
+          </div>
+          
+          <div class="mb-3">
+            {{ render_field_with_errors(login_user_form.password) }}
+          </div>
+          
+          {% if login_user_form.remember %}
+            <div class="mb-3 form-check">
+              {{ login_user_form.remember(class_="form-check-input") }}
+              {{ login_user_form.remember.label(class_="form-check-label") }}
+            </div>
+          {% endif %}
+          
+          <div class="d-grid gap-2">
+            {{ render_field(login_user_form.submit, class_="btn btn-primary") }}
+          </div>
+        </form>
+        
+        <div class="text-center mt-3">
+          {% if security.registerable %}
+            <p class="mb-1">
+              <a href="{{ url_for_security('register') }}" class="text-decoration-none">
+                {{ _fsdomain("Don't have an account?") }} {{ _fsdomain('Register') }}
+              </a>
+            </p>
+          {% endif %}
+          
+          {% if security.recoverable %}
+            <p class="mb-0">
+              <a href="{{ url_for_security('forgot_password') }}" class="text-decoration-none">
+                {{ _fsdomain('Forgot password?') }}
+              </a>
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

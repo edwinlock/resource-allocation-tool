@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% set title = "Enumerator Dashboard" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Enumerator Dashboard</h2>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Survey Management</h5>
+                        <p class="card-text">Create, edit, and manage surveys for data collection.</p>
+                        <a href="{{ url_for('surveys.index') }}" class="btn btn-primary">Manage Surveys</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Session Monitoring</h5>
+                        <p class="card-text">Monitor active sessions and track progress.</p>
+                        <a href="{{ url_for('session_mgmt.index') }}" class="btn btn-primary">View Sessions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Allocation Tool</h5>
+                        <p class="card-text">Access the resource allocation experiment tool.</p>
+                        <a href="{{ url_for('slider.index') }}" class="btn btn-outline-primary">Open Tool</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

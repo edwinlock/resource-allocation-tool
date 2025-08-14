@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% set title = "Admin Dashboard" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Admin Dashboard</h2>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">System Statistics</h5>
+                        <p class="card-text">
+                            <strong>Total Users:</strong> {{ user_count }}<br>
+                            <strong>Total Surveys:</strong> {{ survey_count }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Admin Actions</h5>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('surveys.index') }}" class="btn btn-primary">Manage Surveys</a>
+                            <a href="{{ url_for('session_mgmt.index') }}" class="btn btn-primary">View All Sessions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

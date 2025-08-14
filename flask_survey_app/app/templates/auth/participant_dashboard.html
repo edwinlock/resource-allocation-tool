@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% set title = "Participant Dashboard" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Welcome, {{ current_user.full_name }}!</h2>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">My Sessions</h5>
+                        <p class="card-text">View your survey sessions and progress.</p>
+                        <a href="{{ url_for('session_mgmt.index') }}" class="btn btn-primary">View My Sessions</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Available Surveys</h5>
+                        <p class="card-text">Participate in available research surveys.</p>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-primary">View Surveys</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Resource Allocation</h5>
+                        <p class="card-text">Participate in economic allocation experiments.</p>
+                        <a href="{{ url_for('slider.index') }}" class="btn btn-outline-primary">Start Experiment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

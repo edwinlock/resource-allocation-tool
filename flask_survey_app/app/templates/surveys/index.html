@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% set title = "Surveys" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Surveys</h2>
+            <a href="{{ url_for('surveys.create_survey') }}" class="btn btn-primary">Create New Survey</a>
+        </div>
+        
+        {% if surveys %}
+            <div class="row">
+                {% for survey in surveys %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ survey.title }} <small class="text-muted">v{{ survey.version }}</small></h5>
+                                <p class="card-text">{{ survey.description or 'No description provided.' }}</p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Created {{ survey.created_at.strftime('%B %d, %Y') }}
+                                        {% if not survey.is_active %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </small>
+                                </p>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('surveys.edit_survey', survey_id=survey.id) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                    <a href="{{ url_for('surveys.preview_survey', survey_id=survey.id) }}" class="btn btn-outline-secondary btn-sm">Preview</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <h4 class="text-muted">No surveys yet</h4>
+                <p class="text-muted">Create your first survey to get started.</p>
+                <a href="{{ url_for('surveys.create_survey') }}" class="btn btn-primary">Create Survey</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

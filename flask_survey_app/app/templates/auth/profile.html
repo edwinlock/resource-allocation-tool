@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% set title = "Profile" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>User Profile</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ current_user.full_name }}</h5>
+                <p class="card-text">
+                    <strong>Email:</strong> {{ current_user.email }}<br>
+                    <strong>Username:</strong> {{ current_user.username or 'Not set' }}<br>
+                    <strong>Member since:</strong> {{ current_user.created_at.strftime('%B %d, %Y') }}<br>
+                    <strong>Last login:</strong> {{ current_user.last_login_at.strftime('%B %d, %Y at %I:%M %p') if current_user.last_login_at else 'Never' }}
+                </p>
+                
+                <h6>Roles:</h6>
+                {% for role in current_user.roles %}
+                    <span class="badge bg-primary me-1">{{ role.name.title() }}</span>
+                {% endfor %}
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('security.change_password') }}" class="btn btn-outline-primary">Change Password</a>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
