@@ -57,6 +57,11 @@ let lineChart = null;
 let multiBarChart = null;
 
 const session = {
+    id: "b9f47f2fbb5a1aca",
+    participant_id: "ca6adb86ade03ed2",
+    enumerator_id: "31af862fd42f96c7",
+    date_created: new Date(),
+    date_modified: new Date(),
     abilityScore1: 5,
     abilityScore2: 1,
 }
@@ -271,6 +276,13 @@ function toggleDebugInfo() {
     
     debugContent.classList.toggle('collapsed');
     debugArrow.classList.toggle('collapsed');
+}
+
+function updateSessionDisplay() {
+    document.getElementById('participant-id').textContent = session.participant_id;
+    document.getElementById('enumerator-id').textContent = session.enumerator_id;
+    document.getElementById('date-created').textContent = session.date_created.toLocaleDateString();
+    document.getElementById('date-modified').textContent = session.date_modified.toLocaleDateString();
 }
 
 function updateDebugDisplay() {
@@ -814,6 +826,7 @@ function initializeApp() {
     // Update Chart.js chart
     updateChartData();
     updateDebugDisplay();
+    updateSessionDisplay();
     
     // Set initial chart visibility
     updateChartVisibility();
