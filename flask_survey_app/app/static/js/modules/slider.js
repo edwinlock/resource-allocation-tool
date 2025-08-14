@@ -326,9 +326,9 @@ function create_single_bar_chart() {
             datasets: [{
                 label: 'Earnings',
                 data: [0, 0, 0],
-                backgroundColor: [CHILD1_BG_COLOR, CHILD2_BG_COLOR, COMBINED_BG_COLOR],
+                backgroundColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
                 borderColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
-                borderWidth: 4,
+                borderWidth: 0,
                 barPercentage: 0.5,
                 categoryPercentage: 1
             }]
@@ -442,7 +442,30 @@ function create_line_chart() {
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top'
+                    position: 'top',
+                    labels: {
+                        generateLabels: function(chart) {
+                            return [{
+                                text: 'Child 1',
+                                fillStyle: CHILD1_COLOR,
+                                strokeStyle: CHILD1_COLOR,
+                                lineWidth: 0,
+                                datasetIndex: 0
+                            }, {
+                                text: 'Child 2',
+                                fillStyle: CHILD2_COLOR,
+                                strokeStyle: CHILD2_COLOR,
+                                lineWidth: 0,
+                                datasetIndex: 1
+                            }, {
+                                text: 'Combined',
+                                fillStyle: COMBINED_COLOR,
+                                strokeStyle: COMBINED_COLOR,
+                                lineWidth: 0,
+                                datasetIndex: 2
+                            }];
+                        }
+                    }
                 },
                 tooltip: {
                     enabled: false
@@ -560,7 +583,7 @@ function create_multi_bar_chart() {
                     data: outcomes.postEarnings1Rounded,
                     backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR),
                     borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
-                    borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
+                    borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(0),
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
                 },
@@ -569,7 +592,7 @@ function create_multi_bar_chart() {
                     data: outcomes.postEarnings2Rounded,
                     backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR),
                     borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
-                    borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
+                    borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(0),
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
                 }
@@ -592,13 +615,13 @@ function create_multi_bar_chart() {
                                 text: 'Child 1',
                                 fillStyle: CHILD1_BG_COLOR,
                                 strokeStyle: CHILD1_COLOR,
-                                lineWidth: 4,
+                                lineWidth: 0,
                                 datasetIndex: 0
                             }, {
                                 text: 'Child 2', 
                                 fillStyle: CHILD2_BG_COLOR,
                                 strokeStyle: CHILD2_COLOR,
-                                lineWidth: 4,
+                                lineWidth: 0,
                                 datasetIndex: 1
                             }];
                         }
@@ -746,7 +769,7 @@ function updateMultiBarChartData() {
         const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR);
         const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR);
         const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR);
-        const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(4);
+        const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(0);
         
         // Only highlight the selected bar (not index 0 which affects legend)
         if (selectedIndex > 0 || selectedIndex === 0) {
@@ -755,7 +778,7 @@ function updateMultiBarChartData() {
             backgroundColors2[selectedIndex] = CHILD2_COLOR;
             borderColors1[selectedIndex] = CHILD1_DARK_COLOR;
             borderColors2[selectedIndex] = CHILD2_DARK_COLOR;
-            borderWidths[selectedIndex] = 6;                  // Thicker border
+            borderWidths[selectedIndex] = 0;                  // Thicker border
         }
         
         // Apply styling to datasets
