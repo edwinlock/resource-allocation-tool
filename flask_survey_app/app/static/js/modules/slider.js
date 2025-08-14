@@ -1,12 +1,24 @@
 // Global constants
-const ALLOCATABLE_BUDGET = 9
-const GAP_THRESHOLD = 6
-const MAX_SESSIONS = 15
+const ALLOCATABLE_BUDGET = 9;
+const GAP_THRESHOLD = 6;
+const MAX_SESSIONS = 15;
+
+// Chart colors
+const CHILD1_COLOR = '#81c784';        // Green border
+const CHILD1_BG_COLOR = '#a8e6cf';     // Light green background
+const CHILD1_DARK_COLOR = '#2e7d32';   // Dark green for highlighting/text
+const CHILD2_COLOR = '#ffb74d';        // Orange/peach border
+const CHILD2_BG_COLOR = '#ffd3a5';     // Light orange/peach background
+const CHILD2_DARK_COLOR = '#e65100';   // Dark orange for highlighting/text
+const COMBINED_COLOR = '#9575cd';      // Purple border
+const COMBINED_BG_COLOR = '#c7ceea';   // Light purple background
+const LABEL_BG_COLOR = 'rgba(255, 255, 255, 0.9)';  // Semi-transparent white for labels
+const LABEL_BORDER_COLOR = '#ccc';     // Light gray for label borders
 
 // DOM elements
 // For development purposes
-const child1Ability = document.getElementById('child1-ability')
-const child2Ability = document.getElementById('child2-ability')
+const child1Ability = document.getElementById('child1-ability');
+const child2Ability = document.getElementById('child2-ability');
 // Permanent
 const investmentSlider = document.getElementById('investment-slider');
 const child1Display = document.getElementById('child1-display');
@@ -304,8 +316,8 @@ function create_single_bar_chart() {
             datasets: [{
                 label: 'Earnings',
                 data: [0, 0, 0],
-                backgroundColor: ['#a8e6cf', '#ffd3a5', '#c7ceea'],
-                borderColor: ['#81c784', '#ffb74d', '#9575cd'],
+                backgroundColor: [CHILD1_BG_COLOR, CHILD2_BG_COLOR, COMBINED_BG_COLOR],
+                borderColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
                 borderWidth: 4,
                 barPercentage: 0.5,
                 categoryPercentage: 1
@@ -375,39 +387,39 @@ function create_line_chart() {
                 {
                     label: 'Child 1',
                     data: outcomes.postEarnings1Rounded,
-                    borderColor: '#81c784',
-                    backgroundColor: '#a8e6cf',
+                    borderColor: CHILD1_COLOR,
+                    backgroundColor: CHILD1_BG_COLOR,
                     borderWidth: 3,
                     tension: 0.1,
                     pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
                     pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
-                    pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#81c784'),
+                    pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
                     pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
                     pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
                 },
                 {
                     label: 'Child 2', 
                     data: outcomes.postEarnings2Rounded,
-                    borderColor: '#ffb74d',
-                    backgroundColor: '#ffd3a5',
+                    borderColor: CHILD2_COLOR,
+                    backgroundColor: CHILD2_BG_COLOR,
                     borderWidth: 3,
                     tension: 0.1,
                     pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
                     pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
-                    pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffb74d'),
+                    pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
                     pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
                     pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
                 },
                 {
                     label: 'Combined',
                     data: outcomes.aggrEarningsRounded,
-                    borderColor: '#9575cd',
-                    backgroundColor: '#c7ceea',
+                    borderColor: COMBINED_COLOR,
+                    backgroundColor: COMBINED_BG_COLOR,
                     borderWidth: 3,
                     tension: 0.1,
                     pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
                     pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
-                    pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#9575cd'),
+                    pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(COMBINED_COLOR),
                     pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
                     pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
                 }
@@ -484,8 +496,8 @@ function create_line_chart() {
                         size: 11
                     },
                     color: '#333',
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderColor: '#ccc',
+                    backgroundColor: LABEL_BG_COLOR,
+                    borderColor: LABEL_BORDER_COLOR,
                     borderWidth: 1,
                     borderRadius: 4,
                     padding: 4
@@ -536,8 +548,8 @@ function create_multi_bar_chart() {
                 {
                     label: 'Child 1',
                     data: outcomes.postEarnings1Rounded,
-                    backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#a8e6cf'),
-                    borderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#81c784'),
+                    backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR),
+                    borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
                     borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
@@ -545,8 +557,8 @@ function create_multi_bar_chart() {
                 {
                     label: 'Child 2',
                     data: outcomes.postEarnings2Rounded,
-                    backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffd3a5'),
-                    borderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffb74d'),
+                    backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR),
+                    borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
                     borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(4),
                     barPercentage: 0.8,
                     categoryPercentage: 0.9
@@ -568,14 +580,14 @@ function create_multi_bar_chart() {
                             // Force legend to always show original colors, not highlighted ones
                             return [{
                                 text: 'Child 1',
-                                fillStyle: '#a8e6cf',
-                                strokeStyle: '#81c784',
+                                fillStyle: CHILD1_BG_COLOR,
+                                strokeStyle: CHILD1_COLOR,
                                 lineWidth: 4,
                                 datasetIndex: 0
                             }, {
                                 text: 'Child 2', 
-                                fillStyle: '#ffd3a5',
-                                strokeStyle: '#ffb74d',
+                                fillStyle: CHILD2_BG_COLOR,
+                                strokeStyle: CHILD2_COLOR,
                                 lineWidth: 4,
                                 datasetIndex: 1
                             }];
@@ -605,12 +617,11 @@ function create_multi_bar_chart() {
                         size: 11
                     },
                     color: function(context) {
-                        // Darker text colors to match the border colors
-                        return context.datasetIndex === 0 ? '#2e7d32' : '#e65100';
+                        return context.datasetIndex === 0 ? CHILD1_DARK_COLOR : CHILD2_DARK_COLOR;
                     },
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backgroundColor: LABEL_BG_COLOR,
                     borderColor: function(context) {
-                        return context.datasetIndex === 0 ? '#2e7d32' : '#e65100';
+                        return context.datasetIndex === 0 ? CHILD1_DARK_COLOR : CHILD2_DARK_COLOR;
                     },
                     borderWidth: 1,
                     borderRadius: 4,
@@ -721,20 +732,20 @@ function updateMultiBarChartData() {
         multiBarChart.data.datasets[1].data = [...outcomes.postEarnings2Rounded];
         
         // Create arrays with normal styling for all bars
-        const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#a8e6cf');
-        const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ffd3a5');
-        const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#81c784');
-        const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ffb74d');
+        const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR);
+        const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR);
+        const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR);
+        const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR);
         const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(4);
         
         // Only highlight the selected bar (not index 0 which affects legend)
         if (selectedIndex > 0 || selectedIndex === 0) {
             // Make selected bar more prominent
-            backgroundColors1[selectedIndex] = '#81c784';  // Darker green
-            backgroundColors2[selectedIndex] = '#ffb74d';  // Darker peach
-            borderColors1[selectedIndex] = '#2e7d32';      // Very dark green border
-            borderColors2[selectedIndex] = '#e65100';      // Very dark orange border
-            borderWidths[selectedIndex] = 6;               // Thicker border
+            backgroundColors1[selectedIndex] = CHILD1_COLOR;
+            backgroundColors2[selectedIndex] = CHILD2_COLOR;
+            borderColors1[selectedIndex] = CHILD1_DARK_COLOR;
+            borderColors2[selectedIndex] = CHILD2_DARK_COLOR;
+            borderWidths[selectedIndex] = 6;                  // Thicker border
         }
         
         // Apply styling to datasets
