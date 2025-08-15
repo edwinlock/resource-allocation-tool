@@ -89,7 +89,6 @@
     padding: 15px;
     border-radius: 8px;
     border: 2px solid #e9ecef;
-    font-family: monospace;
     transition: max-height 0.3s ease, opacity 0.3s ease;
     overflow: hidden;
 }
@@ -165,6 +164,13 @@
     cursor: pointer;
 }
 
+.slider::-webkit-slider-thumb:hover,
+.slider::-webkit-slider-thumb:active,
+.slider::-webkit-slider-thumb:focus {
+    background: #0056b3;
+    transform: scale(1.1);
+}
+
 .slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
@@ -172,6 +178,13 @@
     background: #007bff;
     cursor: pointer;
     border: none;
+}
+
+.slider::-moz-range-thumb:hover,
+.slider::-moz-range-thumb:active,
+.slider::-moz-range-thumb:focus {
+    background: #0056b3;
+    transform: scale(1.1);
 }
 
 .chart-canvas {
@@ -266,6 +279,20 @@
     color: #495057;
     margin-top: 5px;
     /* font-size: 0.9em; */
+}
+
+/* Mobile responsiveness */
+/* Progress bar styling */
+.progress {
+    height: 1.5rem; /* Make progress bar taller */
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 /* Mobile responsiveness */

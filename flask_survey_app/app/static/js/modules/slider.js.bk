@@ -1,10 +1,34 @@
 // Global constants
-const ALLOCATABLE_BUDGET = 9
+const ALLOCATABLE_BUDGET = 9;
+const GAP_THRESHOLD = 6;
+const MAX_SESSIONS = 15;
+
+// Chart colors - colorblind-friendly matplotlib-style palette
+const CHILD1_COLOR = '#1f77b4';        // Matplotlib blue border
+const CHILD1_BG_COLOR = '#aecbea';     // Light blue background
+const CHILD1_DARK_COLOR = '#0f4c75';   // Dark blue for highlighting/text
+const CHILD2_COLOR = '#ff7f0e';        // Matplotlib orange border
+const CHILD2_BG_COLOR = '#ffc788';     // Light orange background
+const CHILD2_DARK_COLOR = '#cc5500';   // Dark orange for highlighting/text
+const COMBINED_COLOR = '#2ca02c';      // Matplotlib green border
+const COMBINED_BG_COLOR = '#a8d4a8';   // Light green background
+const LABEL_BG_COLOR = 'rgba(255, 255, 255, 0.9)';  // Semi-transparent white for labels
+const LABEL_BORDER_COLOR = '#ccc';     // Light gray for label borders
+
+// Previous color scheme (kept for reference)
+// const CHILD1_COLOR = '#81c784';        // Green border
+// const CHILD1_BG_COLOR = '#a8e6cf';     // Light green background
+// const CHILD1_DARK_COLOR = '#2e7d32';   // Dark green for highlighting/text
+// const CHILD2_COLOR = '#ffb74d';        // Orange/peach border
+// const CHILD2_BG_COLOR = '#ffd3a5';     // Light orange/peach background
+// const CHILD2_DARK_COLOR = '#e65100';   // Dark orange for highlighting/text
+// const COMBINED_COLOR = '#9575cd';      // Purple border
+// const COMBINED_BG_COLOR = '#c7ceea';   // Light purple background
 
 // DOM elements
 // For development purposes
-const child1Ability = document.getElementById('child1-ability')
-const child2Ability = document.getElementById('child2-ability')
+const child1Ability = document.getElementById('child1-ability');
+const child2Ability = document.getElementById('child2-ability');
 // Permanent
 const investmentSlider = document.getElementById('investment-slider');
 const child1Display = document.getElementById('child1-display');
@@ -15,151 +39,1227 @@ const child1Bar = document.getElementById('child1-bar');
 const child2Bar = document.getElementById('child2-bar');
 const child1BarValue = document.getElementById('child1-bar-value');
 const child2BarValue = document.getElementById('child2-bar-value');
+const ctx = document.getElementById('single-bar-chart-canvas');
+const lineCtx = document.getElementById('line-chart-canvas');
+const multiBarCtx = document.getElementById('multi-bar-chart-canvas');
+const graphTypeSelect = document.getElementById('graph-type-select');
+// Debug elements
+const debugPre1 = document.getElementById('debug-pre1');
+const debugPre2 = document.getElementById('debug-pre2');
+const debugSelected = document.getElementById('debug-selected');
+const debugMax = document.getElementById('debug-max');
+const debugAlpha = document.getElementById('debug-alpha');
+const debugPost1 = document.getElementById('debug-post1');
+const debugPost2 = document.getElementById('debug-post2');
+const debugTotal = document.getElementById('debug-total');
+let barChart = null;
+let lineChart = null;
+let multiBarChart = null;
+
+// Utility Functions
+function getUTCDate() {
+    return new Date().toISOString();
+}
+
+const session = {
+    id: "b9f47f2fbb5a1aca",
+    participant_id: "ca6adb86ade03ed2",
+    enumerator_id: "31af862fd42f96c7",
+    date_created: getUTCDate(),
+    date_modified: getUTCDate(),
+    abilityScore1: 5,
+    abilityScore2: 1,
+}
 
 // Scenario configurations
 // We have a total of 8 scenarios:
 // gamma = 0.5 always
 // sigma is 1 (additive), 0.5 (CES), 0 (Cobb-Douglas) or -2 (CES)
 // theta is 1 or 2
-const SCENARIOS = {
-    One: {
-        description: "Bla bla",
+const SCENARIOS = [
+    {
+        name: "A",
+        description: "σ=1, θ=1",
         gamma: 0.5,
-        sigma: 0.0,
-        theta: 1.0,
+        sigma: 1,
+        theta: 1,
     },
-};
+    {
+        name: "B", 
+        description: "σ=1, θ=2",
+        gamma: 0.5,
+        sigma: 1,
+        theta: 2,
+    },
+    {
+        name: "C",
+        description: "σ=0.5, θ=1", 
+        gamma: 0.5,
+        sigma: 0.5,
+        theta: 1,
+    },
+    {
+        name: "D",
+        description: "σ=0.5, θ=2",
+        gamma: 0.5,
+        sigma: 0.5,
+        theta: 2,
+    },
+    {
+        name: "E",
+        description: "σ=0, θ=1",
+        gamma: 0.5,
+        sigma: 0,
+        theta: 1,
+    },
+    {
+        name: "F",
+        description: "σ=0, θ=2", 
+        gamma: 0.5,
+        sigma: 0,
+        theta: 2,
+    },
+    {
+        name: "G",
+        description: "σ=-2, θ=1",
+        gamma: 0.5,
+        sigma: -2,
+        theta: 1,
+    },
+    {
+        name: "H",
+        description: "σ=-2, θ=2",
+        gamma: 0.5,
+        sigma: -2,
+        theta: 2,
+    },
+]
 
-// Global variables to make life easier
-let initialEarnings1 = 1.0;
-let initialEarnings2 = 5.0;
-let earnings1 = 0.0;
-let earnings2 = 0.0;
-let totalEarnings = 0.0;
-let maximumEarnings = 20.0;
+const scenarioData = {
+    // allocation of lessons to children due to performance
+    preEarnings1: 0,
+    preEarnings2: 0,
+    // all the choices that the parents can make for child 1 and 2
+    investments1: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    investments2: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    // individual and total allocation of lessons to children for each choice of investment
+    postEarnings1: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    postEarnings2: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    aggrEarnings: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    // rounded versions for charts and display
+    postEarnings1Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    postEarnings2Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    aggrEarningsRounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+    maximumEarnings: 0,  // upper bound on aggregate earnings across all choices
+    maximumEarningsRounded: 0,  // upper bound on rounded aggregate earnings
+    alpha: 0,
+}
+
+let selectedInvestment = 0;
+
+// Mapping ability scores to 'performance ratios':
+// Raw scores are between 0 and 100
+// There are two kinds of gap: *medium* and *large*
+// need to distinguish between child 1 being better than child 2 and vice versa
+
+function computePreEarnings(abilityScore1, abilityScore2) {
+    let gap = abilityScore1 - abilityScore2;
+    console.log(gap)
+    if (gap > GAP_THRESHOLD) {  // child1 is much better
+        return [6, 1];
+    } else if (gap >= 0 && gap <= GAP_THRESHOLD) { // child1 is slightly better
+        return [5, 2];
+    } else if (gap >= -GAP_THRESHOLD && gap < 0) { // child2 is slightly better
+        return [2, 5];
+    } else { // child2 is much better
+        return [1, 6];
+    }
+}
 
 // Compute child-specific human capital, as a combination of ability and parental investment
 function human_capital(ability, investment, scenario) {
     // define local constants, for readibility
-    const a = ability
-    const x = investment
-    const sigma = scenario.sigma
-    const gamma = scenario.gamma
+    const a = ability;
+    const x = investment;
+    const sigma = scenario.sigma;
+    const gamma = scenario.gamma;
     if (sigma == 0) {
-        return a**gamma * x**(1-gamma)
+        return a**gamma * x**(1-gamma);
     } else {
-        return (gamma * a**sigma + (1-gamma) * x**sigma)**(1/sigma)
+        return (gamma * a**sigma + (1-gamma) * x**sigma)**(1/sigma);
     }
+}
+
+function compute_alpha(preEarnings1, preEarnings2, scenario) {
+    const amax = Math.max(preEarnings1, preEarnings2)
+    return MAX_SESSIONS / (human_capital(amax, ALLOCATABLE_BUDGET, scenario)**scenario.theta)
 }
 
 // Compute earnings for specific investment using the human capital function and scenario parameter theta
 function earnings(ability, investment, scenario) {
-    return human_capital(ability, investment, scenario)**scenario.theta
+    return scenarioData.alpha * human_capital(ability, investment, scenario)**scenario.theta
 }
 
-// Compute earnings for all possible investments
-function all_earnings(ability1, ability2, scenario) {
-    let investments = []
-    let earnings1 = []
-    let earnings2 = []
-    for (alloc = 0; alloc <= ALLOCATABLE_BUDGET; alloc++) {
-        let investment1 = alloc
-        let investment2 = ALLOCATABLE_BUDGET - alloc
-        investments.push(alloc)
-        earnings1.push(earnings(ability1, investment1, scenario))
-        earnings2.push(earnings(ability2, investment2, scenario))
+
+function compute_outcomes(session, scenario) {
+    const sd = scenarioData; // Alias for conciseness
+    const pre = computePreEarnings(session.abilityScore1, session.abilityScore2);
+    sd.preEarnings1 = pre[0];
+    sd.preEarnings2 = pre[1];
+    
+    // Compute alpha first since earnings depend on it
+    sd.alpha = compute_alpha(sd.preEarnings1, sd.preEarnings2, scenario);
+    
+    for (let i=0; i <= ALLOCATABLE_BUDGET; i++) {
+        sd.investments1[i] = i;
+        sd.investments2[i] = ALLOCATABLE_BUDGET - i;
+        
+        // Separate investment-only earnings from total earnings
+        sd.postEarnings1[i] = earnings(sd.preEarnings1, sd.investments1[i], scenario);
+        sd.postEarnings2[i] = earnings(sd.preEarnings2, sd.investments2[i], scenario);
+        
+        // Aggregate earnings based on total earnings
+        sd.aggrEarnings[i] = sd.postEarnings1[i] + sd.postEarnings2[i];
+        
+        // Calculate rounded versions
+        sd.postEarnings1Rounded[i] = Math.round(sd.postEarnings1[i]);
+        sd.postEarnings2Rounded[i] = Math.round(sd.postEarnings2[i]);
+        sd.aggrEarningsRounded[i] = sd.postEarnings1Rounded[i] + sd.postEarnings2Rounded[i];
     }
-    return [investments, earnings1, earnings2]
-}
-
-function updateLessonAllocation() {
-    const investment1 = parseInt(investmentSlider.value);
-    const investment2 = ALLOCATABLE_BUDGET - investment1;
-    // Update investment displays
-    child1Display.textContent = investment1;
-    child2Display.textContent = investment2;
-}
-
-function updateEarnings() {
-    const ability1 = parseInt(child1Ability.value);
-    const ability2 = parseInt(child2Ability.value);
-    const investment1 = parseInt(investmentSlider.value);
-    const investment2 = ALLOCATABLE_BUDGET - investment1;
-    const scenario = SCENARIOS[scenarioSelect.value];
-
-    // Calculate earnings
-    earnings1 = initialEarnings1 + earnings(ability1, investment1, scenario);
-    earnings2 = initialEarnings2 + earnings(ability2, investment2, scenario);
-    totalEarnings = earnings1 + earnings2;
-}
-
-function updateBarGraph() {
-
-    // Update bar values
-    const combinedBarValue = document.getElementById('combined-bar-value');
-    
-    if (child1BarValue) child1BarValue.textContent = `$${earnings1.toLocaleString()}`;
-    if (child2BarValue) child2BarValue.textContent = `$${earnings2.toLocaleString()}`;
-    if (combinedBarValue) combinedBarValue.textContent = `$${totalEarnings.toLocaleString()}`;
-    
-    // Update bar heights
-    const combinedBar = document.getElementById('combined-bar');
-    
-    // Scale bars to fit container (300px max height)
-    const maxHeight = 300;
-    const scale = maxHeight / maximumEarnings;
-    
-    const height1 = earnings1 * scale;
-    const height2 = earnings2 * scale;
-    const heightCombined = totalEarnings * scale;
-    
-    if (child1Bar) child1Bar.style.height = `${height1}px`;
-    if (child2Bar) child2Bar.style.height = `${height2}px`;
-    if (combinedBar) combinedBar.style.height = `${heightCombined}px`;
+    sd.maximumEarnings = Math.max(...sd.aggrEarnings);
+    sd.maximumEarningsRounded = Math.max(...sd.aggrEarningsRounded);
+    console.log(scenarioData)
 }
 
 function onSliderChange() {
-    console.log("Slider value has changed.")
-    updateEverything();
-}
-
-function updateEverything() {
-    updateEarnings();
-    updateLessonAllocation();
-    updateBarGraph();
+    const i = parseInt(investmentSlider.value);
+    selectedInvestment = i;
+    // Update investment labels
+    child1Display.textContent = i;
+    child2Display.textContent = ALLOCATABLE_BUDGET - i;
+    // Update Chart.js chart
+    updateChartData();
+    updateDebugDisplay();
 }
 
 function onScenarioChange() {
-    const selectedScenario = scenarioSelect.value;
-    scenarioDesc.textContent = SCENARIOS[selectedScenario].description;
-    updateEverything();
+    const selectedScenarioIndex = parseInt(scenarioSelect.value);
+    const selectedScenario = SCENARIOS[selectedScenarioIndex];
+    compute_outcomes(session, selectedScenario);
+    // Update Chart.js chart
+    updateChartData();
+    updateDebugDisplay();
+}
+
+function updateChartVisibility() {
+    const selectedType = graphTypeSelect.value;
+    
+    // Hide all charts first
+    ctx.style.display = 'none';
+    lineCtx.style.display = 'none';
+    multiBarCtx.style.display = 'none';
+    
+    // Show only the selected chart
+    switch(selectedType) {
+        case 'single-bar':
+            ctx.style.display = 'block';
+            break;
+        case 'multi-bar':
+            multiBarCtx.style.display = 'block';
+            break;
+        case 'line-chart':
+            lineCtx.style.display = 'block';
+            break;
+    }
+}
+
+function onGraphTypeChange() {
+    updateChartVisibility();
+}
+
+function toggleDebugInfo() {
+    const debugContent = document.getElementById('debug-content');
+    const debugArrow = document.getElementById('debug-arrow');
+    
+    debugContent.classList.toggle('collapsed');
+    debugArrow.classList.toggle('collapsed');
+}
+
+function updateSessionDisplay() {
+    document.getElementById('participant-id').textContent = session.participant_id;
+    document.getElementById('enumerator-id').textContent = session.enumerator_id;
+    document.getElementById('date-created').textContent = new Date(session.date_created).toLocaleDateString();
+    document.getElementById('date-modified').textContent = new Date(session.date_modified).toLocaleDateString();
+    
+    // Update total scenarios in intro text
+    const totalScenariosElement = document.getElementById('total-scenarios');
+    if (totalScenariosElement) {
+        totalScenariosElement.textContent = SCENARIOS.length;
+    }
+}
+
+function updateDebugDisplay() {
+    const sd = scenarioData; // Alias for conciseness
+    debugPre1.textContent = sd.preEarnings1;
+    debugPre2.textContent = sd.preEarnings2;
+    debugSelected.textContent = selectedInvestment;
+    debugMax.textContent = sd.maximumEarningsRounded;
+    debugAlpha.textContent = sd.alpha.toFixed(3);
+    
+    // Update table cells
+    for (let i = 0; i <= ALLOCATABLE_BUDGET; i++) {
+        document.getElementById(`debug-post1-${i}`).textContent = sd.postEarnings1[i].toFixed(1);
+        document.getElementById(`debug-post2-${i}`).textContent = sd.postEarnings2[i].toFixed(1);
+        document.getElementById(`debug-total-${i}`).textContent = sd.aggrEarningsRounded[i];
+        document.getElementById(`debug-post1r-${i}`).textContent = sd.postEarnings1Rounded[i];
+        document.getElementById(`debug-post2r-${i}`).textContent = sd.postEarnings2Rounded[i];
+    }
+}
+
+function onAbilityChange() {
+    let abilityScore1 = parseInt(child1Ability.value);
+    let abilityScore2 = parseInt(child2Ability.value);
+    session.abilityScore1 = abilityScore1;
+    session.abilityScore2 = abilityScore2;
+    const scenario = SCENARIOS[parseInt(scenarioSelect.value)];
+    compute_outcomes(session, scenario);
+    updateChartData();
+    updateDebugDisplay();
 }
 
 function updateScenarioOptions() {
     scenarioSelect.innerHTML = '';
     
-    for (const [key] of Object.entries(SCENARIOS)) {
+    for (let i = 0; i < SCENARIOS.length; i++) {
         const option = document.createElement('option');
-        option.value = key;
-        option.textContent = key;
+        option.value = i;
+        option.textContent = `${SCENARIOS[i].name} (σ=${SCENARIOS[i].sigma}, θ=${SCENARIOS[i].theta})`;
         scenarioSelect.appendChild(option);
     }
     
     if (scenarioSelect.options.length > 0) {
-        scenarioSelect.value = scenarioSelect.options[0].value;
+        scenarioSelect.value = 0;
         onScenarioChange();
     }
 }
 
+
+function create_single_bar_chart() {
+    barChart = createChart('singleBar', ctx, { selectedIndex: selectedInvestment });
+}
+
+function create_line_chart() {
+    lineChart = createChart('line', lineCtx, { selectedIndex: selectedInvestment });
+}
+
+function create_multi_bar_chart() {
+    multiBarChart = createChart('multiBar', multiBarCtx, { selectedIndex: selectedInvestment });
+}
+
+// Chart Configuration Functions - Structured Composition Approach
+
+function getAnimationConfig() {
+    return { duration: 400 };
+}
+
+function getTooltipConfig() {
+    return { enabled: false };
+}
+
+function getLayoutConfig(chartType) {
+    if (chartType === 'singleBar') {
+        return {
+            padding: {
+                top: 0,
+                bottom: 10,
+            }
+        };
+    }
+    
+    if (chartType === 'line') {
+        return {
+            padding: {
+                top: 10,
+                bottom: 10,
+                left: 50,
+                right: 50,
+            }
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        return {
+            padding: {
+                top: 10,
+                bottom: 10,
+                left: 20,
+                right: 20
+            }
+        };
+    }
+    
+    return {};
+}
+
+function getScalesConfig(chartType) {
+    const maxEarnings = scenarioData.maximumEarningsRounded || 100; // fallback value
+    const baseY = {
+        beginAtZero: true,
+        max: maxEarnings * 1.1
+    };
+    
+    if (chartType === 'singleBar') {
+        return {
+            x: {
+                grid: { display: false },
+                ticks: { display: true },
+                border: { display: false }
+            },
+            y: {
+                ...baseY,
+                display: false,
+                grid: { display: false }
+            }
+        };
+    }
+    
+    if (chartType === 'line') {
+        return {
+            x: {
+                title: { display: true, text: 'Investment into Child 1' },
+                grid: { display: true, color: '#f0f0f0' }
+            },
+            y: {
+                ...baseY,
+                title: { display: true, text: 'Earnings' },
+                grid: { display: true, color: '#f0f0f0' }
+            }
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        return {
+            x: {
+                title: { display: true, text: 'Investment into Child 1' },
+                grid: { display: false },
+                stacked: true
+            },
+            y: {
+                ...baseY,
+                title: { display: true, text: 'Earnings' },
+                grid: { display: false },
+                stacked: true
+            }
+        };
+    }
+    
+    return {};
+}
+
+function getLegendConfig(chartType) {
+    if (chartType === 'singleBar') {
+        return { display: false };
+    }
+    
+    if (chartType === 'line') {
+        return {
+            display: true,
+            position: 'top',
+            labels: {
+                generateLabels: function(chart) {
+                    return [{
+                        text: 'Child 1',
+                        fillStyle: CHILD1_COLOR,
+                        strokeStyle: CHILD1_COLOR,
+                        lineWidth: 0,
+                        datasetIndex: 0
+                    }, {
+                        text: 'Child 2',
+                        fillStyle: CHILD2_COLOR,
+                        strokeStyle: CHILD2_COLOR,
+                        lineWidth: 0,
+                        datasetIndex: 1
+                    }, {
+                        text: 'Combined',
+                        fillStyle: COMBINED_COLOR,
+                        strokeStyle: COMBINED_COLOR,
+                        lineWidth: 0,
+                        datasetIndex: 2
+                    }];
+                }
+            }
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        return {
+            display: true,
+            position: 'top',
+            labels: {
+                generateLabels: function(chart) {
+                    return [{
+                        text: 'Child 1',
+                        fillStyle: CHILD1_BG_COLOR,
+                        strokeStyle: CHILD1_COLOR,
+                        lineWidth: 0,
+                        datasetIndex: 0
+                    }, {
+                        text: 'Child 2', 
+                        fillStyle: CHILD2_BG_COLOR,
+                        strokeStyle: CHILD2_COLOR,
+                        lineWidth: 0,
+                        datasetIndex: 1
+                    }];
+                }
+            }
+        };
+    }
+    
+    return { display: false };
+}
+
+function getDataLabelsConfig(chartType, selectedIndex = 0) {
+    const baseConfig = {
+        formatter: (value) => value.toLocaleString(),
+        font: { weight: 'bold' },
+        backgroundColor: LABEL_BG_COLOR,
+        borderWidth: 1,
+        borderRadius: 4,
+        padding: 4
+    };
+    
+    if (chartType === 'singleBar') {
+        return {
+            ...baseConfig,
+            display: true,
+            anchor: 'end',
+            align: 'end',
+            offset: 0,
+            font: { weight: 'bold', size: 12 },
+            color: '#333'
+        };
+    }
+    
+    if (chartType === 'line') {
+        return {
+            ...baseConfig,
+            display: function(context) {
+                return context.dataIndex === selectedIndex;
+            },
+            anchor: function(context) {
+                const datasetIndex = context.datasetIndex;
+                const child1Value = scenarioData.postEarnings1Rounded[selectedIndex];
+                const child2Value = scenarioData.postEarnings2Rounded[selectedIndex];
+                const combinedValue = scenarioData.aggrEarningsRounded[selectedIndex];
+                
+                const values = [
+                    { dataset: 0, value: child1Value },
+                    { dataset: 1, value: child2Value },
+                    { dataset: 2, value: combinedValue }
+                ].sort((a, b) => b.value - a.value);
+                
+                const rank = values.findIndex(item => item.dataset === datasetIndex);
+                
+                if (rank === 0) return 'end';
+                if (rank === 1) return 'center';
+                return 'start';
+            },
+            align: function(context) {
+                const datasetIndex = context.datasetIndex;
+                const child1Value = scenarioData.postEarnings1Rounded[selectedIndex];
+                const child2Value = scenarioData.postEarnings2Rounded[selectedIndex];
+                const combinedValue = scenarioData.aggrEarningsRounded[selectedIndex];
+                
+                const values = [
+                    { dataset: 0, value: child1Value },
+                    { dataset: 1, value: child2Value },
+                    { dataset: 2, value: combinedValue }
+                ].sort((a, b) => b.value - a.value);
+                
+                const rank = values.findIndex(item => item.dataset === datasetIndex);
+                
+                if (rank === 0) return 'top';
+                if (rank === 1) return 'right';
+                return 'bottom';
+            },
+            offset: 10,
+            font: { weight: 'bold', size: 11 },
+            color: '#333',
+            borderColor: LABEL_BORDER_COLOR
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        return {
+            ...baseConfig,
+            display: function(context) {
+                return context.dataIndex === selectedIndex;
+            },
+            anchor: function(context) {
+                return context.datasetIndex === 0 ? 'end' : 'start';
+            },
+            align: function(context) {
+                return context.datasetIndex === 0 ? 'top' : 'bottom';
+            },
+            offset: 8,
+            font: { weight: 'bold', size: 11 },
+            color: function(context) {
+                return context.datasetIndex === 0 ? CHILD1_DARK_COLOR : CHILD2_DARK_COLOR;
+            },
+            borderColor: function(context) {
+                return context.datasetIndex === 0 ? CHILD1_DARK_COLOR : CHILD2_DARK_COLOR;
+            }
+        };
+    }
+    
+    return baseConfig;
+}
+
+function getLabels(chartType) {
+    if (chartType === 'singleBar') {
+        return ['Child 1', 'Child 2', 'Combined'];
+    }
+    
+    if (chartType === 'line' || chartType === 'multiBar') {
+        return Array.from({length: ALLOCATABLE_BUDGET + 1}, (_, i) => i);
+    }
+    
+    return [];
+}
+
+function createChild1DisplayConfig(chartType) {
+    if (chartType === 'singleBar') {
+        // For single bar chart, Child1 data is just the current value
+        return {
+            label: 'Earnings',
+            data: [0, 0, 0], // Will be updated with current values
+            backgroundColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
+            borderColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
+            borderWidth: 0,
+            barPercentage: 0.5,
+            categoryPercentage: 1
+        };
+    }
+    
+    if (chartType === 'line') {
+        return {
+            label: 'Child 1',
+            data: scenarioData.postEarnings1Rounded,
+            borderColor: CHILD1_COLOR,
+            backgroundColor: CHILD1_BG_COLOR,
+            borderWidth: 3,
+            tension: 0.1,
+            pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
+            pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
+            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
+            pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
+            pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        return {
+            label: 'Child 1',
+            data: scenarioData.postEarnings1Rounded,
+            backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR),
+            borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
+            borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(0),
+            barPercentage: 0.8,
+            categoryPercentage: 0.9
+        };
+    }
+    
+    return {};
+}
+
+function createChild2DisplayConfig(chartType) {
+    if (chartType === 'singleBar') {
+        // Single bar chart handles all data in one dataset
+        return null;
+    }
+    
+    if (chartType === 'line') {
+        return {
+            label: 'Child 2', 
+            data: scenarioData.postEarnings2Rounded,
+            borderColor: CHILD2_COLOR,
+            backgroundColor: CHILD2_BG_COLOR,
+            borderWidth: 3,
+            tension: 0.1,
+            pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
+            pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
+            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
+            pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
+            pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        return {
+            label: 'Child 2',
+            data: scenarioData.postEarnings2Rounded,
+            backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR),
+            borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
+            borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(0),
+            barPercentage: 0.8,
+            categoryPercentage: 0.9
+        };
+    }
+    
+    return {};
+}
+
+function createCombinedDisplayConfig(chartType) {
+    if (chartType === 'singleBar') {
+        // Single bar chart handles all data in one dataset
+        return null;
+    }
+    
+    if (chartType === 'line') {
+        return {
+            label: 'Combined',
+            data: scenarioData.aggrEarningsRounded,
+            borderColor: COMBINED_COLOR,
+            backgroundColor: COMBINED_BG_COLOR,
+            borderWidth: 3,
+            tension: 0.1,
+            pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
+            pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
+            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(COMBINED_COLOR),
+            pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
+            pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
+        };
+    }
+    
+    if (chartType === 'multiBar') {
+        // Multi bar chart only shows Child 1 and Child 2
+        return null;
+    }
+    
+    return {};
+}
+
+function createAllDatasets(chartType) {
+    const datasets = [];
+    
+    const child1Config = createChild1DisplayConfig(chartType);
+    if (child1Config) datasets.push(child1Config);
+    
+    const child2Config = createChild2DisplayConfig(chartType);
+    if (child2Config) datasets.push(child2Config);
+    
+    const combinedConfig = createCombinedDisplayConfig(chartType);
+    if (combinedConfig) datasets.push(combinedConfig);
+    
+    return datasets;
+}
+
+function createChart(type, context, options = {}) {
+    const selectedIndex = options.selectedIndex || 0;
+    
+    // Handle chart type specific configurations
+    let chartConfig = {
+        type: (type === 'singleBar' || type === 'multiBar') ? 'bar' : type,
+        data: {
+            labels: getLabels(type),
+            datasets: createAllDatasets(type)
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            animation: getAnimationConfig(),
+            plugins: {
+                tooltip: getTooltipConfig(),
+                legend: getLegendConfig(type),
+                datalabels: getDataLabelsConfig(type, selectedIndex)
+            },
+            scales: getScalesConfig(type),
+            layout: getLayoutConfig(type)
+        }
+    };
+    
+    // Handle any specific overrides
+    if (options.data) {
+        chartConfig.data = { ...chartConfig.data, ...options.data };
+    }
+    
+    return new Chart(context, chartConfig);
+}
+
+function updateLineChartData() {
+    if (lineChart) {
+        // Update data arrays
+        lineChart.data.datasets[0].data = [...scenarioData.postEarnings1Rounded];
+        lineChart.data.datasets[1].data = [...scenarioData.postEarnings2Rounded];
+        lineChart.data.datasets[2].data = [...scenarioData.aggrEarningsRounded];
+        
+        // Update datalabels config with new selected index
+        lineChart.options.plugins.datalabels = getDataLabelsConfig('line', selectedInvestment);
+        
+        // Update y-axis max
+        lineChart.options.scales.y.max = scenarioData.maximumEarningsRounded * 1.1;
+        
+        // Update point highlighting
+        const highlightedRadius = Array(ALLOCATABLE_BUDGET + 1).fill(4);
+        const highlightedBorderWidth = Array(ALLOCATABLE_BUDGET + 1).fill(2);
+        highlightedRadius[selectedInvestment] = 8;
+        highlightedBorderWidth[selectedInvestment] = 4;
+        
+        lineChart.data.datasets.forEach((dataset) => {
+            dataset.pointRadius = [...highlightedRadius];
+            dataset.pointBorderWidth = [...highlightedBorderWidth];
+            const borderColors = Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff');
+            borderColors[selectedInvestment] = '#000000';
+            dataset.pointBorderColor = borderColors;
+        });
+        
+        lineChart.update();
+    }
+}
+
+function updateChartData() {
+    const sd = scenarioData; // Alias for conciseness
+    const i = selectedInvestment;
+    
+    // Update single bar chart
+    if (barChart) {
+        const earnings1 = sd.postEarnings1Rounded[i];
+        const earnings2 = sd.postEarnings2Rounded[i];
+        const postEarnings = sd.aggrEarningsRounded[i];
+        
+        barChart.data.datasets[0].data = [earnings1, earnings2, postEarnings];
+        barChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
+        barChart.update();
+    }
+    
+    // Update line chart and multi-bar chart
+    updateLineChartData();
+    updateMultiBarChartData();
+}
+
+function updateMultiBarChartData() {
+    if (multiBarChart) {
+        const sd = scenarioData; // Alias for conciseness
+        const selectedIndex = selectedInvestment;
+        
+        // Update data arrays
+        multiBarChart.data.datasets[0].data = [...sd.postEarnings1Rounded];
+        multiBarChart.data.datasets[1].data = [...sd.postEarnings2Rounded];
+        
+        // Update datalabels config with new selected index
+        multiBarChart.options.plugins.datalabels = getDataLabelsConfig('multiBar', selectedIndex);
+        
+        // Update highlighting
+        const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR);
+        const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR);
+        const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR);
+        const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR);
+        const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(0);
+        
+        // Highlight selected bar
+        backgroundColors1[selectedIndex] = CHILD1_COLOR;
+        backgroundColors2[selectedIndex] = CHILD2_COLOR;
+        borderColors1[selectedIndex] = CHILD1_DARK_COLOR;
+        borderColors2[selectedIndex] = CHILD2_DARK_COLOR;
+        
+        // Apply styling
+        multiBarChart.data.datasets[0].backgroundColor = backgroundColors1;
+        multiBarChart.data.datasets[0].borderColor = borderColors1;
+        multiBarChart.data.datasets[0].borderWidth = borderWidths;
+        multiBarChart.data.datasets[1].backgroundColor = backgroundColors2;
+        multiBarChart.data.datasets[1].borderColor = borderColors2;
+        multiBarChart.data.datasets[1].borderWidth = borderWidths;
+        
+        // Update y-axis max
+        multiBarChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
+        
+        multiBarChart.update();
+    }
+}
+
+// Dexie Database Setup
+const db = new Dexie('MultiPageApp');
+db.version(1).stores({
+    sessions: 'id, participantId, enumeratorID, startedAt, completedAt, status',
+    pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
+});
+
+
+// Utility Functions
+function generateUUID() {
+    return crypto.randomUUID();
+}
+
+// Database Functions
+async function createSession(participantId, enumeratorId) {
+    const sessionId = generateUUID();
+    
+    await db.sessions.add({
+        id: sessionId,
+        participantId,
+        enumeratorId,
+        startedAt: getUTCDate(),
+        status: 'in_progress'
+    });
+    
+    return sessionId;
+}
+
+async function saveAllResponses(sessionId, responses) {
+    // Convert responses array to database records
+    const responseRecords = responses.map(response => ({
+        id: generateUUID(),
+        sessionId,
+        scenarioNumber: response.pageNumber,
+        displayOrder: response.displayOrder,
+        child1investment: response.child1investment,
+        completedAt: response.completedAt
+    }));
+
+    // Bulk insert all responses
+    await db.pageResponses.bulkAdd(responseRecords);
+}
+
+async function completeSession(sessionId, responses) {
+    // Save all responses and complete session in a transaction
+    await db.transaction('rw', db.sessions, db.pageResponses, async () => {
+        await saveAllResponses(sessionId, responses);
+        await db.sessions.update(sessionId, {
+            completedAt: getUTCDate(),
+            status: 'completed'
+        });
+    });
+}
+
+async function getSessionSliderResponses(sessionId) {
+    const responses = await db.pageResponses
+        .where('sessionId')
+        .equals(sessionId)
+        .orderBy('displayOrder')
+        .toArray();
+    return responses;
+}
+
+// Slider App State Management
+
+// Global slider state
+const sliderAppState = {
+    sessionId: null,
+    scenarioOrder: null,
+    currentIndex: null,
+    currentScenarioNumber: null,
+    totalScenarios: null,
+    responses: null
+};
+
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// State Management Functions
+async function initializeState(sessionId, totalScenarios) {    
+    // Create shuffled scenario order
+    const scenarioNumbers = [...Array(totalScenarios).keys()];
+    const shuffledOrder = shuffleArray(scenarioNumbers);
+
+    // Initialize global state properties
+    sliderAppState.sessionId = sessionId;
+    sliderAppState.scenarioOrder = shuffledOrder;
+    sliderAppState.currentIndex = 0;
+    sliderAppState.currentScenarioNumber = shuffledOrder[0]; // Store current scenario directly
+    sliderAppState.totalScenarios = totalScenarios;
+    sliderAppState.responses = Array(totalScenarios).fill(null); // Preallocated array
+}
+
+function getCurrentDisplayOrder() {
+    return sliderAppState.currentIndex + 1;
+}
+
+function isLastScenario() {
+    return sliderAppState.currentIndex >= sliderAppState.totalScenarios - 1;
+}
+
+function addResponse(child1investment) {
+    const response = {
+        scenarioNumber: sliderAppState.currentScenarioNumber,
+        displayOrder: getCurrentDisplayOrder(),
+        child1investment,
+        completedAt: getUTCDate()
+    };
+    
+    // Store response at current index
+    sliderAppState.responses[sliderAppState.currentIndex] = response;
+}
+
+function advanceToNextScenario() {
+    sliderAppState.currentIndex++;
+    if (sliderAppState.currentIndex < sliderAppState.totalScenarios) {
+        sliderAppState.currentScenarioNumber = sliderAppState.scenarioOrder[sliderAppState.currentIndex];
+    }
+}
+
+function goToPreviousScenario() {
+    if (sliderAppState.currentIndex > 0) {
+        sliderAppState.currentIndex--;
+        sliderAppState.currentScenarioNumber = sliderAppState.scenarioOrder[sliderAppState.currentIndex];
+    }
+}
+
+// UI Functions
+function updateProgressBar() {
+    const progressBar = document.querySelector('.progress-bar');
+    const progressText = document.getElementById('progress-text');
+    
+    if (progressBar && sliderAppState.totalScenarios) {
+        // For progress bar: show progress based on current scenario being worked on
+        const currentScenario = sliderAppState.currentIndex + 1;
+        const percentage = Math.round((currentScenario / sliderAppState.totalScenarios) * 100);
+        
+        // Update the progress bar width and aria attributes
+        progressBar.style.width = `${percentage}%`;
+        
+        // Update the parent progress element aria-valuenow
+        const progressContainer = progressBar.parentElement;
+        if (progressContainer) {
+            progressContainer.setAttribute('aria-valuenow', percentage);
+        }
+        
+        // Update the progress text (current scenario is 1-based for display)
+        if (progressText) {
+            progressText.textContent = `${currentScenario}/${sliderAppState.totalScenarios}`;
+        }
+        
+        console.log(`Progress updated: scenario ${currentScenario}/${sliderAppState.totalScenarios} (${percentage}%)`);
+    }
+}
+
+function updateCurrentScenarioDisplay() {
+    const currentScenarioElement = document.getElementById('current-scenario-display');
+    if (currentScenarioElement && sliderAppState.currentScenarioNumber !== null) {
+        const scenario = SCENARIOS[sliderAppState.currentScenarioNumber];
+        if (scenario) {
+            currentScenarioElement.textContent = `${scenario.name} (σ=${scenario.sigma}, θ=${scenario.theta})`;
+        }
+    }
+}
+
+function updateNextButtonText() {
+    const nextButton = document.getElementById('nextButton');
+    if (nextButton && sliderAppState.totalScenarios) {
+        if (isLastScenario()) {
+            nextButton.textContent = 'Finish';
+        } else {
+            nextButton.textContent = 'Next Scenario';
+        }
+    }
+}
+
+function updateButtonVisibility() {
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    
+    if (prevButton && sliderAppState.totalScenarios) {
+        // Show previous button only if we're not on the first scenario
+        if (sliderAppState.currentIndex > 0) {
+            prevButton.style.display = 'block';
+        } else {
+            prevButton.style.display = 'none';
+        }
+    }
+    
+    // Update next button text
+    updateNextButtonText();
+}
+
+// Main Application Logic
+async function handleNextButtonClick() {    
+    try {
+        // Add response to global state
+        addResponse(selectedInvestment);
+        
+        // Check if this was the last scenario
+        if (isLastScenario()) {
+            // For now, just log completion instead of saving to database
+            console.log('Session completed!', {
+                sessionId: sliderAppState.sessionId,
+                totalResponses: sliderAppState.responses.filter(r => r !== null).length,
+                responses: sliderAppState.responses
+            });
+            alert('Session completed! All responses collected.');
+        } else {
+            // Advance to next scenario
+            advanceToNextScenario();
+            
+            // Get the new scenario and recalculate outcomes
+            const newScenario = SCENARIOS[sliderAppState.currentScenarioNumber];
+            compute_outcomes(session, newScenario);
+            
+            // Update charts with new scenario data
+            updateChartData();
+            updateDebugDisplay();
+            
+            // Update UI elements
+            updateProgressBar();
+            updateCurrentScenarioDisplay();
+            updateButtonVisibility();
+        }
+    } catch (error) {
+        console.error('Error processing response:', error);
+        alert('Error processing your input. Please try again.');
+    }
+}
+
+async function handlePrevButtonClick() {    
+    try {
+        // Go to previous scenario
+        goToPreviousScenario();
+        
+        // Get the previous scenario and recalculate outcomes
+        const prevScenario = SCENARIOS[sliderAppState.currentScenarioNumber];
+        compute_outcomes(session, prevScenario);
+        
+        // Update charts with previous scenario data
+        updateChartData();
+        updateDebugDisplay();
+        
+        // Update UI elements
+        updateProgressBar();
+        updateCurrentScenarioDisplay();
+        updateButtonVisibility();
+        
+        // Restore the previous response if it exists
+        const savedResponse = sliderAppState.responses[sliderAppState.currentIndex];
+        if (savedResponse) {
+            selectedInvestment = savedResponse.child1investment;
+            // Update slider and displays
+            document.getElementById('investment-slider').value = selectedInvestment;
+            document.getElementById('child1-display').textContent = selectedInvestment;
+            document.getElementById('child2-display').textContent = ALLOCATABLE_BUDGET - selectedInvestment;
+            updateChartData(); // Update charts with restored slider position
+        }
+    } catch (error) {
+        console.error('Error going to previous scenario:', error);
+        alert('Error going to previous scenario. Please try again.');
+    }
+}
+
+function setupScenarioHandlers() {
+    console.log('Looking for buttons...');
+    const nextButton = document.getElementById('nextButton');
+    const prevButton = document.getElementById('prevButton');
+    console.log('nextButton element:', nextButton);
+    console.log('prevButton element:', prevButton);
+    
+    if (!nextButton) {
+        throw new Error('nextButton element not found in DOM');
+    }
+    
+    if (!prevButton) {
+        throw new Error('prevButton element not found in DOM');
+    }
+    
+    // Handle next button click
+    nextButton.addEventListener('click', async () => {
+        console.log('Next button clicked');
+        await handleNextButtonClick();
+    });
+    console.log('Event listener added to nextButton');
+    
+    // Handle previous button click
+    prevButton.addEventListener('click', async () => {
+        console.log('Previous button clicked');
+        await handlePrevButtonClick();
+    });
+    console.log('Event listener added to prevButton');
+}
+
+// Application Initialization
+async function startSession(totalScenarios = SCENARIOS.length) {
+    try {
+        // Use dummy session id instead of database session
+        await initializeState(session.id, totalScenarios);
+        // Initialize progress bar, current scenario display, and button visibility
+        updateProgressBar();
+        updateCurrentScenarioDisplay();
+        updateButtonVisibility();
+        // Set up Next button handler
+        console.log('About to setup scenario handlers...');
+        setupScenarioHandlers();
+        console.log('Scenario handlers set up successfully');
+        console.log('Session state initialized:', sliderAppState);
+        return sliderAppState;
+    } catch (error) {
+        console.error('Error starting session:', error);
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        alert('Error starting session: ' + error.message + '. Please refresh and try again.');
+    }
+}
+
+// Initialize the app when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, looking for elements...');
+    console.log('nextButton exists?', document.getElementById('nextButton'));
+    
+    // Small delay to ensure all DOM elements are ready
+    setTimeout(() => {
+        // Auto-start session with dummy session data
+        startSession(SCENARIOS.length);
+        console.log('Slider app started with dummy session:', session.id);
+    }, 100);
+});
+
+// Debug function to see current state
+function logCurrentState() {
+    console.log('Current session state:', {
+        sessionId: sliderAppState.sessionId,
+        currentScenario: sliderAppState.currentScenarioNumber,
+        displayOrder: getCurrentDisplayOrder(),
+        responsesCollected: sliderAppState.responses.filter(r => r !== null).length,
+        responses: sliderAppState.responses
+    });
+}
+
+// Export functions for external use (if needed)
+window.SessionApp = {
+    startSession,
+    getSessionSliderResponses,
+    logCurrentState,
+    sliderAppState // Expose state for debugging
+};
+
 // Initialize and export the initialization function
-function initializeSlider() {
+function initializeApp() {
+    // Initialize session values from input fields
+    session.abilityScore1 = parseInt(child1Ability.value);
+    session.abilityScore2 = parseInt(child2Ability.value);
+    
     updateScenarioOptions();
-    updateEverything();
+    const scenario = SCENARIOS[0];
+    compute_outcomes(session, scenario);
+    create_single_bar_chart();
+    create_line_chart();
+    create_multi_bar_chart();
+    // Update Chart.js chart
+    updateChartData();
+    updateDebugDisplay();
+    updateSessionDisplay();
+    
+    // Set initial chart visibility
+    updateChartVisibility();
     
     // Add event listeners
     investmentSlider.addEventListener('input', onSliderChange);
     scenarioSelect.addEventListener('change', onScenarioChange);
+    graphTypeSelect.addEventListener('change', onGraphTypeChange);
+    child1Ability.addEventListener('input', onAbilityChange);
+    child2Ability.addEventListener('input', onAbilityChange);
 }
 
 // Export the initialization function for use as a module
-export { initializeSlider };
+export { initializeApp };

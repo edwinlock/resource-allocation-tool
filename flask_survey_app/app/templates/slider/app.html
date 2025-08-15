@@ -9,94 +9,110 @@
         <div class="session-info">
             <small>Participant: <span id="participant-id">-</span> | Enumerator: <span id="enumerator-id">-</span> | Created: <span id="date-created">-</span> | Modified: <span id="date-modified">-</span></small>
         </div>
-        <div class="debug-inputs">
-            <h3>Performance Scores (0-100)</h3>
-            <div class="row">
-                <div class="col-6">
-                    <label for="child1-ability" class="form-label">Child 1 Ability</label>
-                    <input type="number" id="child1-ability" class="form-control" min="0" max="100" value="50" step="1" required pattern="[0-9]+" inputmode="numeric">
-                </div>
-                <div class="col-6">
-                    <label for="child2-ability" class="form-label">Child 2 Ability</label>
-                    <input type="number" id="child2-ability" class="form-control" min="0" max="100" value="20" step="1" required pattern="[0-9]+" inputmode="numeric">
-                </div>
+        <div class="intro-text my-3">
+            <p>You will be shown <span id="total-scenarios">8</span> different scenarios in which you choose investments into your children.</p>
+        </div>
+        <div class="current-scenario-info my-2">
+            <small><strong>Current Scenario:</strong> <span id="current-scenario-display">-</span></small>
+        </div>
+        <div class="progress my-2" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" style="width: 0%">
+                <span id="progress-text">-/-</span>
             </div>
         </div>
-
-        <div class="scenario-section">
-            <h3>Settings</h3>
-            <div class="scenario-selector">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="scenario-select" class="form-label">Scenario</label>
-                        <select id="scenario-select" class="form-select scenario-dropdown">
-                            <option value="One">The First Scenario</option>
-                        </select>
-                    </div>
-                    <div class="col-6">
-                        <label for="graph-type-select" class="form-label">Graph Type</label>
-                        <select id="graph-type-select" class="form-select scenario-dropdown">
-                            <option value="single-bar">Mono Bar Chart</option>
-                            <option value="multi-bar">Multi Bar Chart</option>
-                            <option value="line-chart" selected>Line Chart</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="debug-section">
-            <h4 class="debug-header" onclick="toggleDebugInfo()">
-                <span class="debug-arrow collapsed" id="debug-arrow">▼</span>
-                Debug Info
+        <div class="debug-area my-3">
+            <h4 class="debug-header" onclick="toggleDebugArea()">
+                <span class="debug-arrow collapsed" id="debug-area-arrow">▼</span>
+                ⚠️ Advanced
             </h4>
-            <div class="debug-content collapsed" id="debug-content">
-                <small>
-                    <strong>Pre-earnings:</strong> Child1=<span id="debug-pre1">0</span>, Child2=<span id="debug-pre2">0</span> | 
-                    <strong>Selected:</strong> <span id="debug-selected">0</span> | 
-                    <strong>Max:</strong> <span id="debug-max">0</span> | 
-                    <strong>Alpha:</strong> <span id="debug-alpha">0</span>
-                </small>
-                <table class="debug-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>PostEarnings1</strong></td>
-                            <td id="debug-post1-0">0</td><td id="debug-post1-1">0</td><td id="debug-post1-2">0</td><td id="debug-post1-3">0</td><td id="debug-post1-4">0</td>
-                            <td id="debug-post1-5">0</td><td id="debug-post1-6">0</td><td id="debug-post1-7">0</td><td id="debug-post1-8">0</td><td id="debug-post1-9">0</td>
-                        </tr>
-                        <tr>
-                            <td><strong>PostEarnings2</strong></td>
-                            <td id="debug-post2-0">0</td><td id="debug-post2-1">0</td><td id="debug-post2-2">0</td><td id="debug-post2-3">0</td><td id="debug-post2-4">0</td>
-                            <td id="debug-post2-5">0</td><td id="debug-post2-6">0</td><td id="debug-post2-7">0</td><td id="debug-post2-8">0</td><td id="debug-post2-9">0</td>
-                        </tr>
-                        <tr>
-                            <td><strong>PostEarnings1 (R)</strong></td>
-                            <td id="debug-post1r-0">0</td><td id="debug-post1r-1">0</td><td id="debug-post1r-2">0</td><td id="debug-post1r-3">0</td><td id="debug-post1r-4">0</td>
-                            <td id="debug-post1r-5">0</td><td id="debug-post1r-6">0</td><td id="debug-post1r-7">0</td><td id="debug-post1r-8">0</td><td id="debug-post1r-9">0</td>
-                        </tr>
-                        <tr>
-                            <td><strong>PostEarnings2 (R)</strong></td>
-                            <td id="debug-post2r-0">0</td><td id="debug-post2r-1">0</td><td id="debug-post2r-2">0</td><td id="debug-post2r-3">0</td><td id="debug-post2r-4">0</td>
-                            <td id="debug-post2r-5">0</td><td id="debug-post2r-6">0</td><td id="debug-post2r-7">0</td><td id="debug-post2r-8">0</td><td id="debug-post2r-9">0</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td id="debug-total-0">0</td><td id="debug-total-1">0</td><td id="debug-total-2">0</td><td id="debug-total-3">0</td><td id="debug-total-4">0</td>
-                            <td id="debug-total-5">0</td><td id="debug-total-6">0</td><td id="debug-total-7">0</td><td id="debug-total-8">0</td><td id="debug-total-9">0</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="debug-content collapsed" id="debug-area-content">
+                
+                <!-- Performance Scores -->
+                <div class="mb-3">
+                    <h5>Performance Scores (0-100)</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="child1-ability" class="form-label">Child 1 Ability</label>
+                            <input type="number" id="child1-ability" class="form-control" min="0" max="100" value="50" step="1" required pattern="[0-9]+" inputmode="numeric">
+                        </div>
+                        <div class="col-6">
+                            <label for="child2-ability" class="form-label">Child 2 Ability</label>
+                            <input type="number" id="child2-ability" class="form-control" min="0" max="100" value="20" step="1" required pattern="[0-9]+" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="mb-3">
+                    <h5>Settings</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="scenario-select" class="form-label">Scenario</label>
+                            <select id="scenario-select" class="form-select scenario-dropdown">
+                                <option value="One">The First Scenario</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="graph-type-select" class="form-label">Graph Type</label>
+                            <select id="graph-type-select" class="form-select scenario-dropdown">
+                                <option value="single-bar">Mono Bar Chart</option>
+                                <option value="multi-bar">Multi Bar Chart</option>
+                                <option value="line" selected>Line Chart</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Debug Info -->
+                <div class="mb-3">
+                    <h5>Debug Info</h5>
+                    <small>
+                        <strong>Pre-earnings:</strong> Child1=<span id="debug-pre1">0</span>, Child2=<span id="debug-pre2">0</span> | 
+                        <strong>Selected:</strong> <span id="debug-selected">0</span> | 
+                        <strong>Max:</strong> <span id="debug-max">0</span> | 
+                        <strong>Alpha:</strong> <span id="debug-alpha">0</span>
+                    </small>
+                    <table class="debug-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>PostEarnings1</strong></td>
+                                <td id="debug-post1-0">0</td><td id="debug-post1-1">0</td><td id="debug-post1-2">0</td><td id="debug-post1-3">0</td><td id="debug-post1-4">0</td>
+                                <td id="debug-post1-5">0</td><td id="debug-post1-6">0</td><td id="debug-post1-7">0</td><td id="debug-post1-8">0</td><td id="debug-post1-9">0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PostEarnings2</strong></td>
+                                <td id="debug-post2-0">0</td><td id="debug-post2-1">0</td><td id="debug-post2-2">0</td><td id="debug-post2-3">0</td><td id="debug-post2-4">0</td>
+                                <td id="debug-post2-5">0</td><td id="debug-post2-6">0</td><td id="debug-post2-7">0</td><td id="debug-post2-8">0</td><td id="debug-post2-9">0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PostEarnings1 (R)</strong></td>
+                                <td id="debug-post1r-0">0</td><td id="debug-post1r-1">0</td><td id="debug-post1r-2">0</td><td id="debug-post1r-3">0</td><td id="debug-post1r-4">0</td>
+                                <td id="debug-post1r-5">0</td><td id="debug-post1r-6">0</td><td id="debug-post1r-7">0</td><td id="debug-post1r-8">0</td><td id="debug-post1r-9">0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PostEarnings2 (R)</strong></td>
+                                <td id="debug-post2r-0">0</td><td id="debug-post2r-1">0</td><td id="debug-post2r-2">0</td><td id="debug-post2r-3">0</td><td id="debug-post2r-4">0</td>
+                                <td id="debug-post2r-5">0</td><td id="debug-post2r-6">0</td><td id="debug-post2r-7">0</td><td id="debug-post2r-8">0</td><td id="debug-post2r-9">0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td id="debug-total-0">0</td><td id="debug-total-1">0</td><td id="debug-total-2">0</td><td id="debug-total-3">0</td><td id="debug-total-4">0</td>
+                                <td id="debug-total-5">0</td><td id="debug-total-6">0</td><td id="debug-total-7">0</td><td id="debug-total-8">0</td><td id="debug-total-9">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         
         <div class="investment-section">
-            <h3>Lesson investment</h3>
+            <h3>Choose Investments</h3>
             
             <div class="child-slider">
                 <div>
@@ -113,6 +129,16 @@
             <canvas id="line-chart-canvas" class="chart-canvas"></canvas>
             <canvas id="single-bar-chart-canvas" class="chart-canvas"></canvas>
         </div>
+        
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="btn btn-secondary" id="prevButton" style="display: none;">
+                Previous Scenario
+            </button>
+            <button type="button" class="btn btn-primary" id="nextButton">
+                Next Scenario
+            </button>
+        </div>
+
     </div>
 </div>
 {% endblock %}
@@ -120,24 +146,21 @@
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <script>
         // Register the datalabels plugin globally
         Chart.register(ChartDataLabels);
     </script>
+    <script type="module" src="{{ url_for('static', filename='js/slider.js') }}"></script>
     <script type="module">
-        import { initializeApp } from "{{ url_for('static', filename='js/modules/slider.js') }}";
         
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
-        
-        // Make toggleDebugInfo globally accessible
-        window.toggleDebugInfo = function() {
-            const debugContent = document.getElementById('debug-content');
-            const debugArrow = document.getElementById('debug-arrow');
+        // Make toggleDebugArea globally accessible
+        window.toggleDebugArea = function() {
+            const debugAreaContent = document.getElementById('debug-area-content');
+            const debugAreaArrow = document.getElementById('debug-area-arrow');
             
-            debugContent.classList.toggle('collapsed');
-            debugArrow.classList.toggle('collapsed');
+            debugAreaContent.classList.toggle('collapsed');
+            debugAreaArrow.classList.toggle('collapsed');
         };
     </script>
 {% endblock %}
