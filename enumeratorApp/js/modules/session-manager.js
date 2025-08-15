@@ -2,37 +2,45 @@ import { CONFIG, SCENARIOS } from './constants.js';
 import { generateUUID, getUTCDate } from './utilities.js';
 import { appState } from './app-state.js';
 
-// Import Dexie for database operations
-import { Dexie } from 'https://cdn.skypack.dev/dexie@3.2.4';
-
-// Database Functions - Dexie Database Setup
-const db = new Dexie('MultiPageApp');
-db.version(1).stores({
-    sessions: 'id, participantId, enumeratorID, startedAt, completedAt, status',
-    pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
-});
+// Database Functions - Dexie Database Setup (accessed from global Dexie)
+let db;
 
 export class SessionManager {
     constructor() {
-        this.db = db;
+        // Initialize Dexie database using the global Dexie instance
+        if (typeof Dexie !== 'undefined') {
+            db = new Dexie('MultiPageApp');
+            db.version(1).stores({
+                sessions: 'id, participantId, enumeratorID, startedAt, completedAt, status',
+                pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
+            });
+            this.db = db;
+        } else {
+            console.warn('Dexie not available, running without database persistence');
+            this.db = null;
+        }
     }
 
     // Database operations
     async createSession(participantId, enumeratorId) {
         const sessionId = generateUUID();
         
-        await this.db.sessions.add({
-            id: sessionId,
-            participantId,
-            enumeratorId,
-            startedAt: getUTCDate(),
-            status: 'in_progress'
-        });
+        if (this.db) {
+            await this.db.sessions.add({
+                id: sessionId,
+                participantId,
+                enumeratorId,
+                startedAt: getUTCDate(),
+                status: 'in_progress'
+            });
+        }
         
         return sessionId;
     }
 
     async saveAllResponses(sessionId, responses) {
+        if (!this.db) return;
+        
         // Convert responses array to database records
         const responseRecords = responses.map(response => ({
             id: generateUUID(),
@@ -48,6 +56,8 @@ export class SessionManager {
     }
 
     async completeSession(sessionId, responses) {
+        if (!this.db) return;
+        
         // Save all responses and complete session in a transaction
         await this.db.transaction('rw', this.db.sessions, this.db.pageResponses, async () => {
             await this.saveAllResponses(sessionId, responses);
@@ -59,6 +69,8 @@ export class SessionManager {
     }
 
     async getSessionSliderResponses(sessionId) {
+        if (!this.db) return [];
+        
         const responses = await this.db.pageResponses
             .where('sessionId')
             .equals(sessionId)
