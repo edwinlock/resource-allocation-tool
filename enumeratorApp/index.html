@@ -3,203 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Allocation Study</title>
-    
-    <!-- iOS PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Resource Tool">
-    <meta name="format-detection" content="telephone=no">
-    
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iNDAiIGZpbGw9IiMwMDdiZmYiLz4KPHN2ZyB4PSI0NSIgeT0iNDUiIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxN2gtMnYtMmgydjJ6bTIuMDctNy43NWwtLjkuOTJDMTEuNDUgMTIuNzkgMTEgMTMuMjUgMTEgMTVoLTJ2LS41YzAtMS4yNS40NS0yLjM5IDEuMjktMy4yNWwxLjI5LTEuMjVjLjMxLS4zMS4zMS0uODEgMC0xLjEycy0uODEtLjMxLTEuMTIgMGMtLjMxLjMxLS4zMS44MS0uMDEgMS4xMmwtLjAxLjAxYzAtLjAxLS4wMS0uMDEtLjAxLS4wMWwxLjQxLTEuNDFjLjc4LS43OCAyLjA0LS43OCAyLjgyIDBzLjc4IDIuMDQgMCAyLjgyeiIvPgo8L3N2Zz4KPC9zdmc+">
-    <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iMjYiIGZpbGw9IiMwMDdiZmYiLz4KPHN2ZyB4PSIzMCIgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxN2gtMnYtMmgydjJ6bTIuMDctNy43NWwtLjkuOTJDMTEuNDUgMTIuNzkgMTEgMTMuMjUgMTEgMTVoLTJ2LS41YzAtMS4yNS40NS0yLjM5IDEuMjktMy4yNWwxLjI5LTEuMjVjLjMxLS4zMS4zMS0uODEgMC0xLjEycy0uODEtLjMxLTEuMTIgMGMtLjMxLjMxLS4zMS44MS0uMDEgMS4xMmwtLjAxLjAxYzAtLjAxLS4wMS0uMDEtLjAxLS4wMWwxLjQxLTEuNDFjLjc4LS43OCAyLjA0LS43OCAyLjgyIDBzLjc4IDIuMDQgMCAyLjgyeiIvPgo8L3N2Zz4KPC9zdmc+">
-    
-    <!-- Theme Color for iOS -->
-    <meta name="theme-color" content="#007bff">
+    <title>Experiment Session Manager</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/slider.css">
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- Custom CSS -->
+    <style>
+        .container {
+            max-width: 1200px;
+        }
+        
+        .session-table {
+            font-size: 0.9rem;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .text-muted {
+            font-size: 0.85rem;
+        }
+        
+        .status-completed {
+            color: #198754;
+            font-weight: 500;
+        }
+        
+        .status-in-progress {
+            color: #fd7e14;
+            font-weight: 500;
+        }
+        
+        .status-not-started {
+            color: #6c757d;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row app-container">
+    <div class="container mt-4">
+        <div class="row">
             <div class="col-12">
-                <div class="session-info">
-                    <small>Participant: <span id="participant-id">demo-participant</span> | Enumerator: <span id="enumerator-id">demo-enumerator</span> | Created: <span id="date-created">-</span> | Modified: <span id="date-modified">-</span></small>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Experiment Session Manager</h1>
+                    <button type="button" class="btn btn-danger" id="resetDbBtn">
+                        Reset Local DB
+                    </button>
                 </div>
-                <div class="intro-text my-3">
-                    <p>You will be shown <span id="total-scenarios">8</span> different scenarios in which you choose investments into your children.</p>
-                </div>
-                <div class="current-scenario-info my-2">
-                    <small><strong>Current Scenario:</strong> <span id="current-scenario-display">-</span></small>
-                </div>
-                <div class="progress my-2" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: 0%">
-                        <span id="progress-text">-/-</span>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary" id="createSessionBtn">
+                            Create New Session
+                        </button>
+                        <button type="button" class="btn btn-secondary ms-2" id="refreshBtn">
+                            Refresh
+                        </button>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span class="text-muted">Total Sessions: <span id="sessionCount">0</span></span>
                     </div>
                 </div>
-                <div class="debug-area my-3">
-                    <h4 class="debug-header" onclick="toggleDebugArea()">
-                        <span class="debug-arrow collapsed" id="debug-area-arrow">▼</span>
-                        ⚠️ Advanced
-                    </h4>
-                    <div class="debug-content collapsed" id="debug-area-content">
-                        
-                        <!-- Performance Scores -->
-                        <div class="mb-3">
-                            <h5>Performance Scores (0-100)</h5>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="child1-ability" class="form-label">Child 1 Ability</label>
-                                    <input type="number" id="child1-ability" class="form-control" min="0" max="100" value="50" step="1" required pattern="[0-9]+" inputmode="numeric">
-                                </div>
-                                <div class="col-6">
-                                    <label for="child2-ability" class="form-label">Child 2 Ability</label>
-                                    <input type="number" id="child2-ability" class="form-control" min="0" max="100" value="20" step="1" required pattern="[0-9]+" inputmode="numeric">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Settings -->
-                        <div class="mb-3">
-                            <h5>Settings</h5>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="scenario-select" class="form-label">Scenario</label>
-                                    <select id="scenario-select" class="form-select scenario-dropdown">
-                                        <option value="One">The First Scenario</option>
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <label for="graph-type-select" class="form-label">Graph Type</label>
-                                    <select id="graph-type-select" class="form-select scenario-dropdown">
-                                        <option value="single-bar">Mono Bar Chart</option>
-                                        <option value="multi-bar">Multi Bar Chart</option>
-                                        <option value="line" selected>Line Chart</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Debug Info -->
-                        <div class="mb-3">
-                            <h5>Debug Info</h5>
-                            <small>
-                                <strong>Pre-earnings:</strong> Child1=<span id="debug-pre1">0</span>, Child2=<span id="debug-pre2">0</span> | 
-                                <strong>Selected:</strong> <span id="debug-selected">0</span> | 
-                                <strong>Max:</strong> <span id="debug-max">0</span> | 
-                                <strong>Alpha:</strong> <span id="debug-alpha">0</span>
-                            </small>
-                            <table class="debug-table">
-                                <thead>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Current Sessions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover session-table" id="sessionsTable">
+                                <thead class="table-dark">
                                     <tr>
-                                        <th></th>
-                                        <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+                                        <th>Session ID</th>
+                                        <th>Participant ID</th>
+                                        <th>Enumerator ID</th>
+                                        <th>Survey Started</th>
+                                        <th>Survey Status</th>
+                                        <th>Slider Started</th>
+                                        <th>Slider Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="sessionsTableBody">
                                     <tr>
-                                        <td><strong>PostEarnings1</strong></td>
-                                        <td id="debug-post1-0">0</td><td id="debug-post1-1">0</td><td id="debug-post1-2">0</td><td id="debug-post1-3">0</td><td id="debug-post1-4">0</td>
-                                        <td id="debug-post1-5">0</td><td id="debug-post1-6">0</td><td id="debug-post1-7">0</td><td id="debug-post1-8">0</td><td id="debug-post1-9">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>PostEarnings2</strong></td>
-                                        <td id="debug-post2-0">0</td><td id="debug-post2-1">0</td><td id="debug-post2-2">0</td><td id="debug-post2-3">0</td><td id="debug-post2-4">0</td>
-                                        <td id="debug-post2-5">0</td><td id="debug-post2-6">0</td><td id="debug-post2-7">0</td><td id="debug-post2-8">0</td><td id="debug-post2-9">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>PostEarnings1 (R)</strong></td>
-                                        <td id="debug-post1r-0">0</td><td id="debug-post1r-1">0</td><td id="debug-post1r-2">0</td><td id="debug-post1r-3">0</td><td id="debug-post1r-4">0</td>
-                                        <td id="debug-post1r-5">0</td><td id="debug-post1r-6">0</td><td id="debug-post1r-7">0</td><td id="debug-post1r-8">0</td><td id="debug-post1r-9">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>PostEarnings2 (R)</strong></td>
-                                        <td id="debug-post2r-0">0</td><td id="debug-post2r-1">0</td><td id="debug-post2r-2">0</td><td id="debug-post2r-3">0</td><td id="debug-post2r-4">0</td>
-                                        <td id="debug-post2r-5">0</td><td id="debug-post2r-6">0</td><td id="debug-post2r-7">0</td><td id="debug-post2r-8">0</td><td id="debug-post2r-9">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Total</strong></td>
-                                        <td id="debug-total-0">0</td><td id="debug-total-1">0</td><td id="debug-total-2">0</td><td id="debug-total-3">0</td><td id="debug-total-4">0</td>
-                                        <td id="debug-total-5">0</td><td id="debug-total-6">0</td><td id="debug-total-7">0</td><td id="debug-total-8">0</td><td id="debug-total-9">0</td>
+                                        <td colspan="8" class="text-center text-muted py-4">
+                                            Loading sessions...
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                
-                <div class="investment-section">
-                    <h3>Choose Investments</h3>
-                    
-                    <div class="child-slider">
-                        <div>
-                            <span>Child 1: <span id="child1-display">0</span> lessons</span>
-                            <span>Child 2: <span id="child2-display">9</span> lessons</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Session Modal -->
+    <div class="modal fade" id="createSessionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Session</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createSessionForm">
+                        <div class="mb-3">
+                            <label for="participantId" class="form-label">Participant ID</label>
+                            <input type="text" class="form-control" id="participantId" required>
                         </div>
-                        <input type="range" min="0" max="9" value="0" class="form-range slider" id="investment-slider">
+                        <div class="mb-3">
+                            <label for="enumeratorId" class="form-label">Enumerator ID</label>
+                            <input type="text" class="form-control" id="enumeratorId" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveSessionBtn">Create Session</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Database Confirmation Modal -->
+    <div class="modal fade" id="resetDbModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">⚠️ Reset Local Database</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <strong>Warning!</strong> This action will permanently delete all sessions and data from the local database.
                     </div>
+                    <p>Are you sure you want to reset the local database? This action cannot be undone.</p>
+                    <p><strong>All experiment sessions and responses will be lost.</strong></p>
                 </div>
-
-                <div class="chart-section">
-                    <h3>Earnings</h3>
-                    <canvas id="multi-bar-chart-canvas" class="chart-canvas"></canvas>
-                    <canvas id="line-chart-canvas" class="chart-canvas"></canvas>
-                    <canvas id="single-bar-chart-canvas" class="chart-canvas"></canvas>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmResetBtn">Yes, Reset Database</button>
                 </div>
-                
-                <div class="d-flex justify-content-center gap-3 mt-4">
-                    <button type="button" class="btn btn-secondary" id="prevButton" style="display: none;">
-                        Previous Scenario
-                    </button>
-                    <button type="button" class="btn btn-primary" id="nextButton">
-                        Next Scenario
-                    </button>
-                </div>
-
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <!-- IndexedDB -->
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-    <script>
-        // Register the datalabels plugin globally
-        Chart.register(ChartDataLabels);
-        
-        // Make toggleDebugArea globally accessible
-        window.toggleDebugArea = function() {
-            const debugAreaContent = document.getElementById('debug-area-content');
-            const debugAreaArrow = document.getElementById('debug-area-arrow');
-            
-            debugAreaContent.classList.toggle('collapsed');
-            debugAreaArrow.classList.toggle('collapsed');
-        };
-    </script>
-    <!-- Modular JavaScript -->
-    <script type="module" src="js/slider.js"></script>
-    <script>
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('js/sw.js')
-                    .then(registration => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
+    
+    <!-- Session Management JavaScript -->
+    <script type="module">
+        import { generateUUID, getUTCDate } from './js/modules/utilities.js';
+
+        // Database setup
+        const db = new Dexie('AppDB');
+        db.version(1).stores({
+            sessions: 'id, participantId, enumeratorID, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus',
+            pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
+        });
+
+        // Session Management Class
+        class SessionManager {
+            constructor() {
+                this.init();
+            }
+
+            async init() {
+                await this.loadSessions();
+                this.bindEvents();
+            }
+
+            async loadSessions() {
+                try {
+                    const sessions = await db.sessions.orderBy('id').reverse().toArray();
+                    this.renderSessions(sessions);
+                    document.getElementById('sessionCount').textContent = sessions.length;
+                } catch (error) {
+                    console.error('Error loading sessions:', error);
+                    this.showError('Failed to load sessions');
+                }
+            }
+
+            renderSessions(sessions) {
+                const tbody = document.getElementById('sessionsTableBody');
+                
+                if (sessions.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No sessions found. Create a new session to get started.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = sessions.map(session => this.renderSessionRow(session)).join('');
+            }
+
+            renderSessionRow(session) {
+                const formatDate = (dateStr) => {
+                    if (!dateStr) return '-';
+                    return new Date(dateStr).toLocaleString();
+                };
+
+                const getStatusDisplay = (status, completedAt, type) => {
+                    if (status === 'completed') {
+                        return `<span class="status-completed">Completed</span><br><small class="text-muted">${formatDate(completedAt)}</small>`;
+                    } else if (status === 'in_progress') {
+                        return `<span class="status-in-progress">In Progress</span>`;
+                    } else {
+                        return `<span class="status-not-started">Not Started</span>`;
+                    }
+                };
+
+                const getActionButtons = (session) => {
+                    let buttons = [];
+                    
+                    if (session.surveyStatus !== 'completed') {
+                        buttons.push(`<button class="btn btn-sm btn-primary me-1" onclick="startSurvey('${session.id}')">Start Survey</button>`);
+                    }
+                    
+                    if (session.sliderStatus !== 'completed') {
+                        buttons.push(`<button class="btn btn-sm btn-success me-1" onclick="startSlider('${session.id}')">Start Slider</button>`);
+                    }
+                    
+                    buttons.push(`<button class="btn btn-sm btn-outline-danger" onclick="deleteSession('${session.id}')">Delete</button>`);
+                    
+                    return buttons.join('');
+                };
+
+                return `
+                    <tr>
+                        <td><code>${session.id.substring(0, 8)}...</code></td>
+                        <td>${session.participantId || '-'}</td>
+                        <td>${session.enumeratorID || '-'}</td>
+                        <td>${formatDate(session.surveyStartedAt)}</td>
+                        <td>${getStatusDisplay(session.surveyStatus, session.surveyCompletedAt, 'survey')}</td>
+                        <td>${formatDate(session.sliderStartedAt)}</td>
+                        <td>${getStatusDisplay(session.sliderStatus, session.sliderCompletedAt, 'slider')}</td>
+                        <td>${getActionButtons(session)}</td>
+                    </tr>
+                `;
+            }
+
+            bindEvents() {
+                // Create session button
+                document.getElementById('createSessionBtn').addEventListener('click', () => {
+                    const modal = new bootstrap.Modal(document.getElementById('createSessionModal'));
+                    modal.show();
+                });
+
+                // Save session button
+                document.getElementById('saveSessionBtn').addEventListener('click', () => {
+                    this.createSession();
+                });
+
+                // Refresh button
+                document.getElementById('refreshBtn').addEventListener('click', () => {
+                    this.loadSessions();
+                });
+
+                // Reset DB button
+                document.getElementById('resetDbBtn').addEventListener('click', () => {
+                    const modal = new bootstrap.Modal(document.getElementById('resetDbModal'));
+                    modal.show();
+                });
+
+                // Confirm reset button
+                document.getElementById('confirmResetBtn').addEventListener('click', () => {
+                    this.resetDatabase();
+                });
+            }
+
+            async createSession() {
+                const participantId = document.getElementById('participantId').value.trim();
+                const enumeratorId = document.getElementById('enumeratorId').value.trim();
+
+                if (!participantId || !enumeratorId) {
+                    this.showError('Please fill in all fields');
+                    return;
+                }
+
+                try {
+                    const sessionId = generateUUID();
+                    await db.sessions.add({
+                        id: sessionId,
+                        participantId: participantId,
+                        enumeratorID: enumeratorId,
+                        surveyStartedAt: null,
+                        surveyCompletedAt: null,
+                        surveyStatus: 'not_started',
+                        sliderStartedAt: null,
+                        sliderCompletedAt: null,
+                        sliderStatus: 'not_started'
                     });
-            });
+
+                    // Close modal and refresh
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('createSessionModal'));
+                    modal.hide();
+                    document.getElementById('createSessionForm').reset();
+                    
+                    this.loadSessions();
+                    this.showSuccess('Session created successfully');
+                } catch (error) {
+                    console.error('Error creating session:', error);
+                    this.showError('Failed to create session');
+                }
+            }
+
+            async resetDatabase() {
+                try {
+                    await db.delete();
+                    
+                    // Recreate the database
+                    const newDb = new Dexie('AppDB');
+                    newDb.version(1).stores({
+                        sessions: 'id, participantId, enumeratorID, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus',
+                        pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
+                    });
+                    
+                    // Close modal and refresh
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('resetDbModal'));
+                    modal.hide();
+                    
+                    this.loadSessions();
+                    this.showSuccess('Database reset successfully');
+                } catch (error) {
+                    console.error('Error resetting database:', error);
+                    this.showError('Failed to reset database');
+                }
+            }
+
+            showSuccess(message) {
+                this.showAlert(message, 'success');
+            }
+
+            showError(message) {
+                this.showAlert(message, 'danger');
+            }
+
+            showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const container = document.querySelector('.container');
+                container.insertBefore(alertDiv, container.firstChild);
+                
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
         }
+
+        // Global functions for action buttons
+        window.startSurvey = async (sessionId) => {
+            try {
+                await db.sessions.update(sessionId, {
+                    surveyStartedAt: getUTCDate(),
+                    surveyStatus: 'in_progress'
+                });
+                
+                // Navigate to survey page (you'll need to create this)
+                window.location.href = `survey.html?sessionId=${sessionId}`;
+            } catch (error) {
+                console.error('Error starting survey:', error);
+                alert('Failed to start survey');
+            }
+        };
+
+        window.startSlider = async (sessionId) => {
+            try {
+                await db.sessions.update(sessionId, {
+                    sliderStartedAt: getUTCDate(),
+                    sliderStatus: 'in_progress'
+                });
+                
+                // Navigate to slider page
+                window.location.href = `slider.html?sessionId=${sessionId}`;
+            } catch (error) {
+                console.error('Error starting slider:', error);
+                alert('Failed to start slider');
+            }
+        };
+
+        window.deleteSession = async (sessionId) => {
+            if (confirm('Are you sure you want to delete this session? This action cannot be undone.')) {
+                try {
+                    await db.sessions.delete(sessionId);
+                    await db.pageResponses.where('sessionId').equals(sessionId).delete();
+                    
+                    sessionManager.loadSessions();
+                    sessionManager.showSuccess('Session deleted successfully');
+                } catch (error) {
+                    console.error('Error deleting session:', error);
+                    alert('Failed to delete session');
+                }
+            }
+        };
+
+        // Initialize the session manager
+        const sessionManager = new SessionManager();
     </script>
 </body>
 </html>

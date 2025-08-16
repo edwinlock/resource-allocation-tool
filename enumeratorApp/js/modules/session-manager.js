@@ -9,9 +9,9 @@ export class SessionManager {
     constructor() {
         // Initialize Dexie database using the global Dexie instance
         if (typeof Dexie !== 'undefined') {
-            db = new Dexie('MultiPageApp');
+            db = new Dexie('AppDB');
             db.version(1).stores({
-                sessions: 'id, participantId, enumeratorID, startedAt, completedAt, status',
+                sessions: 'id, participantId, enumeratorID, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus',
                 pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
             });
             this.db = db;
