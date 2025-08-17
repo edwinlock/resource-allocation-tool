@@ -449,14 +449,7 @@ export function createChart(type, context, scenarioData, options = {}) {
     }
 }
 
-// Export individual configuration functions for chart updates
-export {
-    getDataLabelsConfig,
-    getScalesConfig,
-    createChild1DisplayConfig,
-    createChild2DisplayConfig,
-    createCombinedDisplayConfig
-};
+// Individual configuration functions used internally only
 
 // Chart management class for handling chart instances and updates
 export class ChartManager {

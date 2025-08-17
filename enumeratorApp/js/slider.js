@@ -3,7 +3,7 @@ import { CONFIG, SCENARIOS } from './modules/constants.js';
 import { appState } from './modules/app-state.js';
 import { ChartManager } from './modules/chart-factory.js';
 import { uiManager } from './modules/ui-slider.js';
-import { sessionManager } from './modules/session-manager.js';
+import { sessionManager } from './modules/session-coordinator.js';
 import { getUTCDate } from './modules/utilities.js';
 
 // Application initialization
@@ -20,11 +20,7 @@ class SliderApp {
 
     // Load session data from database
     async loadSessionFromDatabase(sessionId) {
-        if (!sessionManager.db) {
-            throw new Error('Database not available. Cannot load session.');
-        }
-
-        const session = await sessionManager.db.sessions.get(sessionId);
+        const session = await sessionManager.getSession(sessionId);
         if (!session) {
             throw new Error(`Session with ID "${sessionId}" not found in database.`);
         }
@@ -54,7 +50,6 @@ class SliderApp {
 
     async initialize() {
         try {
-            console.log('Initializing modular slider application...');
 
             // Get session ID from URL
             const sessionId = this.getSessionIdFromURL();
@@ -64,7 +59,6 @@ class SliderApp {
 
             // Load session from database
             const session = await this.loadSessionFromDatabase(sessionId);
-            console.log('Loaded session from database:', session);
 
             // Check if slider has already been completed
             if (session.sliderStatus === 'completed') {
@@ -125,9 +119,7 @@ class SliderApp {
             uiManager.updateScenarioDropdown();
             uiManager.updateChartVisibility();
             
-            console.log('Charts created and initialized with randomized scenario:', currentScenario.name);
             
-            console.log('Modular slider application initialized successfully');
         } catch (error) {
             console.error('Error initializing slider application:', error);
             console.error('Error details:', error.message);
@@ -177,7 +169,6 @@ class SliderApp {
 
 // Initialize the app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, starting modular slider app...');
     
     // Small delay to ensure all DOM elements are ready
     setTimeout(async () => {

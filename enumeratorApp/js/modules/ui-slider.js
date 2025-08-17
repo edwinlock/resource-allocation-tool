@@ -228,7 +228,6 @@ export class UIManager {
                 progressText.textContent = `${currentScenario}/${appState.sliderState.totalScenarios}`;
             }
             
-            console.log(`Progress updated: scenario ${currentScenario}/${appState.sliderState.totalScenarios} (${percentage}%)`);
         }
     }
 
@@ -282,7 +281,6 @@ export class UIManager {
             
             if (result.completed) {
                 // Session completed - redirect to session manager
-                console.log('Session completed successfully');
                 window.location.href = 'index.html';
             }
             

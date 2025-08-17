@@ -1,4 +1,4 @@
-import { sessionManager } from './session-manager.js';
+import { sessionManager } from './session-coordinator.js';
 import { SessionRenderer } from './session-renderer.js';
 import { SessionUIUtils } from './shared-utils.js';
 
