@@ -2,6 +2,8 @@ const CACHE_NAME = 'resource-allocation-v2';
 const urlsToCache = [
   './',
   './index.html',
+  './sessiondetail.html',
+  './slider.html',
   './manifest.json',
   './css/slider.css',
   './js/slider.js',
@@ -10,7 +12,11 @@ const urlsToCache = [
   './js/modules/constants.js',
   './js/modules/economic-engine.js',
   './js/modules/session-manager.js',
-  './js/modules/ui-manager.js',
+  './js/modules/session-renderer.js',
+  './js/modules/shared-utils.js',
+  './js/modules/ui-index.js',
+  './js/modules/ui-sessiondetail.js',
+  './js/modules/ui-slider.js',
   './js/modules/utilities.js',
   // External CDN resources for offline fallback
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',

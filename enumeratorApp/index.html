@@ -41,6 +41,17 @@
             color: #6c757d;
             font-weight: 500;
         }
+        
+        /* Action buttons styling for proper wrapping */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+        
+        .action-buttons .btn {
+            margin-bottom: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -75,21 +86,19 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover session-table" id="sessionsTable">
-                                <thead class="table-dark">
+                                <thead>
                                     <tr>
                                         <th>Session ID</th>
                                         <th>Participant ID</th>
                                         <th>Enumerator ID</th>
-                                        <th>Survey Started</th>
                                         <th>Survey Status</th>
-                                        <th>Slider Started</th>
                                         <th>Slider Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sessionsTableBody">
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted py-4">
+                                        <td colspan="6" class="text-center text-muted py-4">
                                             Loading sessions...
                                         </td>
                                     </tr>
@@ -111,14 +120,31 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Error display area for modal -->
+                    <div id="modalErrorDisplay" class="alert alert-danger" style="display: none;">
+                        <div id="modalErrorMessage"></div>
+                    </div>
+                    
                     <form id="createSessionForm">
-                        <div class="mb-3">
-                            <label for="participantId" class="form-label">Participant ID</label>
-                            <input type="text" class="form-control" id="participantId" required>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="participantId" class="form-label">Participant ID</label>
+                                <input type="text" class="form-control" id="participantId" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="enumeratorId" class="form-label">Enumerator ID</label>
+                                <input type="text" class="form-control" id="enumeratorId" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="enumeratorId" class="form-label">Enumerator ID</label>
-                            <input type="text" class="form-control" id="enumeratorId" required>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="child1Ability" class="form-label">Child 1 Ability (0-100)</label>
+                                <input type="number" class="form-control" id="child1Ability" min="0" max="100" step="1" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="child2Ability" class="form-label">Child 2 Ability (0-100)</label>
+                                <input type="number" class="form-control" id="child2Ability" min="0" max="100" step="1" required>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -160,264 +186,8 @@
     
     <!-- Session Management JavaScript -->
     <script type="module">
-        import { generateUUID, getUTCDate } from './js/modules/utilities.js';
-
-        // Database setup
-        const db = new Dexie('AppDB');
-        db.version(1).stores({
-            sessions: 'id, participantId, enumeratorID, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus',
-            pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
-        });
-
-        // Session Management Class
-        class SessionManager {
-            constructor() {
-                this.init();
-            }
-
-            async init() {
-                await this.loadSessions();
-                this.bindEvents();
-            }
-
-            async loadSessions() {
-                try {
-                    const sessions = await db.sessions.orderBy('id').reverse().toArray();
-                    this.renderSessions(sessions);
-                    document.getElementById('sessionCount').textContent = sessions.length;
-                } catch (error) {
-                    console.error('Error loading sessions:', error);
-                    this.showError('Failed to load sessions');
-                }
-            }
-
-            renderSessions(sessions) {
-                const tbody = document.getElementById('sessionsTableBody');
-                
-                if (sessions.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
-                                No sessions found. Create a new session to get started.
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                tbody.innerHTML = sessions.map(session => this.renderSessionRow(session)).join('');
-            }
-
-            renderSessionRow(session) {
-                const formatDate = (dateStr) => {
-                    if (!dateStr) return '-';
-                    return new Date(dateStr).toLocaleString();
-                };
-
-                const getStatusDisplay = (status, completedAt, type) => {
-                    if (status === 'completed') {
-                        return `<span class="status-completed">Completed</span><br><small class="text-muted">${formatDate(completedAt)}</small>`;
-                    } else if (status === 'in_progress') {
-                        return `<span class="status-in-progress">In Progress</span>`;
-                    } else {
-                        return `<span class="status-not-started">Not Started</span>`;
-                    }
-                };
-
-                const getActionButtons = (session) => {
-                    let buttons = [];
-                    
-                    if (session.surveyStatus !== 'completed') {
-                        buttons.push(`<button class="btn btn-sm btn-primary me-1" onclick="startSurvey('${session.id}')">Start Survey</button>`);
-                    }
-                    
-                    if (session.sliderStatus !== 'completed') {
-                        buttons.push(`<button class="btn btn-sm btn-success me-1" onclick="startSlider('${session.id}')">Start Slider</button>`);
-                    }
-                    
-                    buttons.push(`<button class="btn btn-sm btn-outline-danger" onclick="deleteSession('${session.id}')">Delete</button>`);
-                    
-                    return buttons.join('');
-                };
-
-                return `
-                    <tr>
-                        <td><code>${session.id.substring(0, 8)}...</code></td>
-                        <td>${session.participantId || '-'}</td>
-                        <td>${session.enumeratorID || '-'}</td>
-                        <td>${formatDate(session.surveyStartedAt)}</td>
-                        <td>${getStatusDisplay(session.surveyStatus, session.surveyCompletedAt, 'survey')}</td>
-                        <td>${formatDate(session.sliderStartedAt)}</td>
-                        <td>${getStatusDisplay(session.sliderStatus, session.sliderCompletedAt, 'slider')}</td>
-                        <td>${getActionButtons(session)}</td>
-                    </tr>
-                `;
-            }
-
-            bindEvents() {
-                // Create session button
-                document.getElementById('createSessionBtn').addEventListener('click', () => {
-                    const modal = new bootstrap.Modal(document.getElementById('createSessionModal'));
-                    modal.show();
-                });
-
-                // Save session button
-                document.getElementById('saveSessionBtn').addEventListener('click', () => {
-                    this.createSession();
-                });
-
-                // Refresh button
-                document.getElementById('refreshBtn').addEventListener('click', () => {
-                    this.loadSessions();
-                });
-
-                // Reset DB button
-                document.getElementById('resetDbBtn').addEventListener('click', () => {
-                    const modal = new bootstrap.Modal(document.getElementById('resetDbModal'));
-                    modal.show();
-                });
-
-                // Confirm reset button
-                document.getElementById('confirmResetBtn').addEventListener('click', () => {
-                    this.resetDatabase();
-                });
-            }
-
-            async createSession() {
-                const participantId = document.getElementById('participantId').value.trim();
-                const enumeratorId = document.getElementById('enumeratorId').value.trim();
-
-                if (!participantId || !enumeratorId) {
-                    this.showError('Please fill in all fields');
-                    return;
-                }
-
-                try {
-                    const sessionId = generateUUID();
-                    await db.sessions.add({
-                        id: sessionId,
-                        participantId: participantId,
-                        enumeratorID: enumeratorId,
-                        surveyStartedAt: null,
-                        surveyCompletedAt: null,
-                        surveyStatus: 'not_started',
-                        sliderStartedAt: null,
-                        sliderCompletedAt: null,
-                        sliderStatus: 'not_started'
-                    });
-
-                    // Close modal and refresh
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('createSessionModal'));
-                    modal.hide();
-                    document.getElementById('createSessionForm').reset();
-                    
-                    this.loadSessions();
-                    this.showSuccess('Session created successfully');
-                } catch (error) {
-                    console.error('Error creating session:', error);
-                    this.showError('Failed to create session');
-                }
-            }
-
-            async resetDatabase() {
-                try {
-                    await db.delete();
-                    
-                    // Recreate the database
-                    const newDb = new Dexie('AppDB');
-                    newDb.version(1).stores({
-                        sessions: 'id, participantId, enumeratorID, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus',
-                        pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
-                    });
-                    
-                    // Close modal and refresh
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('resetDbModal'));
-                    modal.hide();
-                    
-                    this.loadSessions();
-                    this.showSuccess('Database reset successfully');
-                } catch (error) {
-                    console.error('Error resetting database:', error);
-                    this.showError('Failed to reset database');
-                }
-            }
-
-            showSuccess(message) {
-                this.showAlert(message, 'success');
-            }
-
-            showError(message) {
-                this.showAlert(message, 'danger');
-            }
-
-            showAlert(message, type) {
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-                alertDiv.innerHTML = `
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                
-                const container = document.querySelector('.container');
-                container.insertBefore(alertDiv, container.firstChild);
-                
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    if (alertDiv.parentNode) {
-                        alertDiv.remove();
-                    }
-                }, 5000);
-            }
-        }
-
-        // Global functions for action buttons
-        window.startSurvey = async (sessionId) => {
-            try {
-                await db.sessions.update(sessionId, {
-                    surveyStartedAt: getUTCDate(),
-                    surveyStatus: 'in_progress'
-                });
-                
-                // Navigate to survey page (you'll need to create this)
-                window.location.href = `survey.html?sessionId=${sessionId}`;
-            } catch (error) {
-                console.error('Error starting survey:', error);
-                alert('Failed to start survey');
-            }
-        };
-
-        window.startSlider = async (sessionId) => {
-            try {
-                await db.sessions.update(sessionId, {
-                    sliderStartedAt: getUTCDate(),
-                    sliderStatus: 'in_progress'
-                });
-                
-                // Navigate to slider page
-                window.location.href = `slider.html?sessionId=${sessionId}`;
-            } catch (error) {
-                console.error('Error starting slider:', error);
-                alert('Failed to start slider');
-            }
-        };
-
-        window.deleteSession = async (sessionId) => {
-            if (confirm('Are you sure you want to delete this session? This action cannot be undone.')) {
-                try {
-                    await db.sessions.delete(sessionId);
-                    await db.pageResponses.where('sessionId').equals(sessionId).delete();
-                    
-                    sessionManager.loadSessions();
-                    sessionManager.showSuccess('Session deleted successfully');
-                } catch (error) {
-                    console.error('Error deleting session:', error);
-                    alert('Failed to delete session');
-                }
-            }
-        };
-
-        // Initialize the session manager
-        const sessionManager = new SessionManager();
+        // Import UI management for index page
+        import './js/modules/ui-index.js';
     </script>
 </body>
 </html>

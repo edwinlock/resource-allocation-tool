@@ -2,7 +2,10 @@
 export const CONFIG = {
     ALLOCATABLE_BUDGET: 9,
     GAP_THRESHOLD: 6,
-    MAX_SESSIONS: 15
+    MAX_SESSIONS: 15,
+    // UI Constants
+    ALERT_TIMEOUT_MS: 5000,
+    DOM_SETUP_DELAY_MS: 100
 };
 
 // Chart Colors - colorblind-friendly matplotlib-style palette

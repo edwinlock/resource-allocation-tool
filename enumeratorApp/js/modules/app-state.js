@@ -6,15 +6,15 @@ const { ALLOCATABLE_BUDGET } = CONFIG;
 
 class AppState {
     constructor() {
-        // Dummy session data (for now)
+        // Session data - initialized with default values, updated when real session loads
         this.session = {
-            id: "b9f47f2fbb5a1aca",
-            participant_id: "ca6adb86ade03ed2",
-            enumerator_id: "31af862fd42f96c7",
+            id: null,
+            participant_id: null,
+            enumerator_id: null,
             date_created: getUTCDate(),
             date_modified: getUTCDate(),
-            abilityScore1: 5,
-            abilityScore2: 1,
+            abilityScore1: 50, // Default ability scores
+            abilityScore2: 20,
         };
 
         // Economic calculation results

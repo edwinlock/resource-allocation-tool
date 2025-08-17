@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey - Resource Allocation Study</title>
+    
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Resource Tool">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Theme Color for iOS -->
+    <meta name="theme-color" content="#007bff">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container">
+        <div class="row app-container">
+            <div class="col-12">
+                <div class="text-center mt-5">
+                    <h1 class="mb-4">=Ë Survey Module</h1>
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">Coming Soon!</h4>
+                        <p>The survey functionality is currently under development.</p>
+                        <hr>
+                        <p class="mb-0">You will be automatically redirected back to the session manager.</p>
+                    </div>
+                    <div class="mt-4">
+                        <a href="index.html" class="btn btn-primary btn-lg">
+                            Return to Session Manager
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-redirect after 5 seconds
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 5000);
+        
+        // Get session ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('sessionId');
+        
+        if (sessionId) {
+            console.log('Survey accessed for session:', sessionId);
+        }
+    </script>
+</body>
+</html>

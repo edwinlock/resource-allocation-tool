@@ -2,8 +2,9 @@
 import { CONFIG, SCENARIOS } from './modules/constants.js';
 import { appState } from './modules/app-state.js';
 import { ChartManager } from './modules/chart-factory.js';
-import { uiManager } from './modules/ui-manager.js';
-import { sessionManager, SessionApp } from './modules/session-manager.js';
+import { uiManager } from './modules/ui-slider.js';
+import { sessionManager } from './modules/session-manager.js';
+import { getUTCDate } from './modules/utilities.js';
 
 // Application initialization
 class SliderApp {
@@ -11,9 +12,81 @@ class SliderApp {
         this.chartManager = new ChartManager();
     }
 
+    // Parse URL parameters to get session ID
+    getSessionIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('sessionId');
+    }
+
+    // Load session data from database
+    async loadSessionFromDatabase(sessionId) {
+        if (!sessionManager.db) {
+            throw new Error('Database not available. Cannot load session.');
+        }
+
+        const session = await sessionManager.db.sessions.get(sessionId);
+        if (!session) {
+            throw new Error(`Session with ID "${sessionId}" not found in database.`);
+        }
+
+        return session;
+    }
+
+    // Update session info display at top of page
+    updateSessionInfo(session) {
+        document.getElementById('session-id').textContent = session.id ? session.id.substring(0, 8) + '...' : '-';
+        document.getElementById('participant-id').textContent = session.participantId || '-';
+        document.getElementById('enumerator-id').textContent = session.enumeratorID || '-';
+    }
+
+    // Update child ability input fields with database values
+    updateChildAbilityInputs(session) {
+        const child1AbilityInput = document.getElementById('child1-ability');
+        const child2AbilityInput = document.getElementById('child2-ability');
+        
+        if (child1AbilityInput) {
+            child1AbilityInput.value = session.child1ability || 50;
+        }
+        if (child2AbilityInput) {
+            child2AbilityInput.value = session.child2ability || 20;
+        }
+    }
+
     async initialize() {
         try {
             console.log('Initializing modular slider application...');
+
+            // Get session ID from URL
+            const sessionId = this.getSessionIdFromURL();
+            if (!sessionId) {
+                throw new Error('No session ID provided in URL. Please access this page from the session manager.');
+            }
+
+            // Load session from database
+            const session = await this.loadSessionFromDatabase(sessionId);
+            console.log('Loaded session from database:', session);
+
+            // Check if slider has already been completed
+            if (session.sliderStatus === 'completed') {
+                throw new Error('This slider session has already been completed. Please return to the session manager to view results.');
+            }
+
+            // Update session info display
+            this.updateSessionInfo(session);
+
+            // Update child ability input fields with database values
+            this.updateChildAbilityInputs(session);
+
+            // Update app state with real session data
+            appState.updateSession({
+                id: session.id,
+                participant_id: session.participantId,
+                enumerator_id: session.enumeratorID,
+                date_created: session.createdAt || getUTCDate(),
+                date_modified: session.sliderStartedAt || getUTCDate(),
+                abilityScore1: session.child1ability || 50, // Default values if not set
+                abilityScore2: session.child2ability || 20
+            });
             
             // Initialize UI manager
             uiManager.initialize();
@@ -26,8 +99,19 @@ class SliderApp {
                 this.chartManager.updateChartData(appState, CONFIG);
             };
             
-            // Initialize session management (this will randomize scenario order)
-            await sessionManager.startSession(SCENARIOS.length, uiManager, chartUpdateCallback);
+            // Initialize session management with the real session ID
+            await sessionManager.startSession(SCENARIOS.length);
+            
+            // Initialize UI elements and setup navigation handlers
+            uiManager.updateProgressBar();
+            uiManager.updateCurrentScenarioDisplay();
+            uiManager.updateButtonVisibility();
+            
+            // Set up navigation button handlers
+            uiManager.setupScenarioHandlers(sessionManager, chartUpdateCallback);
+            
+            // Update the slider state with the real session ID
+            appState.sliderState.sessionId = sessionId;
             
             // Now compute outcomes for the first randomized scenario
             const currentScenario = SCENARIOS[appState.sliderState.currentScenarioNumber];
@@ -48,7 +132,45 @@ class SliderApp {
             console.error('Error initializing slider application:', error);
             console.error('Error details:', error.message);
             console.error('Error stack:', error.stack);
-            alert('Error initializing application: ' + error.message + '. Check console for details. Please refresh and try again.');
+            
+            // Show user-friendly error message
+            const errorContainer = document.createElement('div');
+            const isCompletedSession = error.message.includes('already been completed');
+            
+            errorContainer.className = `alert ${isCompletedSession ? 'alert-warning' : 'alert-danger'} mt-3`;
+            
+            if (isCompletedSession) {
+                errorContainer.innerHTML = `
+                    <h4>✅ Session Already Completed</h4>
+                    <p><strong>This slider session has already been completed.</strong></p>
+                    <p>You can view the results in the session manager or start a new session.</p>
+                    <div class="mt-3">
+                        <a href="index.html" class="btn btn-primary me-2">Return to Session Manager</a>
+                        <a href="sessiondetail.html?sessionId=${new URLSearchParams(window.location.search).get('sessionId')}" class="btn btn-info">View Session Details</a>
+                    </div>
+                `;
+            } else {
+                errorContainer.innerHTML = `
+                    <h4>⚠️ Error Loading Session</h4>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Please check the following:</p>
+                    <ul>
+                        <li>Make sure you accessed this page from the session manager</li>
+                        <li>Verify the session ID is correct</li>
+                        <li>Ensure the session exists in the database</li>
+                        <li>Check that the session has not already been completed</li>
+                    </ul>
+                    <a href="index.html" class="btn btn-primary">Return to Session Manager</a>
+                `;
+            }
+            
+            const container = document.querySelector('.container');
+            if (container) {
+                container.innerHTML = '';
+                container.appendChild(errorContainer);
+            } else {
+                alert('Error initializing application: ' + error.message + '. Please return to the session manager and try again.');
+            }
         }
     }
 }
@@ -61,8 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(async () => {
         const app = new SliderApp();
         await app.initialize();
-    }, 100);
+    }, CONFIG.DOM_SETUP_DELAY_MS);
 });
 
-// Export for global access (compatibility)
-window.SessionApp = SessionApp;
+// sessionManager is available as module import - no global access needed

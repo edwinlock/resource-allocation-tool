@@ -184,27 +184,49 @@ h1 {
    SLIDER STYLES
    ======================================== */
 
-/* What actually works - visible background and height */
-#investment-slider {
-    min-height: 15px !important;
-    height: 15px !important;
-    background: linear-gradient(to right, #ddd 0%, #ddd 100%) !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
+/* Simple slider - no Bootstrap conflicts */
+.slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
 }
 
-/* Force track to be #ddd for WebKit */
-#investment-slider::-webkit-slider-track {
-    height: 15px !important;
-    background: #ddd !important;
-    border: none !important;
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
 }
 
-/* Force track to be #ddd for Firefox */
-#investment-slider::-moz-range-track {
-    height: 15px !important;
-    background: #ddd !important;
-    border: none !important;
+.slider::-webkit-slider-thumb:hover,
+.slider::-webkit-slider-thumb:active,
+.slider::-webkit-slider-thumb:focus {
+    background: #0056b3;
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    border: none;
+}
+
+.slider::-moz-range-thumb:hover,
+.slider::-moz-range-thumb:active,
+.slider::-moz-range-thumb:focus {
+    background: #0056b3;
+    transform: scale(1.1);
 }
 
 /* ========================================

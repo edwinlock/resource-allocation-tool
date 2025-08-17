@@ -28,7 +28,7 @@
         <div class="row app-container">
             <div class="col-12">
                 <div class="session-info">
-                    <small>Participant: <span id="participant-id">demo-participant</span> | Enumerator: <span id="enumerator-id">demo-enumerator</span> | Created: <span id="date-created">-</span> | Modified: <span id="date-modified">-</span></small>
+                    <small>Session ID: <span id="session-id">-</span> | Participant: <span id="participant-id">-</span> | Enumerator: <span id="enumerator-id">-</span></small>
                 </div>
                 <div class="intro-text my-3">
                     <p>You will be shown <span id="total-scenarios">8</span> different scenarios in which you choose investments into your children.</p>
@@ -140,7 +140,7 @@
                             <span>Child 1: <span id="child1-display">0</span> lessons</span>
                             <span>Child 2: <span id="child2-display">9</span> lessons</span>
                         </div>
-                        <input type="range" min="0" max="9" value="0" class="form-range slider" id="investment-slider">
+                        <input type="range" min="0" max="9" value="0" class="slider" id="investment-slider">
                     </div>
                 </div>
 
@@ -190,7 +190,7 @@
         // Register service worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('./js/sw.js')
                     .then(registration => {
                         console.log('SW registered: ', registration);
                     })

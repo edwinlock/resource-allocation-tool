@@ -206,18 +206,7 @@ export class UIManager {
         });
     }
 
-    // Chart update methods - these will be called by external chart management
-    updateCharts() {
-        // This method will be implemented to update all charts
-        // Will be called from external chart management functions
-        this.updateChartSelection(appState.selectedInvestment);
-    }
-
-    updateChartSelection(selectedIndex) {
-        // This method will be implemented to update chart highlighting
-        // Will be called from external chart management functions
-        console.log('Updating chart selection to index:', selectedIndex);
-    }
+    // Chart updates are handled by ChartManager - no chart methods needed here
 
     // Progress and navigation UI methods
     updateProgressBar() {
@@ -283,6 +272,86 @@ export class UIManager {
             this.child1Display.textContent = response.child1investment;
             this.child2Display.textContent = ALLOCATABLE_BUDGET - response.child1investment;
         }
+    }
+
+    // Navigation handlers for slider app - UI only
+    async handleNextButtonClick(sessionManager) {
+        try {
+            // Use SessionManager for business logic
+            const result = await sessionManager.processNextScenario();
+            
+            if (result.completed) {
+                // Session completed - redirect to session manager
+                console.log('Session completed successfully');
+                window.location.href = 'index.html';
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('Error processing response:', error);
+            throw error;
+        }
+    }
+
+    async handlePrevButtonClick(sessionManager) {
+        try {
+            // Use SessionManager for business logic
+            return await sessionManager.processPreviousScenario();
+        } catch (error) {
+            console.error('Error going to previous scenario:', error);
+            throw error;
+        }
+    }
+
+    // Button event handlers setup for slider app
+    setupScenarioHandlers(sessionManager, chartUpdateCallback) {
+        if (!this.nextButton) {
+            throw new Error('nextButton element not found in DOM');
+        }
+        
+        if (!this.prevButton) {
+            throw new Error('prevButton element not found in DOM');
+        }
+        
+        // Handle next button click
+        this.nextButton.addEventListener('click', async () => {
+            const result = await this.handleNextButtonClick(sessionManager);
+            
+            if (!result.completed) {
+                // Update charts and UI
+                if (chartUpdateCallback) {
+                    chartUpdateCallback();
+                }
+                this.updateDebugDisplay();
+                this.updateScenarioDropdown();
+                this.updateProgressBar();
+                this.updateCurrentScenarioDisplay();
+                this.updateButtonVisibility();
+            }
+        });
+        
+        // Handle previous button click
+        this.prevButton.addEventListener('click', async () => {
+            const result = await this.handlePrevButtonClick(sessionManager);
+            
+            // Update charts and UI
+            if (chartUpdateCallback) {
+                chartUpdateCallback();
+            }
+            this.updateDebugDisplay();
+            this.updateScenarioDropdown();
+            this.updateProgressBar();
+            this.updateCurrentScenarioDisplay();
+            this.updateButtonVisibility();
+            
+            // Restore the previous response if it exists
+            if (result.savedResponse) {
+                this.restoreUIFromResponse(result.savedResponse);
+                if (chartUpdateCallback) {
+                    chartUpdateCallback(); // Update charts with restored slider position
+                }
+            }
+        });
     }
 
     // Initialize all UI components
