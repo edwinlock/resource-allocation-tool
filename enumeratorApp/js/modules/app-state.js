@@ -1,4 +1,4 @@
-import { CONFIG } from './constants.js';
+import { CONFIG, SCENARIOS } from './constants.js';
 import { getUTCDate, shuffleArray } from './utilities.js';
 import { computeOutcomes } from './economic-engine.js';
 
@@ -125,6 +125,59 @@ class AppState {
         return this.sliderState.currentIndex >= this.sliderState.totalScenarios - 1;
     }
 
+    // Navigation business logic for slider app
+    async processNextScenario() {
+        // Add response to global state
+        this.addResponse(this.selectedInvestment);
+        
+        // Check if this was the last scenario
+        if (this.isLastScenario()) {
+            // Return completion data for coordinator to handle database operations
+            return { 
+                completed: true, 
+                responses: this.sliderState.responses.filter(r => r !== null)
+            };
+        } else {
+            // Advance to next scenario
+            this.advanceToNextScenario();
+            
+            // Get the new scenario and recalculate outcomes
+            const newScenario = SCENARIOS[this.sliderState.currentScenarioNumber];
+            this.computeScenarioOutcomes(newScenario);
+            
+            return { 
+                completed: false, 
+                newScenario,
+                currentIndex: this.sliderState.currentIndex 
+            };
+        }
+    }
+
+    async processPreviousScenario() {
+        // Go to previous scenario
+        this.goToPreviousScenario();
+        
+        // Get the previous scenario and recalculate outcomes
+        const prevScenario = SCENARIOS[this.sliderState.currentScenarioNumber];
+        this.computeScenarioOutcomes(prevScenario);
+        
+        // Get the saved response if it exists
+        const savedResponse = this.sliderState.responses[this.sliderState.currentIndex];
+        
+        return { 
+            prevScenario,
+            savedResponse,
+            currentIndex: this.sliderState.currentIndex 
+        };
+    }
+
+    // Application initialization for slider app
+    async startSession(totalScenarios = SCENARIOS.length) {
+        // Use current session id for initialization
+        this.initializeSession(this.session.id, totalScenarios);
+        return this.sliderState;
+    }
+
     // Update selected investment
     setSelectedInvestment(value) {
         this.selectedInvestment = value;
@@ -137,6 +190,18 @@ class AppState {
 
     getChart(chartType) {
         return this.charts[chartType];
+    }
+
+    clearChart(chartType) {
+        this.charts[chartType] = null;
+    }
+
+    clearAllCharts() {
+        this.charts = {
+            barChart: null,
+            lineChart: null,
+            multiBarChart: null
+        };
     }
 }
 

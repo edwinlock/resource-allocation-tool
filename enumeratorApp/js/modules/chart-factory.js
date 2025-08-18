@@ -1,4 +1,5 @@
 import { CONFIG, COLORS } from './constants.js';
+import { appState } from './app-state.js';
 
 const { ALLOCATABLE_BUDGET } = CONFIG;
 const {
@@ -461,8 +462,38 @@ export class ChartManager {
         };
     }
 
+    // Properly destroy a single chart instance
+    destroyChart(chartName) {
+        if (this.charts[chartName]) {
+            try {
+                // Chart.js provides destroy() method to clean up resources
+                this.charts[chartName].destroy();
+            } catch (error) {
+                console.warn(`Error destroying chart ${chartName}:`, error);
+            }
+            this.charts[chartName] = null;
+            // Also clear reference in appState
+            appState.clearChart(chartName);
+        }
+    }
+
+    // Destroy all chart instances
+    destroyAllCharts() {
+        Object.keys(this.charts).forEach(chartName => {
+            this.destroyChart(chartName);
+        });
+    }
+
+    // Check if chart exists and is valid
+    isChartValid(chartName) {
+        return this.charts[chartName] && !this.charts[chartName].destroyed;
+    }
+
     createAllCharts(uiManager, appState) {
         const sd = appState.scenarioData;
+        
+        // Destroy existing charts before creating new ones to prevent memory leaks
+        this.destroyAllCharts();
         
         // Create single bar chart
         if (uiManager.ctx) {
@@ -494,77 +525,98 @@ export class ChartManager {
         const selectedIndex = appState.selectedInvestment;
         const { ALLOCATABLE_BUDGET } = CONFIG;
 
+        // Validate input data
+        if (!sd || selectedIndex < 0 || !sd.postEarnings1Rounded || !sd.postEarnings2Rounded || !sd.aggrEarningsRounded) {
+            console.warn('Invalid scenario data provided to updateChartData');
+            return;
+        }
+
         // Update single bar chart
-        if (this.charts.barChart) {
-            this.charts.barChart.data.datasets[0].data = [
-                sd.postEarnings1Rounded[selectedIndex],
-                sd.postEarnings2Rounded[selectedIndex], 
-                sd.aggrEarningsRounded[selectedIndex]
-            ];
-            this.charts.barChart.update();
+        if (this.isChartValid('barChart')) {
+            try {
+                this.charts.barChart.data.datasets[0].data = [
+                    sd.postEarnings1Rounded[selectedIndex],
+                    sd.postEarnings2Rounded[selectedIndex], 
+                    sd.aggrEarningsRounded[selectedIndex]
+                ];
+                this.charts.barChart.update();
+            } catch (error) {
+                console.error('Error updating bar chart:', error);
+                this.destroyChart('barChart');
+            }
         }
 
         // Update line chart
-        if (this.charts.lineChart) {
-            this.charts.lineChart.data.datasets[0].data = sd.postEarnings1Rounded;
-            this.charts.lineChart.data.datasets[1].data = sd.postEarnings2Rounded;
-            this.charts.lineChart.data.datasets[2].data = sd.aggrEarningsRounded;
-            
-            // Update datalabels configuration for selected point
-            this.charts.lineChart.options.plugins.datalabels = getDataLabelsConfig('line', selectedIndex, sd);
-            
-            // Update y-axis max
-            this.charts.lineChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
-            
-            // Update point highlighting (larger dot for selected point)
-            const highlightedRadius = Array(ALLOCATABLE_BUDGET + 1).fill(4);
-            const highlightedBorderWidth = Array(ALLOCATABLE_BUDGET + 1).fill(2);
-            highlightedRadius[selectedIndex] = 8;
-            highlightedBorderWidth[selectedIndex] = 4;
-            
-            this.charts.lineChart.data.datasets.forEach((dataset) => {
-                dataset.pointRadius = [...highlightedRadius];
-                dataset.pointBorderWidth = [...highlightedBorderWidth];
-                const borderColors = Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff');
-                borderColors[selectedIndex] = '#000000';
-                dataset.pointBorderColor = borderColors;
-            });
-            
-            this.charts.lineChart.update();
+        if (this.isChartValid('lineChart')) {
+            try {
+                this.charts.lineChart.data.datasets[0].data = sd.postEarnings1Rounded;
+                this.charts.lineChart.data.datasets[1].data = sd.postEarnings2Rounded;
+                this.charts.lineChart.data.datasets[2].data = sd.aggrEarningsRounded;
+                
+                // Update datalabels configuration for selected point
+                this.charts.lineChart.options.plugins.datalabels = getDataLabelsConfig('line', selectedIndex, sd);
+                
+                // Update y-axis max
+                this.charts.lineChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
+                
+                // Update point highlighting (larger dot for selected point)
+                const highlightedRadius = Array(ALLOCATABLE_BUDGET + 1).fill(4);
+                const highlightedBorderWidth = Array(ALLOCATABLE_BUDGET + 1).fill(2);
+                highlightedRadius[selectedIndex] = 8;
+                highlightedBorderWidth[selectedIndex] = 4;
+                
+                this.charts.lineChart.data.datasets.forEach((dataset) => {
+                    dataset.pointRadius = [...highlightedRadius];
+                    dataset.pointBorderWidth = [...highlightedBorderWidth];
+                    const borderColors = Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff');
+                    borderColors[selectedIndex] = '#000000';
+                    dataset.pointBorderColor = borderColors;
+                });
+                
+                this.charts.lineChart.update();
+            } catch (error) {
+                console.error('Error updating line chart:', error);
+                this.destroyChart('lineChart');
+            }
         }
 
         // Update multi-bar chart
-        if (this.charts.multiBarChart) {
-            this.charts.multiBarChart.data.datasets[0].data = sd.postEarnings1Rounded;
-            this.charts.multiBarChart.data.datasets[1].data = sd.postEarnings2Rounded;
-            
-            // Update datalabels configuration
-            this.charts.multiBarChart.options.plugins.datalabels = getDataLabelsConfig('multiBar', selectedIndex, sd);
-            
-            // Update highlighting for selected bar
-            const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#aecbea');
-            const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ffc788');
-            const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#1f77b4');
-            const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ff7f0e');
-            const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(0);
-            
-            // Highlight selected bar
-            backgroundColors1[selectedIndex] = '#1f77b4';
-            backgroundColors2[selectedIndex] = '#ff7f0e';
-            borderColors1[selectedIndex] = '#0f4c75';
-            borderColors2[selectedIndex] = '#cc5500';
-            
-            this.charts.multiBarChart.data.datasets[0].backgroundColor = backgroundColors1;
-            this.charts.multiBarChart.data.datasets[0].borderColor = borderColors1;
-            this.charts.multiBarChart.data.datasets[0].borderWidth = borderWidths;
-            this.charts.multiBarChart.data.datasets[1].backgroundColor = backgroundColors2;
-            this.charts.multiBarChart.data.datasets[1].borderColor = borderColors2;
-            this.charts.multiBarChart.data.datasets[1].borderWidth = borderWidths;
-            
-            // Update y-axis max
-            this.charts.multiBarChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
-            
-            this.charts.multiBarChart.update();
+        if (this.isChartValid('multiBarChart')) {
+            try {
+                this.charts.multiBarChart.data.datasets[0].data = sd.postEarnings1Rounded;
+                this.charts.multiBarChart.data.datasets[1].data = sd.postEarnings2Rounded;
+                
+                // Update datalabels configuration
+                this.charts.multiBarChart.options.plugins.datalabels = getDataLabelsConfig('multiBar', selectedIndex, sd);
+                
+                // Update highlighting for selected bar
+                const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#aecbea');
+                const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ffc788');
+                const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#1f77b4');
+                const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ff7f0e');
+                const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(0);
+                
+                // Highlight selected bar
+                backgroundColors1[selectedIndex] = '#1f77b4';
+                backgroundColors2[selectedIndex] = '#ff7f0e';
+                borderColors1[selectedIndex] = '#0f4c75';
+                borderColors2[selectedIndex] = '#cc5500';
+                
+                this.charts.multiBarChart.data.datasets[0].backgroundColor = backgroundColors1;
+                this.charts.multiBarChart.data.datasets[0].borderColor = borderColors1;
+                this.charts.multiBarChart.data.datasets[0].borderWidth = borderWidths;
+                this.charts.multiBarChart.data.datasets[1].backgroundColor = backgroundColors2;
+                this.charts.multiBarChart.data.datasets[1].borderColor = borderColors2;
+                this.charts.multiBarChart.data.datasets[1].borderWidth = borderWidths;
+                
+                // Update y-axis max
+                this.charts.multiBarChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
+                
+                this.charts.multiBarChart.update();
+            } catch (error) {
+                console.error('Error updating multi-bar chart:', error);
+                this.destroyChart('multiBarChart');
+            }
         }
     }
 
@@ -579,6 +631,12 @@ export class ChartManager {
         uiManager.updateChartSelection = () => {
             this.updateChartData(appState, CONFIG);
         };
+    }
+
+    // Cleanup method for when application is being destroyed or reset
+    cleanup() {
+        console.log('Cleaning up chart manager resources...');
+        this.destroyAllCharts();
     }
 }
 

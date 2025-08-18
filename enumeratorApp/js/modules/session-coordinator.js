@@ -88,19 +88,10 @@ export class SessionCoordinator {
         }
     }
 
-    // Session state management for slider app
-    async initializeSession(sessionId, totalScenarios) {
-        appState.initializeSession(sessionId, totalScenarios);
-        return appState.sliderState;
-    }
-
     // Application initialization for slider app
     async startSession(totalScenarios = SCENARIOS.length) {
         try {
-            // Use dummy session id instead of database session
-            await this.initializeSession(appState.session.id, totalScenarios);
-            
-            return appState.sliderState;
+            return await appState.startSession(totalScenarios);
         } catch (error) {
             console.error('Error starting session:', error);
             console.error('Error details:', error.message);
@@ -109,33 +100,19 @@ export class SessionCoordinator {
         }
     }
 
-    // Navigation business logic for slider app
+    // Navigation coordination for slider app
     async processNextScenario() {
         try {
-            // Add response to global state
-            appState.addResponse(appState.selectedInvestment);
+            // Delegate state logic to AppState
+            const result = await appState.processNextScenario();
             
-            // Check if this was the last scenario
-            if (appState.isLastScenario()) {
-                // Save all responses to database and mark session as completed
-                await this.completeSliderSession(appState.sliderState.sessionId, appState.sliderState.responses.filter(r => r !== null));
-                
-                
+            // Handle database operations if session is completed
+            if (result.completed) {
+                await this.completeSliderSession(appState.sliderState.sessionId, result.responses);
                 return { completed: true };
-            } else {
-                // Advance to next scenario
-                appState.advanceToNextScenario();
-                
-                // Get the new scenario and recalculate outcomes
-                const newScenario = SCENARIOS[appState.sliderState.currentScenarioNumber];
-                appState.computeScenarioOutcomes(newScenario);
-                
-                return { 
-                    completed: false, 
-                    newScenario,
-                    currentIndex: appState.sliderState.currentIndex 
-                };
             }
+            
+            return result;
         } catch (error) {
             console.error('Error processing response:', error);
             throw error;
@@ -144,21 +121,8 @@ export class SessionCoordinator {
 
     async processPreviousScenario() {
         try {
-            // Go to previous scenario
-            appState.goToPreviousScenario();
-            
-            // Get the previous scenario and recalculate outcomes
-            const prevScenario = SCENARIOS[appState.sliderState.currentScenarioNumber];
-            appState.computeScenarioOutcomes(prevScenario);
-            
-            // Get the saved response if it exists
-            const savedResponse = appState.sliderState.responses[appState.sliderState.currentIndex];
-            
-            return { 
-                prevScenario,
-                savedResponse,
-                currentIndex: appState.sliderState.currentIndex 
-            };
+            // Delegate state logic to AppState
+            return await appState.processPreviousScenario();
         } catch (error) {
             console.error('Error going to previous scenario:', error);
             throw error;

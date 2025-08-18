@@ -125,6 +125,11 @@ class SliderApp {
             console.error('Error details:', error.message);
             console.error('Error stack:', error.stack);
             
+            // Cleanup any partially created resources
+            if (this.chartManager) {
+                this.chartManager.cleanup();
+            }
+            
             // Show user-friendly error message
             const errorContainer = document.createElement('div');
             const isCompletedSession = error.message.includes('already been completed');
@@ -167,14 +172,38 @@ class SliderApp {
     }
 }
 
+// Global reference to chart manager for cleanup
+let globalChartManager = null;
+
 // Initialize the app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     
     // Small delay to ensure all DOM elements are ready
     setTimeout(async () => {
         const app = new SliderApp();
+        globalChartManager = app.chartManager;
         await app.initialize();
     }, CONFIG.DOM_SETUP_DELAY_MS);
+});
+
+// Cleanup resources when page is being unloaded
+window.addEventListener('beforeunload', () => {
+    if (globalChartManager) {
+        globalChartManager.cleanup();
+    }
+});
+
+// Also cleanup on page visibility change (when user switches tabs)
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && globalChartManager) {
+        // Optional: only cleanup if page is hidden for extended periods
+        // This prevents unnecessary cleanup on quick tab switches
+        setTimeout(() => {
+            if (document.visibilityState === 'hidden' && globalChartManager) {
+                globalChartManager.cleanup();
+            }
+        }, 30000); // 30 seconds
+    }
 });
 
 // sessionManager is available as module import - no global access needed
