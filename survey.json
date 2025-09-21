@@ -5,13 +5,7 @@
         {
             "question_id": "xj2jljks903sl",
             "type": "open",
-            "query": "What is your name?",
-            "datatype": "number"
-        },
-        {
-            "question_id": "xj2jljks903sl",
-            "type": "open",
-            "query": "Do you like {child1}?",
+            "query": "What is your name? You can also include variables using, e.g. {child1}.",
             "datatype": "number"
         },
         {
@@ -19,8 +13,8 @@
             "type": "multiopen",
             "query": "First part of question that applies to both subquestions?",
             "prefixes": [
-                "Do you like pizza hot?",
-                "Do you like pizza cold?"
+                "This comes before the first input field",
+                "This comes before the second input field"
             ],
             "datatype": "text"
         },
@@ -51,10 +45,10 @@
             ]
         },
         {
-            "question_id": "0dnmab10wj2",
+            "question_id": "b10wj20dnma",
             "type": "mpl",
             "query": "How much would you invest in your worse child?",
-            "values": [
+            "options": [
                 ["Si", "No"],
                 ["Si", "No"],
                 ["Si", "No"],
