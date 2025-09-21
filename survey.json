@@ -60,6 +60,11 @@
                 "Pagar 300 pesos",
                 "Pagar 400 pesos"
             ]
+        },
+        {
+            "question_id": "abcd1235kajgf",
+            "type": "plaintext",
+            "text": "This is just some text. It's not actually a question."
         }
     ]
 }
