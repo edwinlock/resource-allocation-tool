@@ -1,0 +1,55 @@
+{
+    "survey_id": "abcd123",
+    "name": "Survey for Michelle",
+    "questions": [
+        {
+            "question_id": "xj2jljks903sl",
+            "type": "open",
+            "query": "What is your name?",
+            "datatype": "number"
+        },
+        {
+            "question_id": "xj2jljks903sl",
+            "type": "open",
+            "query": "Do you like {child1}?",
+            "datatype": "number"
+        },
+        {
+            "question_id": "xj2jljks903sl",
+            "type": "multiopen",
+            "query": "First part of question that applies to both subquestions?",
+            "prefixes": [
+                "Do you like pizza hot?",
+                "Do you like pizza cold?"
+            ],
+            "postfixes": ["", ""],
+            "datatype": "text"
+        },
+        {
+            "question_id": "b10wj20dnma",
+            "type": "singleselect",
+            "query": "How many bags of liquorice do you want?",
+            "values": [0, 1, 2, 3],
+            "datatype": "number"
+        },
+                {
+            "question_id": "b10wj20dnma",
+            "type": "multiselect",
+            "query": "Which foods do you like?",
+            "values": ["pizza", "burgers", "tacos", "sushi"],
+            "datatype": "text"
+        },
+        {
+            "question_id": "0dnmab10wj2",
+            "type": "multidichotomous",
+            "query": "How much would you invest in your worse child?",
+            "values": ["Si", "No"],
+            "prefixes": [
+                "Pagar 100 pesos",
+                "Pagar 200 pesos",
+                "Pagar 300 pesos",
+                "Pagar 400 pesos"
+            ]
+        }
+    ]
+}
