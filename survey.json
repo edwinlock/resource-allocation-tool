@@ -49,6 +49,23 @@
                 "Pagar 300 pesos",
                 "Pagar 400 pesos"
             ]
+        },
+        {
+            "question_id": "0dnmab10wj2",
+            "type": "mpl",
+            "query": "How much would you invest in your worse child?",
+            "values": [
+                ["Si", "No"],
+                ["Si", "No"],
+                ["Si", "No"],
+                ["Si", "No"]
+            ],
+            "prefixes": [
+                "Pagar 100 pesos",
+                "Pagar 200 pesos",
+                "Pagar 300 pesos",
+                "Pagar 400 pesos"
+            ]
         }
     ]
 }
