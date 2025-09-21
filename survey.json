@@ -22,7 +22,6 @@
                 "Do you like pizza hot?",
                 "Do you like pizza cold?"
             ],
-            "postfixes": ["", ""],
             "datatype": "text"
         },
         {
