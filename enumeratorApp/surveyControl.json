@@ -1,31 +1,17 @@
 {
     "survey_id": "surveyControl",
-    "name": "Post-Experiment Reflection Survey",
+    "name": "Post-Experiment Reflection Survey (Control)",
     "questions": [
         {
             "question_id": "consent_control_survey",
             "type": "consent",
             "query": "I consent to participate in this control group post-experiment reflection survey",
-            "text": "<h5>Research Study Consent - Control Group Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Control Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the control group. This post-experiment survey collects your reflections and feedback about your experience in the resource allocation experiment.</p><p><strong>What you will do:</strong> Reflect on your experience with the investment decision scenarios, describe your strategy, and provide feedback about the experiment design. This should take approximately 10-15 minutes.</p><p><strong>Control Group Procedures:</strong> As part of the control group, your responses will be compared with the treatment group to assess the impact of different experimental conditions.</p><p><strong>Risks and Benefits:</strong> There are minimal risks. You may find some questions require careful reflection about your decision-making process. Your feedback will help improve future research.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes. Group assignment and responses will be anonymized.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time without affecting your participation in other parts of the study.</p><p><strong>Contact:</strong> If you have questions about this research or your rights as a participant, please contact the research team.</p>"
+            "text": "<h5>Research Study Consent - Control Group Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Control Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the control group. This survey collects your reflections about your experience in the resource allocation experiment.</p><p><strong>What you will do:</strong> Reflect on your experience with the investment decisions and provide feedback. This should take approximately 5 minutes.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time.</p>"
         },
         {
             "question_id": "ref_intro",
             "type": "plaintext",
-            "text": "Thank you for completing the investment scenarios involving {child1name} and {child2name}. This final survey asks about your experience and reflections on the experiment."
-        },
-        {
-            "question_id": "ref_children_context",
-            "type": "plaintext",
-            "text": "In the scenarios, you made decisions about allocating lessons between {child1name} (ability: {child1ability}, attends {child1school}) and {child2name} (ability: {child2ability}, attends {child2school})."
-        },
-        {
-            "question_id": "ref_difficulty",
-            "type": "likert",
-            "query": "How difficult did you find the investment decision-making scenarios involving {child1name} and {child2name}?",
-            "prefix": "Rate the difficulty level (1 = Very easy, 5 = Very difficult)",
-            "min": 1,
-            "max": 5,
-            "required": true
+            "text": "Thank you for completing the investment scenarios involving {child1name} and {child2name}. This final survey asks about your experience."
         },
         {
             "question_id": "ref_strategy",
@@ -35,94 +21,20 @@
             "required": true
         },
         {
-            "question_id": "ref_factors_considered",
-            "type": "multiselect",
-            "query": "Which factors did you consider most when allocating lessons between {child1name} (ability: {child1ability}) and {child2name} (ability: {child2ability})? (Select all that apply)",
-            "values": ["Maximizing total earnings", "Ensuring fairness", "Helping the weaker child", "Helping the stronger child", "Minimizing inequality", "My personal values"],
+            "question_id": "ref_approach",
+            "type": "singleselect",
+            "query": "When making investment decisions between {child1name} and {child2name}, how did you typically approach their different abilities?",
+            "values": ["Invest equally regardless of ability", "Invest more in the higher-ability child", "Invest more in the lower-ability child", "Invest based on each child's specific needs"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "ref_school_influence",
+            "question_id": "ref_difficulty",
             "type": "likert",
-            "query": "Did the fact that {child1name} attends {child1school} and {child2name} attends {child2school} influence your investment decisions?",
-            "prefix": "Rate the influence level (1 = Not influenced at all, 5 = Greatly influenced)",
+            "query": "How difficult did you find the investment decision-making scenarios?",
+            "prefix": "Rate the difficulty level (1 = Very easy, 5 = Very difficult)",
             "min": 1,
             "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "ref_ability_gaps",
-            "type": "multiopen",
-            "query": "How did the ability difference between your children affect your decisions?",
-            "prefixes": [
-                "How often you favored {child1name} (higher ability: {child1ability})",
-                "How often you favored {child2name} (lower ability: {child2ability})",
-                "How much the {child1ability} vs {child2ability} gap mattered to you"
-            ],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "ref_consistency",
-            "type": "likert",
-            "query": "Do you feel your decisions were consistent across the different scenarios involving {child1name} and {child2name}?",
-            "prefix": "Rate your consistency (1 = Not consistent at all, 5 = Very consistent)",
-            "min": 1,
-            "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "ref_real_world",
-            "type": "likert",
-            "query": "How similar were these experimental decisions to real-world decisions you make about {child1name} and {child2name}?",
-            "prefix": "Rate the similarity (1 = Very different, 5 = Very similar)",
-            "min": 1,
-            "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "ref_learning",
-            "type": "open",
-            "query": "Did participating in this experiment make you think differently about how you allocate resources between {child1name} and {child2name}? Please explain.",
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "ref_feedback",
-            "type": "open",
-            "query": "Do you have any feedback about the experiment design, interface, or instructions? (Note: This was {sessionType} group experiment for participant {participant} with enumerator {enumerator})",
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "ref_decision_difficulty",
-            "type": "multilikert",
-            "query": "Rate how difficult each type of decision was during the experiment:",
-            "prefixes": [
-                "Decisions favoring {child1name}",
-                "Decisions favoring {child2name}",
-                "Decisions to split resources equally",
-                "Decisions when resources were limited"
-            ],
-            "min": 1,
-            "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "ref_experiment_realism",
-            "type": "likert",
-            "query": "How realistic were the experimental scenarios compared to real parenting decisions?",
-            "prefix": "Rate the realism (1 = Not realistic at all, 7 = Very realistic)",
-            "min": 1,
-            "max": 7,
-            "required": true
-        },
-        {
-            "question_id": "ref_additional",
-            "type": "open",
-            "query": "Is there anything else you would like to share about your experience or thoughts related to this study involving {child1name} and {child2name}?",
-            "datatype": "text",
             "required": true
         }
     ]

@@ -51,9 +51,11 @@ export class OpenQuestion extends SurveyQuestion {
 
         return `
             <div class="mb-3">
-                <label for="q_${this.questionId}" class="form-label">${query}</label>
-                <input type="${inputType}" class="form-control" id="q_${this.questionId}"
-                       data-question-id="${this.questionId}" ${requiredAttr}>
+                <fieldset>
+                    <legend class="form-label">${query}</legend>
+                    <input type="${inputType}" class="form-control" id="q_${this.questionId}"
+                           data-question-id="${this.questionId}" ${requiredAttr}>
+                </fieldset>
             </div>
         `;
     }

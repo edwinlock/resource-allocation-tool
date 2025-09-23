@@ -1,9 +1,10 @@
-const CACHE_NAME = 'resource-allocation-v2';
+const CACHE_NAME = 'resource-allocation-v3';
 const urlsToCache = [
   './',
   './index.html',
   './sessiondetail.html',
   './slider.html',
+  './survey.html',
   './manifest.json',
   './css/slider.css',
   './js/slider.js',
@@ -13,13 +14,20 @@ const urlsToCache = [
   './js/modules/economic-engine.js',
   './js/modules/sessionDB.js',
   './js/modules/sliderResponseDB.js',
+  './js/modules/surveyResponseDB.js',
   './js/modules/session-coordinator.js',
   './js/modules/session-renderer.js',
   './js/modules/shared-utils.js',
   './js/modules/ui-index.js',
   './js/modules/ui-sessiondetail.js',
   './js/modules/ui-slider.js',
+  './js/modules/ui-survey.js',
+  './js/modules/survey-system.js',
+  './js/modules/api-service.js',
   './js/modules/utilities.js',
+  './surveyChild.json',
+  './surveyTreatment.json',
+  './surveyControl.json',
   // External CDN resources for offline fallback
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
@@ -36,11 +44,11 @@ self.addEventListener('install', event => {
         // Add local files first (more likely to succeed)
         const localFiles = urlsToCache.filter(url => !url.startsWith('http'));
         const cdnFiles = urlsToCache.filter(url => url.startsWith('http'));
-        
+
         return cache.addAll(localFiles).then(() => {
           // Try to cache CDN resources, but don't fail if they're not available
           return Promise.allSettled(
-            cdnFiles.map(url => 
+            cdnFiles.map(url =>
               cache.add(url).catch(err => {
                 console.warn(`Failed to cache ${url}:`, err);
                 return null;
@@ -56,7 +64,7 @@ self.addEventListener('install', event => {
 
 self.addEventListener('fetch', event => {
   // Skip cross-origin requests and chrome-extension requests
-  if (!event.request.url.startsWith(self.location.origin) && 
+  if (!event.request.url.startsWith(self.location.origin) &&
       !event.request.url.startsWith('https://cdn.jsdelivr.net') &&
       !event.request.url.startsWith('https://unpkg.com')) {
     return;
@@ -79,7 +87,7 @@ self.addEventListener('fetch', event => {
             return fetchResponse;
           });
         }
-        
+
         // For external resources, try network first, fallback to cache
         return fetch(event.request).then(fetchResponse => {
           const responseClone = fetchResponse.clone();
