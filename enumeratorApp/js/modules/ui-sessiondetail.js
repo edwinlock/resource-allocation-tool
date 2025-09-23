@@ -36,11 +36,14 @@ class SessionDetailUIManager {
                 return;
             }
 
-            // Load response data
-            const responses = await sessionManager.getSessionSliderResponses(this.sessionId);
-            
+            // Load slider response data
+            const sliderResponses = await sessionManager.getSessionSliderResponses(this.sessionId);
+
+            // Load survey response data
+            const surveyResponses = await sessionManager.getSessionSurveyResponses(this.sessionId);
+
             // Display the data
-            SessionRenderer.displaySessionData(session, responses);
+            SessionRenderer.displaySessionData(session, sliderResponses, surveyResponses);
             
         } catch (error) {
             console.error('Error loading session details:', error);

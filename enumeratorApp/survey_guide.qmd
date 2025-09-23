@@ -1,0 +1,221 @@
+---
+title: "Survey JSON Format Guide"
+format: html
+---
+
+## Basic Survey Structure
+
+```json
+{
+    "survey_id": "surveyName",
+    "name": "Survey Display Title",
+    "questions": [
+        // Array of question objects
+    ]
+}
+```
+
+## Variable Substitution
+
+Use `{variableName}` in any text field to inject session data:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{child1name}` | Child 1's name | "Sarah" |
+| `{child2name}` | Child 2's name | "John" |
+| `{child1ability}` | Child 1's ability score | 75 |
+| `{child2ability}` | Child 2's ability score | 45 |
+| `{child1school}` | Child 1's school | "Lincoln Elementary" |
+| `{child2school}` | Child 2's school | "Washington Middle" |
+| `{participant}` | Participant ID | "P001" |
+| `{enumerator}` | Enumerator ID | "E001" |
+| `{sessionType}` | Session type | "treatment" or "control" |
+
+## Question Types
+
+### 1. open - Single text/number input
+
+```json
+{
+    "question_id": "unique_id",
+    "type": "open",
+    "query": "What is {child1name}'s favorite subject?",
+    "datatype": "text",  // or "number"
+    "required": true
+}
+```
+
+### 2. multiopen - Multiple inputs with labels
+
+```json
+{
+    "question_id": "hours_spent",
+    "type": "multiopen",
+    "query": "Hours per week spent on:",
+    "prefixes": [
+        "Helping {child1name} at {child1school}",
+        "Helping {child2name} at {child2school}"
+    ],
+    "datatype": "number",
+    "required": true
+}
+```
+
+### 3. singleselect - Radio buttons (one choice)
+
+```json
+{
+    "question_id": "preference",
+    "type": "singleselect",
+    "query": "Who needs more support?",
+    "values": ["{child1name}", "{child2name}", "Both equally"],
+    "datatype": "text",
+    "required": true
+}
+```
+
+### 4. multiselect - Checkboxes (multiple choices)
+
+```json
+{
+    "question_id": "factors",
+    "type": "multiselect",
+    "query": "Which factors matter? (select all)",
+    "values": ["Ability", "Effort", "Interest", "Future potential"],
+    "datatype": "text",
+    "required": true  // Note: multiselect always validates as true
+}
+```
+
+### 5. grid - Table with radio buttons per row
+
+```json
+{
+    "question_id": "scenarios",
+    "type": "grid",
+    "query": "For each opportunity, who would you choose?",
+    "prefixes": [
+        "Extra tutoring",
+        "Summer camp",
+        "Music lessons"
+    ],
+    "options": [
+        ["{child1name}", "{child2name}"],
+        ["{child1name}", "{child2name}"],
+        ["{child1name}", "{child2name}"]
+    ],
+    "required": true
+}
+```
+
+### 6. mpl - Multiple Price List (with automatic logic)
+
+Same structure as `grid`, but selecting option in row k automatically:
+
+- Selects first option for rows 1 to k-1
+- Selects second option for rows k+1 onwards
+
+```json
+{
+    "question_id": "price_list",
+    "type": "mpl",
+    "query": "Would you accept each offer?",
+    "prefixes": ["$10", "$20", "$30", "$40"],
+    "options": [
+        ["Yes", "No"],
+        ["Yes", "No"],
+        ["Yes", "No"],
+        ["Yes", "No"]
+    ],
+    "required": true
+}
+```
+
+### 7. plaintext - Display text only (no input)
+
+```json
+{
+    "question_id": "instructions",
+    "type": "plaintext",
+    "text": "Next, we'll ask about {child1name} at {child1school}."
+}
+```
+
+### 8. consent - Consent checkbox with text
+
+```json
+{
+    "question_id": "consent_form",
+    "type": "consent",
+    "query": "I agree to participate",
+    "text": "<h5>Study Title</h5><p>Detailed consent information...</p>"
+}
+```
+
+## Common Fields
+
+- `question_id`: Unique identifier (required)
+- `type`: Question type (required)
+- `query`: Main question text (required for input questions)
+- `datatype`: "text" or "number" (for input questions)
+- `required`: true/false (defaults to false)
+- `values`: Array of choices (for select questions)
+- `prefixes`: Array of row labels (for multiopen/grid/mpl)
+- `options`: 2D array of choices per row (for grid/mpl)
+- `text`: Display content (for plaintext/consent)
+
+## Complete Example Survey
+
+```json
+{
+    "survey_id": "Child1",
+    "name": "Child 1 Demographics",
+    "questions": [
+        {
+            "question_id": "consent",
+            "type": "consent",
+            "query": "I consent to this survey",
+            "text": "<p>This survey collects information about {child1name} who attends {child1school}...</p>"
+        },
+        {
+            "question_id": "intro",
+            "type": "plaintext",
+            "text": "Please answer the following questions about {child1name}."
+        },
+        {
+            "question_id": "age",
+            "type": "open",
+            "query": "How old is {child1name}?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "grade",
+            "type": "singleselect",
+            "query": "What grade is {child1name} in at {child1school}?",
+            "values": ["1st", "2nd", "3rd", "4th", "5th"],
+            "required": true
+        },
+        {
+            "question_id": "activities",
+            "type": "multiselect",
+            "query": "Which activities does {child1name} participate in?",
+            "values": ["Sports", "Music", "Art", "Drama", "Academic clubs"],
+            "required": true
+        },
+        {
+            "question_id": "time_allocation",
+            "type": "multiopen",
+            "query": "Hours per week {child1name} spends on:",
+            "prefixes": [
+                "Homework",
+                "Reading",
+                "Screen time",
+                "Playing"
+            ],
+            "datatype": "number",
+            "required": true
+        }
+    ]
+}
+```

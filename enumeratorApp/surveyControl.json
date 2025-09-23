@@ -1,0 +1,102 @@
+{
+    "survey_id": "surveyControl",
+    "name": "Post-Experiment Reflection Survey",
+    "questions": [
+        {
+            "question_id": "consent_control_survey",
+            "type": "consent",
+            "query": "I consent to participate in this control group post-experiment reflection survey",
+            "text": "<h5>Research Study Consent - Control Group Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Control Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the control group. This post-experiment survey collects your reflections and feedback about your experience in the resource allocation experiment.</p><p><strong>What you will do:</strong> Reflect on your experience with the investment decision scenarios, describe your strategy, and provide feedback about the experiment design. This should take approximately 10-15 minutes.</p><p><strong>Control Group Procedures:</strong> As part of the control group, your responses will be compared with the treatment group to assess the impact of different experimental conditions.</p><p><strong>Risks and Benefits:</strong> There are minimal risks. You may find some questions require careful reflection about your decision-making process. Your feedback will help improve future research.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes. Group assignment and responses will be anonymized.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time without affecting your participation in other parts of the study.</p><p><strong>Contact:</strong> If you have questions about this research or your rights as a participant, please contact the research team.</p>"
+        },
+        {
+            "question_id": "ref_intro",
+            "type": "plaintext",
+            "text": "Thank you for completing the investment scenarios involving {child1name} and {child2name}. This final survey asks about your experience and reflections on the experiment."
+        },
+        {
+            "question_id": "ref_children_context",
+            "type": "plaintext",
+            "text": "In the scenarios, you made decisions about allocating lessons between {child1name} (ability: {child1ability}, attends {child1school}) and {child2name} (ability: {child2ability}, attends {child2school})."
+        },
+        {
+            "question_id": "ref_difficulty",
+            "type": "singleselect",
+            "query": "How difficult did you find the investment decision-making scenarios involving {child1name} and {child2name}?",
+            "values": ["Very easy", "Somewhat easy", "Neither easy nor difficult", "Somewhat difficult", "Very difficult"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_strategy",
+            "type": "open",
+            "query": "Describe the strategy or approach you used when making investment decisions between {child1name} and {child2name} in the scenarios.",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_factors_considered",
+            "type": "multiselect",
+            "query": "Which factors did you consider most when allocating lessons between {child1name} (ability: {child1ability}) and {child2name} (ability: {child2ability})? (Select all that apply)",
+            "values": ["Maximizing total earnings", "Ensuring fairness", "Helping the weaker child", "Helping the stronger child", "Minimizing inequality", "My personal values"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_school_influence",
+            "type": "singleselect",
+            "query": "Did the fact that {child1name} attends {child1school} and {child2name} attends {child2school} influence your investment decisions?",
+            "values": ["Greatly influenced", "Somewhat influenced", "Slightly influenced", "Not influenced at all", "I didn't consider the schools"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_ability_gaps",
+            "type": "multiopen",
+            "query": "How did the ability difference between your children affect your decisions?",
+            "prefixes": [
+                "How often you favored {child1name} (higher ability: {child1ability})",
+                "How often you favored {child2name} (lower ability: {child2ability})",
+                "How much the {child1ability} vs {child2ability} gap mattered to you"
+            ],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_consistency",
+            "type": "singleselect",
+            "query": "Do you feel your decisions were consistent across the different scenarios involving {child1name} and {child2name}?",
+            "values": ["Very consistent", "Mostly consistent", "Somewhat consistent", "Not very consistent", "Not consistent at all"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_real_world",
+            "type": "singleselect",
+            "query": "How similar were these experimental decisions to real-world decisions you make about {child1name} and {child2name}?",
+            "values": ["Very similar", "Somewhat similar", "Neither similar nor different", "Somewhat different", "Very different"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_learning",
+            "type": "open",
+            "query": "Did participating in this experiment make you think differently about how you allocate resources between {child1name} and {child2name}? Please explain.",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_feedback",
+            "type": "open",
+            "query": "Do you have any feedback about the experiment design, interface, or instructions? (Note: This was {sessionType} group experiment for participant {participant} with enumerator {enumerator})",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_additional",
+            "type": "open",
+            "query": "Is there anything else you would like to share about your experience or thoughts related to this study involving {child1name} and {child2name}?",
+            "datatype": "text",
+            "required": true
+        }
+    ]
+}

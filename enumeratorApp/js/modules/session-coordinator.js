@@ -2,45 +2,57 @@ import { SCENARIOS } from './constants.js';
 import { appState } from './app-state.js';
 import { sessionDB } from './sessionDB.js';
 import { sliderResponseDB } from './sliderResponseDB.js';
+import { surveyResponseDB } from './surveyResponseDB.js';
 
 // Session Coordinator - orchestrates session and response operations with business logic
 export class SessionCoordinator {
     constructor() {
-        // Coordinate between sessionDB and sliderResponseDB
+        // Coordinate between sessionDB, sliderResponseDB, and surveyResponseDB
         this.sessionDB = sessionDB;
         this.responseDB = sliderResponseDB;
+        this.surveyResponseDB = surveyResponseDB;
     }
 
 
     // Database operations that require coordination
     async resetDatabase() {
         try {
-            // Close both databases if they're open
+            // Close all databases if they're open
             if (this.sessionDB.db && this.sessionDB.db.isOpen()) {
                 this.sessionDB.db.close();
             }
             if (this.responseDB.db && this.responseDB.db.isOpen()) {
                 this.responseDB.db.close();
             }
-            
-            // Delete both databases (only if they exist)
+            if (this.surveyResponseDB.db && this.surveyResponseDB.db.isOpen()) {
+                this.surveyResponseDB.db.close();
+            }
+
+            // Delete all databases (only if they exist)
             if (this.sessionDB.db) {
                 await this.sessionDB.db.delete();
             }
             if (this.responseDB.db) {
                 await this.responseDB.db.delete();
             }
-            
-            // Reinitialize both instances
+            if (this.surveyResponseDB.db) {
+                await this.surveyResponseDB.db.delete();
+            }
+
+            // Reinitialize all instances
             this.sessionDB.initializeDatabase();
             this.responseDB.initializeDatabase();
-            
-            // Ensure both are open (only if databases were created successfully)
+            this.surveyResponseDB.initializeDatabase();
+
+            // Ensure all are open (only if databases were created successfully)
             if (this.sessionDB.db) {
                 await this.sessionDB.ensureOpen();
             }
             if (this.responseDB.db) {
                 await this.responseDB.ensureOpen();
+            }
+            if (this.surveyResponseDB.db) {
+                await this.surveyResponseDB.ensureOpen();
             }
         } catch (error) {
             console.error('Error during database reset:', error);
@@ -50,15 +62,17 @@ export class SessionCoordinator {
 
     async deleteSession(sessionId) {
         if (!this.sessionDB.db) return;
-        
-        // Ensure both databases are open
+
+        // Ensure all databases are open
         await this.sessionDB.ensureOpen();
         await this.responseDB.ensureOpen();
-        
-        // Delete from both databases - not atomic but acceptable for this use case
+        await this.surveyResponseDB.ensureOpen();
+
+        // Delete from all databases - not atomic but acceptable for this use case
         try {
             // Delete responses first (safe if session delete fails)
             await this.responseDB.deleteSessionResponses(sessionId);
+            await this.surveyResponseDB.deleteSessionSurveyResponses(sessionId);
             // Then delete session
             await this.sessionDB.deleteSession(sessionId);
         } catch (error) {
@@ -134,8 +148,8 @@ export class SessionCoordinator {
     // Delegate methods to appropriate DB classes
     
     // Session operations
-    async createSession(participantId, enumeratorId, child1Ability, child2Ability) {
-        return await this.sessionDB.createSession(participantId, enumeratorId, child1Ability, child2Ability);
+    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType) {
+        return await this.sessionDB.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType);
     }
 
     async loadSessions() {
@@ -173,6 +187,41 @@ export class SessionCoordinator {
 
     async getResponseStatistics(sessionId) {
         return await this.responseDB.getResponseStatistics(sessionId);
+    }
+
+    // Survey response operations
+    async completeSurveySession(sessionId, surveyId, responses) {
+        if (!this.sessionDB.db || !this.surveyResponseDB.db) return;
+
+        // Ensure both databases are open
+        await this.sessionDB.ensureOpen();
+        await this.surveyResponseDB.ensureOpen();
+
+        // Complete across both databases
+        try {
+            // Save all survey responses first
+            await this.surveyResponseDB.completeSurveySession(sessionId, surveyId, responses);
+            // Then mark specific survey as completed
+            const surveyStatusField = `${surveyId.toLowerCase()}SurveyStatus`;
+            const surveyCompletedField = `${surveyId.toLowerCase()}SurveyCompletedAt`;
+
+            const statusUpdate = {};
+            statusUpdate[surveyStatusField] = 'completed';
+            statusUpdate[surveyCompletedField] = new Date().toISOString();
+
+            await this.sessionDB.updateSessionStatus(sessionId, statusUpdate);
+        } catch (error) {
+            console.error('Error in coordinated survey completion:', error);
+            throw error;
+        }
+    }
+
+    async getSessionSurveyResponses(sessionId, surveyId = null) {
+        return await this.surveyResponseDB.getSessionSurveyResponses(sessionId, surveyId);
+    }
+
+    async getSurveyStatistics(sessionId, surveyId) {
+        return await this.surveyResponseDB.getSurveyStatistics(sessionId, surveyId);
     }
 }
 

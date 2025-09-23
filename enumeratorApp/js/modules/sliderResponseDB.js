@@ -16,12 +16,12 @@ export class SliderResponseDB {
         }
 
         try {
-            this.db = new Dexie('ResponsesDB');
+            this.db = new Dexie('SliderResponsesDB');
             this.db.version(1).stores({
                 pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
             });
         } catch (error) {
-            console.error('Failed to initialize ResponsesDB:', error);
+            console.error('Failed to initialize SliderResponsesDB:', error);
             this.db = null;
             throw new Error('Database initialization failed');
         }

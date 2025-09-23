@@ -1,0 +1,107 @@
+{
+    "survey_id": "surveyTreatment",
+    "name": "Investment Attitudes and Preferences",
+    "questions": [
+        {
+            "question_id": "consent_treatment_survey",
+            "type": "consent",
+            "query": "I consent to participate in this treatment group survey about investment attitudes and preferences",
+            "text": "<h5>Research Study Consent - Treatment Group Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Treatment Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the treatment group. This survey examines your attitudes and preferences regarding investment decisions for children with different abilities.</p><p><strong>What you will do:</strong> Answer questions about your investment philosophy, decision-making factors, and hypothetical scenarios involving resource allocation between children. This should take approximately 10-15 minutes.</p><p><strong>Treatment Group Procedures:</strong> As part of the treatment group, you will be presented with specific scenarios and decision-making frameworks that may influence your responses.</p><p><strong>Risks and Benefits:</strong> There are minimal risks. You may find some questions thought-provoking regarding parenting decisions. The research will contribute to understanding of family investment behaviors.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes. Group assignment and responses will be anonymized.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time without affecting your participation in other parts of the study.</p><p><strong>Contact:</strong> If you have questions about this research or your rights as a participant, please contact the research team.</p>"
+        },
+        {
+            "question_id": "att_intro",
+            "type": "plaintext",
+            "text": "This survey examines your attitudes about investing in {child1name} (ability: {child1ability}, attends {child1school}) and {child2name} (ability: {child2ability}, attends {child2school})."
+        },
+        {
+            "question_id": "att_investment_philosophy",
+            "type": "open",
+            "query": "In your own words, describe your philosophy about investing in {child1name} and {child2name}'s education and development.",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "att_child_comparison",
+            "type": "singleselect",
+            "query": "When making investment decisions between {child1name} and {child2name}, how do you typically approach their different abilities?",
+            "values": ["Invest equally regardless of ability", "Invest more in the higher-ability child", "Invest more in the lower-ability child", "Invest based on each child's specific needs", "I don't have a consistent approach"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "att_school_investment",
+            "type": "multiopen",
+            "query": "How much do you spend per month on educational extras for each child's schooling?",
+            "prefixes": [
+                "Monthly spending on extras for {child1name} at {child1school}",
+                "Monthly spending on extras for {child2name} at {child2school}"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "att_factors",
+            "type": "multiselect",
+            "query": "Which factors most influence your decisions about investing in {child1name} vs {child2name}? (Select all that apply)",
+            "values": ["Child's natural ability", "Child's effort and motivation", "Child's interests", "Future earning potential", "Fairness between children", "Available resources"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "att_scenarios",
+            "type": "grid",
+            "query": "For each scenario below, would you prefer to give the investment to {child1name} (ability: {child1ability}) or {child2name} (ability: {child2ability})?",
+            "options": [
+                ["{child1name}", "{child2name}"],
+                ["{child1name}", "{child2name}"],
+                ["{child1name}", "{child2name}"],
+                ["{child1name}", "{child2name}"]
+            ],
+            "prefixes": [
+                "Limited tutoring budget: one child can get intensive help",
+                "Music lessons: only one child can participate this year",
+                "Summer camp opportunity: space for one child",
+                "Advanced academic program: one child can be enrolled"
+            ],
+            "required": true
+        },
+        {
+            "question_id": "att_school_priorities",
+            "type": "mpl",
+            "query": "For each level of support, would you prioritize {child1name} at {child1school} or {child2name} at {child2school}?",
+            "prefixes": [
+                "Basic homework help",
+                "Weekly tutoring sessions",
+                "Intensive test preparation",
+                "Private lessons in weak subjects"
+            ],
+            "options": [
+                ["{child1name}", "{child2name}"],
+                ["{child1name}", "{child2name}"],
+                ["{child1name}", "{child2name}"],
+                ["{child1name}", "{child2name}"]
+            ],
+            "required": true
+        },
+        {
+            "question_id": "att_concerns",
+            "type": "multiopen",
+            "query": "What are your main concerns when making investment decisions about {child1name} and {child2name}?",
+            "prefixes": [
+                "Concern about fairness between {child1name} and {child2name}",
+                "Concern about effectiveness of investments",
+                "Concern about long-term outcomes for both children"
+            ],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "att_confidence",
+            "type": "singleselect",
+            "query": "How confident do you feel about your ability to make good investment decisions for {child1name} and {child2name}?",
+            "values": ["Very confident", "Somewhat confident", "Neutral", "Somewhat uncertain", "Very uncertain"],
+            "datatype": "text",
+            "required": true
+        }
+    ]
+}

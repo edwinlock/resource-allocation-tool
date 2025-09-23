@@ -1,0 +1,114 @@
+{
+    "survey_id": "surveyChild",
+    "name": "Demographic and Background Survey",
+    "questions": [
+        {
+            "question_id": "consent_child_survey",
+            "type": "consent",
+            "query": "I consent to participate in this demographic and background survey about my children",
+            "text": "<h5>Research Study Consent - Child Demographics Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study</p><p><strong>Purpose:</strong> We are conducting research to understand how parents make decisions about investing in their children's development. This survey will collect basic demographic information about you and your children.</p><p><strong>What you will do:</strong> Answer questions about your background, education, income, and your children's ages and development priorities. This should take approximately 5-10 minutes.</p><p><strong>Risks and Benefits:</strong> There are no known risks to participating in this survey. The information will help researchers understand family decision-making patterns.</p><p><strong>Confidentiality:</strong> Your responses will be kept confidential and used only for research purposes. No personally identifying information will be shared.</p><p><strong>Voluntary Participation:</strong> Your participation is completely voluntary. You may stop at any time without penalty.</p><p><strong>Contact:</strong> If you have questions about this research, please contact the research team.</p>"
+        },
+        {
+            "question_id": "demo_name",
+            "type": "open",
+            "query": "What is your full name?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "demo_age",
+            "type": "open",
+            "query": "What is your age?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "demo_education",
+            "type": "singleselect",
+            "query": "What is your highest level of education?",
+            "values": ["Primary school", "Secondary school", "High school", "University degree", "Graduate degree"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "demo_income",
+            "type": "singleselect",
+            "query": "What is your approximate monthly household income?",
+            "values": ["Less than $1,000", "$1,000-$2,999", "$3,000-$4,999", "$5,000-$7,499", "$7,500 or more"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "demo_children_info",
+            "type": "multiopen",
+            "query": "Please provide information about your children in this study:",
+            "prefixes": [
+                "{child1name} age (years)",
+                "{child2name} age (years)"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "demo_school_satisfaction",
+            "type": "multiopen",
+            "query": "How satisfied are you with each child's current school? (Scale: 1=Very dissatisfied, 5=Very satisfied)",
+            "prefixes": [
+                "Satisfaction with {child1school} (where {child1name} attends)",
+                "Satisfaction with {child2school} (where {child2name} attends)"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "demo_child_comparison",
+            "type": "singleselect",
+            "query": "Between {child1name} (ability: {child1ability}) and {child2name} (ability: {child2ability}), who do you think has more potential for academic success?",
+            "values": ["{child1name}", "{child2name}", "Both have equal potential"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "demo_time_allocation",
+            "type": "multiopen",
+            "query": "Approximately how many hours per week do you spend helping each child with schoolwork?",
+            "prefixes": [
+                "Hours helping {child1name} with {child1school} homework",
+                "Hours helping {child2name} with {child2school} homework"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "demo_priorities",
+            "type": "multiselect",
+            "query": "Which of the following are important priorities when investing in your children's education? (Select all that apply)",
+            "values": ["Academic achievement", "Character development", "Social skills", "Physical health", "Creativity and arts", "Technical skills"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "demo_specific_needs",
+            "type": "grid",
+            "query": "For each type of educational support, which child would benefit more?",
+            "prefixes": [
+                "Extra tutoring",
+                "Music lessons",
+                "Sports activities",
+                "Art classes"
+            ],
+            "options": [
+                ["{child1name}", "{child2name}", "Both equally"],
+                ["{child1name}", "{child2name}", "Both equally"],
+                ["{child1name}", "{child2name}", "Both equally"],
+                ["{child1name}", "{child2name}", "Both equally"]
+            ],
+            "required": true
+        },
+        {
+            "question_id": "demo_intro",
+            "type": "plaintext",
+            "text": "Thank you for providing information about {child1name} and {child2name}. This completes the demographic section of our study for participant {participant} working with enumerator {enumerator}."
+        }
+    ]
+}

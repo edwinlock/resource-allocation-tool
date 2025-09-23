@@ -70,9 +70,6 @@
                         <button type="button" class="btn btn-primary" id="createSessionBtn">
                             Create New Session
                         </button>
-                        <button type="button" class="btn btn-secondary ms-2" id="refreshBtn">
-                            Refresh
-                        </button>
                     </div>
                     <div class="col-md-6 text-end">
                         <span class="text-muted">Total Sessions: <span id="sessionCount">0</span></span>
@@ -91,8 +88,8 @@
                                         <th>Session ID</th>
                                         <th>Participant ID</th>
                                         <th>Enumerator ID</th>
-                                        <th>Survey Status</th>
-                                        <th>Slider Status</th>
+                                        <th>Children</th>
+                                        <th>Type</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -138,12 +135,51 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
+                                <label for="child1Name" class="form-label">Child 1 Name</label>
+                                <input type="text" class="form-control" id="child1Name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="child2Name" class="form-label">Child 2 Name</label>
+                                <input type="text" class="form-control" id="child2Name" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <label for="child1Ability" class="form-label">Child 1 Ability (0-100)</label>
                                 <input type="number" class="form-control" id="child1Ability" min="0" max="100" step="1" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="child2Ability" class="form-label">Child 2 Ability (0-100)</label>
                                 <input type="number" class="form-control" id="child2Ability" min="0" max="100" step="1" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="child1School" class="form-label">Child 1 School</label>
+                                <input type="text" class="form-control" id="child1School" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="child2School" class="form-label">Child 2 School</label>
+                                <input type="text" class="form-control" id="child2School" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label">Session Type</label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sessionType" id="sessionTypeTreatment" value="treatment" required>
+                                        <label class="form-check-label" for="sessionTypeTreatment">
+                                            Treatment
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sessionType" id="sessionTypeControl" value="control" required>
+                                        <label class="form-check-label" for="sessionTypeControl">
+                                            Control
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>

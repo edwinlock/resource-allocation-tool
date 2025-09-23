@@ -50,13 +50,6 @@ class IndexUIManager {
             });
         }
 
-        // Refresh button
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                this.loadAndRenderSessions();
-            });
-        }
 
         // Reset DB button
         const resetDbBtn = document.getElementById('resetDbBtn');
@@ -78,16 +71,30 @@ class IndexUIManager {
         // Event delegation for session action buttons
         document.addEventListener('click', (event) => {
             if (event.target.classList.contains('session-action')) {
+                // Prevent action on disabled buttons
+                if (event.target.disabled || event.target.hasAttribute('disabled')) {
+                    return;
+                }
+
                 const action = event.target.dataset.action;
                 const sessionId = event.target.dataset.sessionId;
-                
+
                 if (action && sessionId) {
                     switch (action) {
                         case 'viewSessionDetails':
                             this.viewSessionDetails(sessionId);
                             break;
-                        case 'startSurvey':
-                            this.startSurvey(sessionId);
+                        case 'startChild1Survey':
+                            this.startChild1Survey(sessionId);
+                            break;
+                        case 'startChild2Survey':
+                            this.startChild2Survey(sessionId);
+                            break;
+                        case 'startTreatmentSurvey':
+                            this.startTreatmentSurvey(sessionId);
+                            break;
+                        case 'startControlSurvey':
+                            this.startControlSurvey(sessionId);
                             break;
                         case 'startSlider':
                             this.startSlider(sessionId);
@@ -113,13 +120,18 @@ class IndexUIManager {
     async handleCreateSession() {
         const participantId = document.getElementById('participantId').value.trim();
         const enumeratorId = document.getElementById('enumeratorId').value.trim();
+        const child1Name = document.getElementById('child1Name').value.trim();
+        const child2Name = document.getElementById('child2Name').value.trim();
+        const child1School = document.getElementById('child1School').value.trim();
+        const child2School = document.getElementById('child2School').value.trim();
         const child1Ability = parseInt(document.getElementById('child1Ability').value);
         const child2Ability = parseInt(document.getElementById('child2Ability').value);
+        const sessionType = document.querySelector('input[name="sessionType"]:checked')?.value;
 
         // Clear any previous modal errors
         SessionUIUtils.hideModalError();
 
-        if (!participantId || !enumeratorId) {
+        if (!participantId || !enumeratorId || !child1Name || !child2Name || !child1School || !child2School || !sessionType) {
             SessionUIUtils.showModalError('Please fill in all fields');
             return;
         }
@@ -136,7 +148,7 @@ class IndexUIManager {
         }
 
         try {
-            await sessionManager.createSession(participantId, enumeratorId, child1Ability, child2Ability);
+            await sessionManager.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType);
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Session created successfully');
 
@@ -171,13 +183,43 @@ class IndexUIManager {
     }
 
     // Action button handlers for onclick events
-    async startSurvey(sessionId) {
+    async startChild1Survey(sessionId) {
         try {
             await sessionManager.markSurveyStarted(sessionId);
-            window.location.href = `survey.html?sessionId=${sessionId}`;
+            window.location.href = `survey.html?survey_id=Child1&session_id=${sessionId}`;
         } catch (error) {
-            console.error('Error starting survey:', error);
-            SessionUIUtils.showError('Failed to start survey');
+            console.error('Error starting child 1 survey:', error);
+            SessionUIUtils.showError('Failed to start child 1 survey');
+        }
+    }
+
+    async startChild2Survey(sessionId) {
+        try {
+            await sessionManager.markSurveyStarted(sessionId);
+            window.location.href = `survey.html?survey_id=Child2&session_id=${sessionId}`;
+        } catch (error) {
+            console.error('Error starting child 2 survey:', error);
+            SessionUIUtils.showError('Failed to start child 2 survey');
+        }
+    }
+
+    async startTreatmentSurvey(sessionId) {
+        try {
+            await sessionManager.markSurveyStarted(sessionId);
+            window.location.href = `survey.html?survey_id=Treatment&session_id=${sessionId}`;
+        } catch (error) {
+            console.error('Error starting treatment survey:', error);
+            SessionUIUtils.showError('Failed to start treatment survey');
+        }
+    }
+
+    async startControlSurvey(sessionId) {
+        try {
+            await sessionManager.markSurveyStarted(sessionId);
+            window.location.href = `survey.html?survey_id=Control&session_id=${sessionId}`;
+        } catch (error) {
+            console.error('Error starting control survey:', error);
+            SessionUIUtils.showError('Failed to start control survey');
         }
     }
 

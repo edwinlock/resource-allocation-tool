@@ -20,6 +20,9 @@ export class SessionDB {
             this.db.version(1).stores({
                 sessions: 'id, participantId, enumeratorID, createdAt, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, [participantId+enumeratorID]'
             });
+            this.db.version(6).stores({
+                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, child1school, child2school, sessionType, [participantId+enumeratorID]'
+            });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
             this.db = null;
@@ -50,7 +53,7 @@ export class SessionDB {
     }
 
     // Session CRUD operations
-    async createSession(participantId, enumeratorId, child1Ability, child2Ability) {
+    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType) {
         if (!this.db) {
             throw new Error('Database not available');
         }
@@ -75,14 +78,24 @@ export class SessionDB {
                 participantId: participantId,
                 enumeratorID: enumeratorId,
                 createdAt: getUTCDate(),
-                surveyStartedAt: null,
-                surveyCompletedAt: null,
-                surveyStatus: 'not_started',
+                child1SurveyStatus: 'not_started',
+                child1SurveyCompletedAt: null,
+                child2SurveyStatus: 'not_started',
+                child2SurveyCompletedAt: null,
+                treatmentSurveyStatus: 'not_started',
+                treatmentSurveyCompletedAt: null,
+                controlSurveyStatus: 'not_started',
+                controlSurveyCompletedAt: null,
                 sliderStartedAt: null,
                 sliderCompletedAt: null,
                 sliderStatus: 'not_started',
                 child1ability: child1Ability,
-                child2ability: child2Ability
+                child2ability: child2Ability,
+                child1name: child1Name,
+                child2name: child2Name,
+                child1school: child1School,
+                child2school: child2School,
+                sessionType: sessionType
             });
         } catch (error) {
             if (error.name === 'ConstraintError') {

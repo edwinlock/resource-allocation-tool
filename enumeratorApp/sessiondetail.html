@@ -113,12 +113,44 @@
                                         <span id="createdAt">-</span>
                                     </div>
                                     <div class="mb-3">
+                                        <span class="detail-label">Session Type:</span><br>
+                                        <span id="sessionType">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="detail-label">Child 1 Name:</span><br>
+                                        <span id="child1Name">-</span>
+                                    </div>
+                                    <div class="mb-3">
                                         <span class="detail-label">Child 1 Ability:</span><br>
                                         <span id="child1Ability">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="detail-label">Child 2 Name:</span><br>
+                                        <span id="child2Name">-</span>
                                     </div>
                                     <div class="mb-3">
                                         <span class="detail-label">Child 2 Ability:</span><br>
                                         <span id="child2Ability">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="detail-label">Child 1 School:</span><br>
+                                        <span id="child1School">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="detail-label">Child 2 School:</span><br>
+                                        <span id="child2School">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -132,17 +164,34 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Survey Status</h6>
+                                <div class="col-md-3">
+                                    <h6>Child 1 Survey</h6>
                                     <div class="mb-3">
-                                        <div id="surveyStatus">-</div>
+                                        <div id="child1SurveyStatus">-</div>
                                         <small class="text-muted">
-                                            <strong>Started:</strong> <span id="surveyStarted">-</span><br>
-                                            <strong>Completed:</strong> <span id="surveyCompleted">-</span>
+                                            <strong>Completed:</strong> <span id="child1SurveyCompleted">-</span>
                                         </small>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
+                                    <h6>Child 2 Survey</h6>
+                                    <div class="mb-3">
+                                        <div id="child2SurveyStatus">-</div>
+                                        <small class="text-muted">
+                                            <strong>Completed:</strong> <span id="child2SurveyCompleted">-</span>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6 id="mainSurveyTitle">Parent Survey</h6>
+                                    <div class="mb-3">
+                                        <div id="mainSurveyStatus">-</div>
+                                        <small class="text-muted">
+                                            <strong>Completed:</strong> <span id="mainSurveyCompleted">-</span>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <h6>Slider Status</h6>
                                     <div class="mb-3">
                                         <div id="sliderStatus">-</div>
@@ -156,10 +205,26 @@
                         </div>
                     </div>
                     
-                    <!-- Response Data Card -->
+                    <!-- Survey Responses Card -->
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">📋 Survey Responses</h5>
+                            <span class="badge bg-success" id="surveyResponseCount">0 responses</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="noSurveyResponses" class="text-center text-muted py-4">
+                                No survey responses available for this session.
+                            </div>
+                            <div id="surveyResponsesContent" style="display: none;">
+                                <!-- Survey responses will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider Response Data Card -->
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">📊 Response Data</h5>
+                            <h5 class="mb-0">📊 Slider Response Data</h5>
                             <span class="badge bg-primary" id="responseCount">0 responses</span>
                         </div>
                         <div class="card-body">
