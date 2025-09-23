@@ -137,6 +137,7 @@ export class SessionRenderer {
             ? `${session.child1name}, ${session.child2name}`
             : '-';
 
+
         const sessionTypeDisplay = session.sessionType
             ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)
             : 'Unknown';
@@ -241,8 +242,7 @@ export class SessionRenderer {
         SessionUIUtils.updateElementText('child2Name', session.child2name || '-');
         SessionUIUtils.updateElementText('child1Ability', session.child1ability || '-');
         SessionUIUtils.updateElementText('child2Ability', session.child2ability || '-');
-        SessionUIUtils.updateElementText('child1School', session.child1school || '-');
-        SessionUIUtils.updateElementText('child2School', session.child2school || '-');
+        SessionUIUtils.updateElementText('school', session.school || '-');
         SessionUIUtils.updateElementText('sessionType', session.sessionType ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1) : '-');
 
         // Status Timeline - Individual Survey Statuses

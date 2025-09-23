@@ -115,8 +115,6 @@ class SliderApp {
             this.chartManager.createAllCharts(uiManager, appState);
             
             // Update UI displays and chart visibility
-            uiManager.updateDebugDisplay();
-            uiManager.updateScenarioDropdown();
             uiManager.updateChartVisibility();
             
             

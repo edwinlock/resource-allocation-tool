@@ -18,23 +18,7 @@ export class SessionDB {
         try {
             this.db = new Dexie('SessionsDB');
             this.db.version(1).stores({
-                sessions: 'id, participantId, enumeratorID, createdAt, surveyStartedAt, surveyCompletedAt, surveyStatus, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, [participantId+enumeratorID]'
-            });
-            this.db.version(6).stores({
-                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, child1school, child2school, sessionType, [participantId+enumeratorID]'
-            });
-            this.db.version(7).stores({
-                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, child1school, child2school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
-            }).upgrade(tx => {
-                // Add default values for new upload fields to existing sessions
-                return tx.sessions.toCollection().modify(session => {
-                    if (session.uploadedAt === undefined) {
-                        session.uploadedAt = null;
-                    }
-                    if (session.uploadStatus === undefined) {
-                        session.uploadStatus = 'not_uploaded';
-                    }
-                });
+                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
             });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
@@ -66,10 +50,11 @@ export class SessionDB {
     }
 
     // Session CRUD operations
-    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType) {
+    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType) {
         if (!this.db) {
             throw new Error('Database not available');
         }
+
 
         await this.ensureOpen();
         
@@ -106,8 +91,7 @@ export class SessionDB {
                 child2ability: child2Ability,
                 child1name: child1Name,
                 child2name: child2Name,
-                child1school: child1School,
-                child2school: child2School,
+                school: school,
                 sessionType: sessionType,
                 uploadedAt: null,
                 uploadStatus: 'not_uploaded'

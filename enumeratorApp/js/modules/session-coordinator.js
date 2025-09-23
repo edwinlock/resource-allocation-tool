@@ -148,8 +148,8 @@ export class SessionCoordinator {
     // Delegate methods to appropriate DB classes
     
     // Session operations
-    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType) {
-        return await this.sessionDB.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType);
+    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType) {
+        return await this.sessionDB.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType);
     }
 
     async loadSessions() {
@@ -343,12 +343,12 @@ export class SessionCoordinator {
                         child1: {
                             name: session.child1name,
                             ability: session.child1ability,
-                            school: session.child1school
+                            school: session.school
                         },
                         child2: {
                             name: session.child2name,
                             ability: session.child2ability,
-                            school: session.child2school
+                            school: session.school
                         }
                     }
                 },

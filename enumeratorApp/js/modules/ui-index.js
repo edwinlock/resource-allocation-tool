@@ -152,16 +152,16 @@ class IndexUIManager {
         const enumeratorId = document.getElementById('enumeratorId').value.trim();
         const child1Name = document.getElementById('child1Name').value.trim();
         const child2Name = document.getElementById('child2Name').value.trim();
-        const child1School = document.getElementById('child1School').value.trim();
-        const child2School = document.getElementById('child2School').value.trim();
+        const school = document.getElementById('school').value.trim();
         const child1Ability = parseInt(document.getElementById('child1Ability').value);
         const child2Ability = parseInt(document.getElementById('child2Ability').value);
         const sessionType = document.querySelector('input[name="sessionType"]:checked')?.value;
 
+
         // Clear any previous modal errors
         SessionUIUtils.hideModalError();
 
-        if (!participantId || !enumeratorId || !child1Name || !child2Name || !child1School || !child2School || !sessionType) {
+        if (!participantId || !enumeratorId || !child1Name || !child2Name || !school || !sessionType) {
             SessionUIUtils.showModalError('Please fill in all fields');
             return;
         }
@@ -178,7 +178,7 @@ class IndexUIManager {
         }
 
         try {
-            await sessionManager.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, child1School, child2School, sessionType);
+            await sessionManager.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType);
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Session created successfully');
 

@@ -32,8 +32,8 @@ class SurveyUIManager {
                 child2ability: this.sessionData.child2ability || 20,
                 child1name: this.sessionData.child1name || 'Child 1',
                 child2name: this.sessionData.child2name || 'Child 2',
-                child1school: this.sessionData.child1school || 'School',
-                child2school: this.sessionData.child2school || 'School',
+                child1school: this.sessionData.school || 'School',
+                child2school: this.sessionData.school || 'School',
                 participant: this.sessionData.participantId || 'Participant',
                 enumerator: this.sessionData.enumeratorID || 'Enumerator',
                 sessionType: this.sessionData.sessionType || 'unknown'
