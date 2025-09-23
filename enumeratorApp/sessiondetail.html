@@ -204,7 +204,45 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Upload Status Card -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">📤 Upload Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="detail-label">Upload Status:</span><br>
+                                        <span id="uploadStatus">-</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="detail-label">Uploaded At:</span><br>
+                                        <span id="uploadedAt">-</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <span class="detail-label">Session Complete:</span><br>
+                                        <span id="sessionComplete">-</span>
+                                    </div>
+                                    <div id="uploadError" class="mb-3" style="display: none;">
+                                        <span class="detail-label">Last Error:</span><br>
+                                        <span class="text-danger" id="uploadErrorMessage">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div id="uploadActions">
+                                        <!-- Upload buttons will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Survey Responses Card -->
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">

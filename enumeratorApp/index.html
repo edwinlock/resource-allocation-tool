@@ -72,17 +72,23 @@
                         </button>
                     </div>
                     <div class="col-md-6 text-end">
-                        <span class="text-muted">Total Sessions: <span id="sessionCount">0</span></span>
+                        <span class="text-muted">
+                            Current: <span id="currentSessionCount">0</span> |
+                            Uploaded: <span id="uploadedSessionCount">0</span> |
+                            Total: <span id="totalSessionCount">0</span>
+                        </span>
                     </div>
                 </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Current Sessions</h5>
+
+                <!-- Current Sessions Table -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">📝 Current Sessions</h5>
+                        <span class="badge bg-primary" id="currentSessionsBadge">0 sessions</span>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover session-table" id="sessionsTable">
+                            <table class="table table-striped table-hover session-table" id="currentSessionsTable">
                                 <thead>
                                     <tr>
                                         <th>Session ID</th>
@@ -90,13 +96,46 @@
                                         <th>Enumerator ID</th>
                                         <th>Children</th>
                                         <th>Type</th>
+                                        <th>Upload Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="sessionsTableBody">
+                                <tbody id="currentSessionsTableBody">
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-4">
-                                            Loading sessions...
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            Loading current sessions...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Uploaded Sessions Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">✅ Uploaded Sessions</h5>
+                        <span class="badge bg-success" id="uploadedSessionsBadge">0 uploaded</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover session-table" id="uploadedSessionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Session ID</th>
+                                        <th>Participant ID</th>
+                                        <th>Enumerator ID</th>
+                                        <th>Children</th>
+                                        <th>Type</th>
+                                        <th>Uploaded At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="uploadedSessionsTableBody">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            No uploaded sessions yet.
                                         </td>
                                     </tr>
                                 </tbody>

@@ -23,6 +23,19 @@ export class SessionDB {
             this.db.version(6).stores({
                 sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, child1school, child2school, sessionType, [participantId+enumeratorID]'
             });
+            this.db.version(7).stores({
+                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, child1school, child2school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
+            }).upgrade(tx => {
+                // Add default values for new upload fields to existing sessions
+                return tx.sessions.toCollection().modify(session => {
+                    if (session.uploadedAt === undefined) {
+                        session.uploadedAt = null;
+                    }
+                    if (session.uploadStatus === undefined) {
+                        session.uploadStatus = 'not_uploaded';
+                    }
+                });
+            });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
             this.db = null;
@@ -95,7 +108,9 @@ export class SessionDB {
                 child2name: child2Name,
                 child1school: child1School,
                 child2school: child2School,
-                sessionType: sessionType
+                sessionType: sessionType,
+                uploadedAt: null,
+                uploadStatus: 'not_uploaded'
             });
         } catch (error) {
             if (error.name === 'ConstraintError') {

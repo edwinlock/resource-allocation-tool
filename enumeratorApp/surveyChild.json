@@ -51,13 +51,14 @@
         },
         {
             "question_id": "demo_school_satisfaction",
-            "type": "multiopen",
-            "query": "How satisfied are you with each child's current school? (Scale: 1=Very dissatisfied, 5=Very satisfied)",
+            "type": "multilikert",
+            "query": "How satisfied are you with each child's current school?",
             "prefixes": [
                 "Satisfaction with {child1school} (where {child1name} attends)",
                 "Satisfaction with {child2school} (where {child2name} attends)"
             ],
-            "datatype": "number",
+            "min": 1,
+            "max": 5,
             "required": true
         },
         {
@@ -103,6 +104,45 @@
                 ["{child1name}", "{child2name}", "Both equally"],
                 ["{child1name}", "{child2name}", "Both equally"]
             ],
+            "required": true
+        },
+        {
+            "question_id": "demo_satisfaction_single",
+            "type": "likert",
+            "query": "Overall, how satisfied are you with your children's educational progress?",
+            "prefix": "Please rate your overall satisfaction",
+            "min": 1,
+            "max": 7,
+            "required": true
+        },
+        {
+            "question_id": "demo_child_attributes",
+            "type": "multilikert",
+            "query": "Rate each child on the following characteristics (0 = Very Low, 10 = Very High):",
+            "prefixes": [
+                "{child1name}'s motivation to learn",
+                "{child1name}'s natural academic ability",
+                "{child1name}'s social skills",
+                "{child2name}'s motivation to learn",
+                "{child2name}'s natural academic ability",
+                "{child2name}'s social skills"
+            ],
+            "min": 0,
+            "max": 10,
+            "required": true
+        },
+        {
+            "question_id": "demo_school_quality",
+            "type": "multilikert",
+            "query": "How would you rate the quality of each school? (1 = Poor, 5 = Excellent):",
+            "prefixes": [
+                "Teaching quality at {child1school}",
+                "Resources available at {child1school}",
+                "Teaching quality at {child2school}",
+                "Resources available at {child2school}"
+            ],
+            "min": 1,
+            "max": 5,
             "required": true
         },
         {

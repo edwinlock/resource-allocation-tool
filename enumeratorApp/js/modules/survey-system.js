@@ -519,6 +519,171 @@ export class ConsentQuestion extends SurveyQuestion {
     }
 }
 
+// Likert scale question - single scale with customizable range
+export class LikertQuestion extends SurveyQuestion {
+    constructor(questionData) {
+        super(questionData);
+        this.min = questionData.min !== undefined ? questionData.min : 0;
+        this.max = questionData.max !== undefined ? questionData.max : 5;
+        this.prefix = questionData.prefix || '';
+    }
+
+    render(variables = {}) {
+        const query = this.substituteVariables(this.query, variables);
+        const prefix = this.substituteVariables(this.prefix, variables);
+        const requiredAttr = this.required ? 'required' : '';
+
+        let html = `
+            <div class="mb-4">
+                <fieldset>
+                    <legend class="h5">${query}</legend>
+                    ${prefix ? `<div class="mb-3 text-muted">${prefix}</div>` : ''}
+                    <div class="likert-scale">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">${this.min}</span>
+                            <div class="d-flex gap-3">
+        `;
+
+        // Generate radio buttons for the scale
+        for (let i = this.min; i <= this.max; i++) {
+            html += `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio"
+                           name="q_${this.questionId}"
+                           id="q_${this.questionId}_${i}"
+                           value="${i}"
+                           data-question-id="${this.questionId}" ${requiredAttr}>
+                    <label class="form-check-label" for="q_${this.questionId}_${i}">
+                        ${i}
+                    </label>
+                </div>
+            `;
+        }
+
+        html += `
+                            </div>
+                            <span class="text-muted small">${this.max}</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        `;
+
+        return html;
+    }
+
+    getValue() {
+        const selectedElement = document.querySelector(`input[name="q_${this.questionId}"]:checked`);
+        return selectedElement ? parseInt(selectedElement.value) : null;
+    }
+}
+
+// Multi-Likert question - multiple likert scales with same range
+export class MultiLikertQuestion extends SurveyQuestion {
+    constructor(questionData) {
+        super(questionData);
+        this.min = questionData.min !== undefined ? questionData.min : 0;
+        this.max = questionData.max !== undefined ? questionData.max : 5;
+        this.prefixes = questionData.prefixes || [];
+    }
+
+    render(variables = {}) {
+        const query = this.substituteVariables(this.query, variables);
+        const requiredAttr = this.required ? 'required' : '';
+
+        let html = `
+            <div class="mb-4">
+                <fieldset>
+                    <legend class="h5">${query}</legend>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;"></th>
+        `;
+
+        // Header with scale numbers
+        for (let i = this.min; i <= this.max; i++) {
+            html += `<th class="text-center" style="width: ${60 / (this.max - this.min + 1)}%;">${i}</th>`;
+        }
+
+        html += `
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+
+        // Generate rows for each prefix
+        this.prefixes.forEach((prefix, rowIndex) => {
+            const displayPrefix = this.substituteVariables(prefix, variables);
+            html += `
+                <tr>
+                    <td class="align-middle">
+                        <strong>${displayPrefix}</strong>
+                    </td>
+            `;
+
+            // Generate radio buttons for each scale value
+            for (let i = this.min; i <= this.max; i++) {
+                html += `
+                    <td class="text-center">
+                        <div class="form-check d-inline-block">
+                            <input class="form-check-input" type="radio"
+                                   name="q_${this.questionId}_row_${rowIndex}"
+                                   id="q_${this.questionId}_${rowIndex}_${i}"
+                                   value="${i}"
+                                   data-question-id="${this.questionId}"
+                                   data-row="${rowIndex}" ${requiredAttr}>
+                            <label class="form-check-label visually-hidden" for="q_${this.questionId}_${rowIndex}_${i}">
+                                ${displayPrefix} - ${i}
+                            </label>
+                        </div>
+                    </td>
+                `;
+            }
+
+            html += `</tr>`;
+        });
+
+        html += `
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="text-muted small">${this.min} (Minimum)</span>
+                            <span class="text-muted small">${this.max} (Maximum)</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        `;
+
+        return html;
+    }
+
+    getValue() {
+        const values = [];
+        this.prefixes.forEach((_, rowIndex) => {
+            const selectedElement = document.querySelector(`input[name="q_${this.questionId}_row_${rowIndex}"]:checked`);
+            if (selectedElement) {
+                values.push(parseInt(selectedElement.value));
+            } else {
+                values.push(null);
+            }
+        });
+        return values.some(v => v !== null) ? values : null;
+    }
+
+    validate(answer) {
+        if (this.required && (!answer || answer.every(v => v === null))) {
+            return {
+                valid: false,
+                message: `Please answer all parts of: ${this.query}`
+            };
+        }
+        return { valid: true };
+    }
+}
+
 // Factory function to create appropriate question instance
 export function createQuestion(questionData) {
     switch (questionData.type) {
@@ -538,6 +703,10 @@ export function createQuestion(questionData) {
             return new PlainTextQuestion(questionData);
         case 'consent':
             return new ConsentQuestion(questionData);
+        case 'likert':
+            return new LikertQuestion(questionData);
+        case 'multilikert':
+            return new MultiLikertQuestion(questionData);
         default:
             throw new Error(`Unknown question type: ${questionData.type}`);
     }

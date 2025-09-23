@@ -20,10 +20,11 @@
         },
         {
             "question_id": "ref_difficulty",
-            "type": "singleselect",
+            "type": "likert",
             "query": "How difficult did you find the investment decision-making scenarios involving {child1name} and {child2name}?",
-            "values": ["Very easy", "Somewhat easy", "Neither easy nor difficult", "Somewhat difficult", "Very difficult"],
-            "datatype": "text",
+            "prefix": "Rate the difficulty level (1 = Very easy, 5 = Very difficult)",
+            "min": 1,
+            "max": 5,
             "required": true
         },
         {
@@ -43,10 +44,11 @@
         },
         {
             "question_id": "ref_school_influence",
-            "type": "singleselect",
+            "type": "likert",
             "query": "Did the fact that {child1name} attends {child1school} and {child2name} attends {child2school} influence your investment decisions?",
-            "values": ["Greatly influenced", "Somewhat influenced", "Slightly influenced", "Not influenced at all", "I didn't consider the schools"],
-            "datatype": "text",
+            "prefix": "Rate the influence level (1 = Not influenced at all, 5 = Greatly influenced)",
+            "min": 1,
+            "max": 5,
             "required": true
         },
         {
@@ -63,18 +65,20 @@
         },
         {
             "question_id": "ref_consistency",
-            "type": "singleselect",
+            "type": "likert",
             "query": "Do you feel your decisions were consistent across the different scenarios involving {child1name} and {child2name}?",
-            "values": ["Very consistent", "Mostly consistent", "Somewhat consistent", "Not very consistent", "Not consistent at all"],
-            "datatype": "text",
+            "prefix": "Rate your consistency (1 = Not consistent at all, 5 = Very consistent)",
+            "min": 1,
+            "max": 5,
             "required": true
         },
         {
             "question_id": "ref_real_world",
-            "type": "singleselect",
+            "type": "likert",
             "query": "How similar were these experimental decisions to real-world decisions you make about {child1name} and {child2name}?",
-            "values": ["Very similar", "Somewhat similar", "Neither similar nor different", "Somewhat different", "Very different"],
-            "datatype": "text",
+            "prefix": "Rate the similarity (1 = Very different, 5 = Very similar)",
+            "min": 1,
+            "max": 5,
             "required": true
         },
         {
@@ -89,6 +93,29 @@
             "type": "open",
             "query": "Do you have any feedback about the experiment design, interface, or instructions? (Note: This was {sessionType} group experiment for participant {participant} with enumerator {enumerator})",
             "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ref_decision_difficulty",
+            "type": "multilikert",
+            "query": "Rate how difficult each type of decision was during the experiment:",
+            "prefixes": [
+                "Decisions favoring {child1name}",
+                "Decisions favoring {child2name}",
+                "Decisions to split resources equally",
+                "Decisions when resources were limited"
+            ],
+            "min": 1,
+            "max": 5,
+            "required": true
+        },
+        {
+            "question_id": "ref_experiment_realism",
+            "type": "likert",
+            "query": "How realistic were the experimental scenarios compared to real parenting decisions?",
+            "prefix": "Rate the realism (1 = Not realistic at all, 7 = Very realistic)",
+            "min": 1,
+            "max": 7,
             "required": true
         },
         {

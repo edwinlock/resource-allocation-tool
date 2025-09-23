@@ -89,6 +89,13 @@ export class UIManager {
 
     onSliderChange(event) {
         const value = parseInt(event.target.value);
+
+        // Mark slider as touched and enable next button
+        if (!this.investmentSlider.classList.contains('slider-touched')) {
+            this.investmentSlider.classList.add('slider-touched');
+            this.enableNextButton();
+        }
+
         appState.setSelectedInvestment(value);
         this.updateDisplays();
         this.updateChartSelection(value);
@@ -270,6 +277,30 @@ export class UIManager {
             this.investmentSlider.value = response.child1investment;
             this.child1Display.textContent = response.child1investment;
             this.child2Display.textContent = ALLOCATABLE_BUDGET - response.child1investment;
+            // Mark slider as touched since we're restoring a saved response
+            this.investmentSlider.classList.add('slider-touched');
+            this.enableNextButton();
+        }
+    }
+
+    // Enable/disable next button based on slider interaction
+    enableNextButton() {
+        if (this.nextButton) {
+            this.nextButton.disabled = false;
+        }
+    }
+
+    disableNextButton() {
+        if (this.nextButton) {
+            this.nextButton.disabled = true;
+        }
+    }
+
+    // Reset slider state for new scenario
+    resetSliderForNewScenario() {
+        if (this.investmentSlider) {
+            this.investmentSlider.classList.remove('slider-touched');
+            this.disableNextButton();
         }
     }
 
@@ -314,8 +345,11 @@ export class UIManager {
         // Handle next button click
         this.nextButton.addEventListener('click', async () => {
             const result = await this.handleNextButtonClick(sessionManager);
-            
+
             if (!result.completed) {
+                // Reset slider state for new scenario
+                this.resetSliderForNewScenario();
+
                 // Update charts and UI
                 if (chartUpdateCallback) {
                     chartUpdateCallback();
@@ -361,7 +395,10 @@ export class UIManager {
                 abilityScore2: parseInt(this.child2Ability.value)
             });
         }
-        
+
+        // Initialize slider state - hide thumb and disable next button
+        this.disableNextButton();
+
         this.updateScenarioOptions();
         this.updateSessionDisplay();
         this.setupEventListeners();

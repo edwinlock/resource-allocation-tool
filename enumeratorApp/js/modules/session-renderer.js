@@ -6,10 +6,10 @@ export class SessionRenderer {
     static renderSessionRow(session) {
         const getActionButtons = (session) => {
             let buttons = [];
-            
+
             // Always show Details button first
             buttons.push(`<button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>`);
-            
+
             // Child 1 Survey button - always show, gray out if completed
             const child1Completed = session.child1SurveyStatus === 'completed';
             const child1BtnClass = child1Completed ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-primary';
@@ -45,11 +45,93 @@ export class SessionRenderer {
             const sliderBtnDisabled = sliderCompleted ? 'disabled' : '';
             const sliderBtnText = sliderCompleted ? 'Slider ✓' : 'Slider';
             buttons.push(`<button class="${sliderBtnClass} session-action" data-action="startSlider" data-session-id="${session.id}" ${sliderBtnDisabled}>${sliderBtnText}</button>`);
-            
+
+            // Upload button - consistent "Upload" text, different colors for status
+            const isComplete = this.isSessionComplete(session);
+            const uploadStatus = session.uploadStatus || 'not_uploaded';
+
+            if (isComplete) {
+                if (uploadStatus === 'uploaded') {
+                    buttons.push(`<button class="btn btn-sm btn-success" disabled>Upload</button>`);
+                } else if (uploadStatus === 'uploading') {
+                    buttons.push(`<button class="btn btn-sm btn-warning" disabled>Upload</button>`);
+                } else if (uploadStatus === 'upload_failed') {
+                    buttons.push(`<button class="btn btn-sm btn-danger session-action" data-action="uploadSession" data-session-id="${session.id}">Upload</button>`);
+                } else {
+                    buttons.push(`<button class="btn btn-sm btn-primary session-action" data-action="uploadSession" data-session-id="${session.id}">Upload</button>`);
+                }
+            } else {
+                buttons.push(`<button class="btn btn-sm btn-outline-secondary" disabled>Upload</button>`);
+            }
+
             buttons.push(`<button class="btn btn-sm btn-outline-danger session-action" data-action="deleteSession" data-session-id="${session.id}">Delete</button>`);
-            
+
             return `<div class="action-buttons">${buttons.join('')}</div>`;
         };
+
+        const getUploadStatusBadge = (session) => {
+            const isComplete = this.isSessionComplete(session);
+            const uploadStatus = session.uploadStatus || 'not_uploaded';
+
+            if (!isComplete) {
+                const missing = this.getMissingComponents(session);
+                return `<span class="badge bg-secondary" title="Missing: ${missing.join(', ')}">Incomplete</span>`;
+            } else if (uploadStatus === 'uploaded') {
+                return `<span class="badge bg-success">Uploaded ✓</span>`;
+            } else if (uploadStatus === 'uploading') {
+                return `<span class="badge bg-warning">Uploading...</span>`;
+            } else if (uploadStatus === 'upload_failed') {
+                return `<span class="badge bg-danger">Upload Failed</span>`;
+            } else {
+                return `<span class="badge bg-info">Ready to Upload</span>`;
+            }
+        };
+
+        // Helper methods for session completion (made static to access from here)
+        const isSessionComplete = (session) => {
+            if (!session) return false;
+
+            const child1Complete = session.child1SurveyStatus === 'completed';
+            const child2Complete = session.child2SurveyStatus === 'completed';
+            const sliderComplete = session.sliderStatus === 'completed';
+
+            let parentSurveyComplete = false;
+            if (session.sessionType === 'treatment') {
+                parentSurveyComplete = session.treatmentSurveyStatus === 'completed';
+            } else if (session.sessionType === 'control') {
+                parentSurveyComplete = session.controlSurveyStatus === 'completed';
+            }
+
+            return child1Complete && child2Complete && parentSurveyComplete && sliderComplete;
+        };
+
+        const getMissingComponents = (session) => {
+            if (!session) return ['Session not found'];
+
+            const missing = [];
+
+            if (session.child1SurveyStatus !== 'completed') {
+                missing.push('Child 1 Survey');
+            }
+            if (session.child2SurveyStatus !== 'completed') {
+                missing.push('Child 2 Survey');
+            }
+            if (session.sessionType === 'treatment' && session.treatmentSurveyStatus !== 'completed') {
+                missing.push('Parent Survey');
+            }
+            if (session.sessionType === 'control' && session.controlSurveyStatus !== 'completed') {
+                missing.push('Parent Survey');
+            }
+            if (session.sliderStatus !== 'completed') {
+                missing.push('Slider Exercise');
+            }
+
+            return missing;
+        };
+
+        // Make helper functions available to getActionButtons
+        this.isSessionComplete = isSessionComplete;
+        this.getMissingComponents = getMissingComponents;
 
         const childrenDisplay = session.child1name && session.child2name
             ? `${session.child1name}, ${session.child2name}`
@@ -69,21 +151,22 @@ export class SessionRenderer {
                 <td>${session.enumeratorID || '-'}</td>
                 <td>${childrenDisplay}</td>
                 <td><span class="badge bg-${badgeColor}">${sessionTypeDisplay}</span></td>
+                <td>${getUploadStatusBadge(session)}</td>
                 <td>${getActionButtons(session)}</td>
             </tr>
         `;
     }
 
-    static async renderSessions(sessions) {
-        const tbody = document.getElementById('sessionsTableBody');
-        
+    static async renderCurrentSessions(sessions) {
+        const tbody = document.getElementById('currentSessionsTableBody');
+
         if (!tbody) return;
-        
+
         if (sessions.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
-                        No sessions found. Create a new session to get started.
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No current sessions found. Create a new session to get started.
                     </td>
                 </tr>
             `;
@@ -91,6 +174,54 @@ export class SessionRenderer {
         }
 
         tbody.innerHTML = sessions.map(session => this.renderSessionRow(session)).join('');
+    }
+
+    static async renderUploadedSessions(sessions) {
+        const tbody = document.getElementById('uploadedSessionsTableBody');
+
+        if (!tbody) return;
+
+        if (sessions.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No uploaded sessions yet.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = sessions.map(session => this.renderUploadedSessionRow(session)).join('');
+    }
+
+    static renderUploadedSessionRow(session) {
+        const childrenDisplay = session.child1name && session.child2name
+            ? `${session.child1name}, ${session.child2name}`
+            : '-';
+
+        const sessionTypeDisplay = session.sessionType
+            ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)
+            : 'Unknown';
+
+        const badgeColor = session.sessionType === 'treatment' ? 'primary' :
+                          session.sessionType === 'control' ? 'secondary' : 'warning';
+
+        return `
+            <tr>
+                <td><code>${session.id.substring(0, 8)}...</code></td>
+                <td>${session.participantId || '-'}</td>
+                <td>${session.enumeratorID || '-'}</td>
+                <td>${childrenDisplay}</td>
+                <td><span class="badge bg-${badgeColor}">${sessionTypeDisplay}</span></td>
+                <td>${SessionUIUtils.formatDate(session.uploadedAt)}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>
+                    </div>
+                </td>
+            </tr>
+        `;
     }
 
     static displaySessionData(session, sliderResponses, surveyResponses) {

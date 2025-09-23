@@ -17,16 +17,43 @@ class IndexUIManager {
 
     async loadAndRenderSessions() {
         try {
-            const sessions = await sessionManager.loadSessions();
-            await SessionRenderer.renderSessions(sessions);
-            
-            const sessionCount = document.getElementById('sessionCount');
-            if (sessionCount) {
-                sessionCount.textContent = sessions.length;
-            }
+            const allSessions = await sessionManager.loadSessions();
+
+            // Separate current and uploaded sessions
+            const currentSessions = allSessions.filter(session => session.uploadStatus !== 'uploaded');
+            const uploadedSessions = allSessions.filter(session => session.uploadStatus === 'uploaded');
+
+            // Render both tables
+            await SessionRenderer.renderCurrentSessions(currentSessions);
+            await SessionRenderer.renderUploadedSessions(uploadedSessions);
+
+            // Update counts in header
+            this.updateSessionCounts(currentSessions.length, uploadedSessions.length, allSessions.length);
+
+            // Update table badges
+            this.updateTableBadges(currentSessions.length, uploadedSessions.length);
+
         } catch (error) {
             console.error('Error loading sessions:', error);
             SessionUIUtils.showError(`Failed to load sessions: ${error.message}`);
+        }
+    }
+
+    updateSessionCounts(currentCount, uploadedCount, totalCount) {
+        SessionUIUtils.updateElementText('currentSessionCount', currentCount);
+        SessionUIUtils.updateElementText('uploadedSessionCount', uploadedCount);
+        SessionUIUtils.updateElementText('totalSessionCount', totalCount);
+    }
+
+    updateTableBadges(currentCount, uploadedCount) {
+        const currentBadge = document.getElementById('currentSessionsBadge');
+        if (currentBadge) {
+            currentBadge.textContent = `${currentCount} session${currentCount !== 1 ? 's' : ''}`;
+        }
+
+        const uploadedBadge = document.getElementById('uploadedSessionsBadge');
+        if (uploadedBadge) {
+            uploadedBadge.textContent = `${uploadedCount} uploaded`;
         }
     }
 
@@ -101,6 +128,9 @@ class IndexUIManager {
                             break;
                         case 'deleteSession':
                             this.deleteSession(sessionId);
+                            break;
+                        case 'uploadSession':
+                            this.uploadSession(sessionId);
                             break;
                     }
                 }
@@ -247,6 +277,17 @@ class IndexUIManager {
                 console.error('Error deleting session:', error);
                 SessionUIUtils.showError('Failed to delete session');
             }
+        }
+    }
+
+    async uploadSession(sessionId) {
+        try {
+            await sessionManager.uploadSession(sessionId);
+            await this.loadAndRenderSessions();
+            SessionUIUtils.showSuccess('Session uploaded successfully');
+        } catch (error) {
+            console.error('Error uploading session:', error);
+            SessionUIUtils.showError(`Upload failed: ${error.message}`);
         }
     }
 }

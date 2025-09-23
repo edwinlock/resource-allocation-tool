@@ -223,6 +223,213 @@ export class SessionCoordinator {
     async getSurveyStatistics(sessionId, surveyId) {
         return await this.surveyResponseDB.getSurveyStatistics(sessionId, surveyId);
     }
+
+    // Session completion validation
+    isSessionComplete(session) {
+        if (!session) return false;
+
+        // Check all required surveys are completed
+        const child1Complete = session.child1SurveyStatus === 'completed';
+        const child2Complete = session.child2SurveyStatus === 'completed';
+        const sliderComplete = session.sliderStatus === 'completed';
+
+        // Check parent survey based on session type
+        let parentSurveyComplete = false;
+        if (session.sessionType === 'treatment') {
+            parentSurveyComplete = session.treatmentSurveyStatus === 'completed';
+        } else if (session.sessionType === 'control') {
+            parentSurveyComplete = session.controlSurveyStatus === 'completed';
+        }
+
+        return child1Complete && child2Complete && parentSurveyComplete && sliderComplete;
+    }
+
+    getMissingComponents(session) {
+        if (!session) return ['Session not found'];
+
+        const missing = [];
+
+        if (session.child1SurveyStatus !== 'completed') {
+            missing.push('Child 1 Survey');
+        }
+        if (session.child2SurveyStatus !== 'completed') {
+            missing.push('Child 2 Survey');
+        }
+        if (session.sessionType === 'treatment' && session.treatmentSurveyStatus !== 'completed') {
+            missing.push('Parent Survey (Treatment)');
+        }
+        if (session.sessionType === 'control' && session.controlSurveyStatus !== 'completed') {
+            missing.push('Parent Survey (Control)');
+        }
+        if (session.sliderStatus !== 'completed') {
+            missing.push('Slider Exercise');
+        }
+
+        return missing;
+    }
+
+    async getCompletedSessions() {
+        const allSessions = await this.loadSessions();
+        return allSessions.filter(session => this.isSessionComplete(session));
+    }
+
+    // Data aggregation for upload
+    async aggregateSessionData(sessionId) {
+        try {
+            // Get session details
+            const session = await this.getSession(sessionId);
+            if (!session) {
+                throw new Error(`Session ${sessionId} not found`);
+            }
+
+            if (!this.isSessionComplete(session)) {
+                throw new Error(`Session ${sessionId} is not complete`);
+            }
+
+            // Get all survey responses
+            const surveyResponses = await this.getSessionSurveyResponses(sessionId);
+
+            // Get slider responses
+            const sliderResponses = await this.getSessionSliderResponses(sessionId);
+
+            // Aggregate survey responses by survey type
+            const surveysByType = {
+                child1Survey: [],
+                child2Survey: [],
+                parentSurvey: []
+            };
+
+            surveyResponses.forEach(response => {
+                if (response.surveyId === 'Child1') {
+                    surveysByType.child1Survey.push({
+                        questionId: response.questionId,
+                        answer: response.answer,
+                        completedAt: response.completedAt
+                    });
+                } else if (response.surveyId === 'Child2') {
+                    surveysByType.child2Survey.push({
+                        questionId: response.questionId,
+                        answer: response.answer,
+                        completedAt: response.completedAt
+                    });
+                } else if (response.surveyId === 'Treatment' || response.surveyId === 'Control') {
+                    surveysByType.parentSurvey.push({
+                        questionId: response.questionId,
+                        answer: response.answer,
+                        completedAt: response.completedAt
+                    });
+                }
+            });
+
+            // Format slider responses
+            const formattedSliderResponses = sliderResponses.map(response => ({
+                scenarioNumber: response.scenarioNumber,
+                displayOrder: response.displayOrder,
+                child1Investment: response.child1investment,
+                child2Investment: response.child1investment ? (100 - response.child1investment) : null,
+                completedAt: response.completedAt
+            }));
+
+            // Create aggregated data structure
+            const aggregatedData = {
+                sessionMetadata: {
+                    sessionId: session.id,
+                    participantId: session.participantId,
+                    enumeratorId: session.enumeratorID,
+                    sessionType: session.sessionType,
+                    createdAt: session.createdAt,
+                    completedAt: session.sliderCompletedAt || new Date().toISOString(),
+                    children: {
+                        child1: {
+                            name: session.child1name,
+                            ability: session.child1ability,
+                            school: session.child1school
+                        },
+                        child2: {
+                            name: session.child2name,
+                            ability: session.child2ability,
+                            school: session.child2school
+                        }
+                    }
+                },
+                surveyResponses: surveysByType,
+                sliderResponses: formattedSliderResponses,
+                completionTimestamps: {
+                    child1SurveyCompleted: session.child1SurveyCompletedAt,
+                    child2SurveyCompleted: session.child2SurveyCompletedAt,
+                    parentSurveyCompleted: session.sessionType === 'treatment'
+                        ? session.treatmentSurveyCompletedAt
+                        : session.controlSurveyCompletedAt,
+                    sliderCompleted: session.sliderCompletedAt
+                }
+            };
+
+            return aggregatedData;
+
+        } catch (error) {
+            console.error('Error aggregating session data:', error);
+            throw error;
+        }
+    }
+
+    // Upload functionality
+    async uploadSession(sessionId) {
+        try {
+            // Lazy load the API service to avoid circular import issues
+            const { apiService } = await import('./api-service.js');
+
+            // Get session to check current upload status
+            const session = await this.getSession(sessionId);
+            if (!session) {
+                throw new Error(`Session ${sessionId} not found`);
+            }
+
+            if (session.uploadStatus === 'uploaded') {
+                throw new Error('Session has already been uploaded');
+            }
+
+            if (!this.isSessionComplete(session)) {
+                const missing = this.getMissingComponents(session);
+                throw new Error(`Session is not complete. Missing: ${missing.join(', ')}`);
+            }
+
+            // Mark as uploading
+            await this.sessionDB.updateSessionStatus(sessionId, {
+                uploadStatus: 'uploading'
+            });
+
+            // Aggregate session data
+            const sessionData = await this.aggregateSessionData(sessionId);
+
+            // Upload to API
+            const uploadResult = await apiService.uploadSession(sessionData);
+
+            // Mark as uploaded
+            await this.sessionDB.updateSessionStatus(sessionId, {
+                uploadStatus: 'uploaded',
+                uploadedAt: new Date().toISOString()
+            });
+
+            return uploadResult;
+
+        } catch (error) {
+            // Mark upload as failed
+            await this.sessionDB.updateSessionStatus(sessionId, {
+                uploadStatus: 'upload_failed'
+            });
+
+            console.error('Error uploading session:', error);
+            throw error;
+        }
+    }
+
+    async getUploadableSessions() {
+        const allSessions = await this.loadSessions();
+        return allSessions.filter(session =>
+            this.isSessionComplete(session) &&
+            session.uploadStatus !== 'uploaded'
+        );
+    }
 }
 
 // Create and export singleton instance for backward compatibility

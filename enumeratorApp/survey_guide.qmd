@@ -61,6 +61,8 @@ Use `{variableName}` in any text field to inject session data:
 }
 ```
 
+**Note:** For rating/satisfaction questions, consider using `multilikert` instead of `multiopen` with numbers.
+
 ### 3. singleselect - Radio buttons (one choice)
 
 ```json
@@ -141,7 +143,40 @@ Same structure as `grid`, but selecting option in row k automatically:
 }
 ```
 
-### 8. consent - Consent checkbox with text
+### 8. likert - Single Likert scale
+
+```json
+{
+    "question_id": "satisfaction",
+    "type": "likert",
+    "query": "How satisfied are you with {child1name}'s school performance?",
+    "prefix": "Rate your satisfaction level",
+    "min": 1,
+    "max": 7,
+    "required": true
+}
+```
+
+### 9. multilikert - Multiple Likert scales with same range
+
+```json
+{
+    "question_id": "child_ratings",
+    "type": "multilikert",
+    "query": "Rate each child on the following aspects:",
+    "prefixes": [
+        "{child1name}'s academic performance",
+        "{child1name}'s social skills",
+        "{child2name}'s academic performance",
+        "{child2name}'s social skills"
+    ],
+    "min": 0,
+    "max": 10,
+    "required": true
+}
+```
+
+### 10. consent - Consent checkbox with text
 
 ```json
 {
@@ -160,62 +195,150 @@ Same structure as `grid`, but selecting option in row k automatically:
 - `datatype`: "text" or "number" (for input questions)
 - `required`: true/false (defaults to false)
 - `values`: Array of choices (for select questions)
-- `prefixes`: Array of row labels (for multiopen/grid/mpl)
+- `prefixes`: Array of row labels (for multiopen/grid/mpl/multilikert)
 - `options`: 2D array of choices per row (for grid/mpl)
 - `text`: Display content (for plaintext/consent)
+- `min`: Minimum value for scale (for likert/multilikert, defaults to 0)
+- `max`: Maximum value for scale (for likert/multilikert, defaults to 5)
+- `prefix`: Descriptive text for single likert scale (for likert)
 
-## Complete Example Survey
+## Complete Example Survey (Showcasing All Question Types)
 
 ```json
 {
-    "survey_id": "Child1",
-    "name": "Child 1 Demographics",
+    "survey_id": "comprehensive_example",
+    "name": "Comprehensive Survey Example",
     "questions": [
         {
-            "question_id": "consent",
+            "question_id": "consent_example",
             "type": "consent",
-            "query": "I consent to this survey",
-            "text": "<p>This survey collects information about {child1name} who attends {child1school}...</p>"
+            "query": "I consent to participate in this research study",
+            "text": "<h5>Research Study Consent</h5><p><strong>Study Title:</strong> Family Decision-Making Study</p><p><strong>Purpose:</strong> This survey collects information about family decision-making patterns...</p><p><strong>Confidentiality:</strong> All responses will be kept confidential...</p>"
         },
         {
-            "question_id": "intro",
+            "question_id": "intro_section",
             "type": "plaintext",
-            "text": "Please answer the following questions about {child1name}."
+            "text": "Thank you for agreeing to participate. This survey asks about decisions involving {child1name} and {child2name}."
         },
         {
-            "question_id": "age",
+            "question_id": "parent_age",
             "type": "open",
-            "query": "How old is {child1name}?",
+            "query": "What is your age?",
             "datatype": "number",
             "required": true
         },
         {
-            "question_id": "grade",
+            "question_id": "family_income",
+            "type": "open",
+            "query": "What is your approximate annual household income?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "education_level",
             "type": "singleselect",
-            "query": "What grade is {child1name} in at {child1school}?",
-            "values": ["1st", "2nd", "3rd", "4th", "5th"],
+            "query": "What is your highest level of education?",
+            "values": ["High school", "Bachelor's degree", "Master's degree", "Doctoral degree"],
+            "datatype": "text",
             "required": true
         },
         {
-            "question_id": "activities",
+            "question_id": "parenting_concerns",
             "type": "multiselect",
-            "query": "Which activities does {child1name} participate in?",
-            "values": ["Sports", "Music", "Art", "Drama", "Academic clubs"],
+            "query": "Which areas are you most concerned about for your children? (Select all that apply)",
+            "values": ["Academic performance", "Social development", "Physical health", "Emotional wellbeing", "Future career prospects"],
+            "datatype": "text",
             "required": true
         },
         {
-            "question_id": "time_allocation",
+            "question_id": "time_spent_weekly",
             "type": "multiopen",
-            "query": "Hours per week {child1name} spends on:",
+            "query": "Hours per week you spend on the following activities:",
             "prefixes": [
-                "Homework",
-                "Reading",
-                "Screen time",
-                "Playing"
+                "Helping {child1name} with homework",
+                "Helping {child2name} with homework",
+                "Family recreational activities",
+                "Individual time with each child"
             ],
             "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "resource_scenarios",
+            "type": "grid",
+            "query": "For each scenario, which child would you prioritize?",
+            "prefixes": [
+                "Extra tutoring opportunity",
+                "Summer camp enrollment",
+                "Music lesson investment",
+                "Sports equipment purchase"
+            ],
+            "options": [
+                ["{child1name}", "{child2name}", "Both equally"],
+                ["{child1name}", "{child2name}", "Both equally"],
+                ["{child1name}", "{child2name}", "Both equally"],
+                ["{child1name}", "{child2name}", "Both equally"]
+            ],
+            "required": true
+        },
+        {
+            "question_id": "investment_priorities",
+            "type": "mpl",
+            "query": "Would you invest in each opportunity if it cost the following amount?",
+            "prefixes": [
+                "$100 tutoring program",
+                "$200 tutoring program",
+                "$300 tutoring program",
+                "$400 tutoring program"
+            ],
+            "options": [
+                ["Yes, invest", "No, too expensive"],
+                ["Yes, invest", "No, too expensive"],
+                ["Yes, invest", "No, too expensive"],
+                ["Yes, invest", "No, too expensive"]
+            ],
+            "required": true
+        },
+        {
+            "question_id": "satisfaction_single",
+            "type": "likert",
+            "query": "How satisfied are you with {child1name}'s current academic progress?",
+            "prefix": "Rate your satisfaction level (1 = Very dissatisfied, 7 = Very satisfied)",
+            "min": 1,
+            "max": 7,
+            "required": true
+        },
+        {
+            "question_id": "child_ratings_multi",
+            "type": "multilikert",
+            "query": "Rate each child on the following aspects (0 = Poor, 10 = Excellent):",
+            "prefixes": [
+                "{child1name}'s academic performance",
+                "{child1name}'s social skills",
+                "{child1name}'s independence level",
+                "{child2name}'s academic performance",
+                "{child2name}'s social skills",
+                "{child2name}'s independence level"
+            ],
+            "min": 0,
+            "max": 10,
             "required": true
         }
     ]
 }
 ```
+
+## Summary of All Question Types
+
+The survey system supports **10 different question types**:
+
+1. **consent** - Consent form with detailed text
+2. **plaintext** - Display-only text (instructions, section headers)
+3. **open** - Single text or number input
+4. **singleselect** - Radio buttons (single choice)
+5. **multiselect** - Checkboxes (multiple choices)
+6. **multiopen** - Multiple labeled inputs
+7. **grid** - Table with radio buttons per row
+8. **mpl** - Multiple Price List with automatic selection logic
+9. **likert** - Single Likert scale (1-5, 1-7, 0-10, etc.)
+10. **multilikert** - Multiple items with same Likert scale

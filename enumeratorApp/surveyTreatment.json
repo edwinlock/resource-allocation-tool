@@ -31,7 +31,7 @@
         {
             "question_id": "att_school_investment",
             "type": "multiopen",
-            "query": "How much do you spend per month on educational extras for each child's schooling?",
+            "query": "How much do you spend per month on educational extras for each child's schooling? (in dollars)",
             "prefixes": [
                 "Monthly spending on extras for {child1name} at {child1school}",
                 "Monthly spending on extras for {child2name} at {child2school}"
@@ -97,10 +97,36 @@
         },
         {
             "question_id": "att_confidence",
-            "type": "singleselect",
+            "type": "likert",
             "query": "How confident do you feel about your ability to make good investment decisions for {child1name} and {child2name}?",
-            "values": ["Very confident", "Somewhat confident", "Neutral", "Somewhat uncertain", "Very uncertain"],
-            "datatype": "text",
+            "prefix": "Rate your confidence level (1 = Very uncertain, 7 = Very confident)",
+            "min": 1,
+            "max": 7,
+            "required": true
+        },
+        {
+            "question_id": "att_investment_importance",
+            "type": "likert",
+            "query": "How important is it to invest equally in both {child1name} and {child2name}?",
+            "prefix": "Rate the importance (1 = Not at all important, 7 = Extremely important)",
+            "min": 1,
+            "max": 7,
+            "required": true
+        },
+        {
+            "question_id": "att_child_potential",
+            "type": "multilikert",
+            "query": "Rate each child's potential in different areas (0 = Very Low, 10 = Very High):",
+            "prefixes": [
+                "{child1name}'s academic potential",
+                "{child1name}'s leadership potential",
+                "{child1name}'s creativity potential",
+                "{child2name}'s academic potential",
+                "{child2name}'s leadership potential",
+                "{child2name}'s creativity potential"
+            ],
+            "min": 0,
+            "max": 10,
             "required": true
         }
     ]
