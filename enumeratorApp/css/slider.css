@@ -213,10 +213,6 @@ h1 {
     transform: scale(1.1);
 }
 
-/* Hide slider thumb until first interaction */
-.slider:not(.slider-touched)::-webkit-slider-thumb {
-    opacity: 0;
-}
 
 .slider::-moz-range-thumb {
     width: 20px;
@@ -234,10 +230,6 @@ h1 {
     transform: scale(1.1);
 }
 
-/* Hide slider thumb until first interaction - Firefox */
-.slider:not(.slider-touched)::-moz-range-thumb {
-    opacity: 0;
-}
 
 /* ========================================
    PROGRESS BAR

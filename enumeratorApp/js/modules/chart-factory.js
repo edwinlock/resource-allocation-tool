@@ -197,7 +197,7 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
         return {
             ...baseConfig,
             display: function(context) {
-                return context.dataIndex === selectedIndex;
+                return appState.sliderTouched && context.dataIndex === selectedIndex;
             },
             anchor: function(context) {
                 const datasetIndex = context.datasetIndex;
@@ -246,7 +246,7 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
         return {
             ...baseConfig,
             display: function(context) {
-                return context.dataIndex === selectedIndex;
+                return appState.sliderTouched && context.dataIndex === selectedIndex;
             },
             anchor: function(context) {
                 return context.datasetIndex === 0 ? 'end' : 'start';
@@ -562,14 +562,20 @@ export class ChartManager {
                 // Update point highlighting (larger dot for selected point)
                 const highlightedRadius = Array(ALLOCATABLE_BUDGET + 1).fill(4);
                 const highlightedBorderWidth = Array(ALLOCATABLE_BUDGET + 1).fill(2);
-                highlightedRadius[selectedIndex] = 8;
-                highlightedBorderWidth[selectedIndex] = 4;
-                
+
+                // Only highlight if slider has been touched
+                if (appState.sliderTouched) {
+                    highlightedRadius[selectedIndex] = 8;
+                    highlightedBorderWidth[selectedIndex] = 4;
+                }
+
                 this.charts.lineChart.data.datasets.forEach((dataset) => {
                     dataset.pointRadius = [...highlightedRadius];
                     dataset.pointBorderWidth = [...highlightedBorderWidth];
                     const borderColors = Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff');
-                    borderColors[selectedIndex] = '#000000';
+                    if (appState.sliderTouched) {
+                        borderColors[selectedIndex] = '#000000';
+                    }
                     dataset.pointBorderColor = borderColors;
                 });
                 

@@ -40,6 +40,7 @@ class AppState {
 
         // Current UI state
         this.selectedInvestment = 0;
+        this.sliderTouched = false;
 
         // Chart instances
         this.charts = {
@@ -181,6 +182,15 @@ class AppState {
     // Update selected investment
     setSelectedInvestment(value) {
         this.selectedInvestment = value;
+    }
+
+    // Slider touch state management
+    markSliderTouched() {
+        this.sliderTouched = true;
+    }
+
+    resetSliderTouched() {
+        this.sliderTouched = false;
     }
 
     // Chart management

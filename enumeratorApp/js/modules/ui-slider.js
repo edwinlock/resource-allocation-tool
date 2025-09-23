@@ -93,6 +93,7 @@ export class UIManager {
         // Mark slider as touched and enable next button
         if (!this.investmentSlider.classList.contains('slider-touched')) {
             this.investmentSlider.classList.add('slider-touched');
+            appState.markSliderTouched();
             this.enableNextButton();
         }
 
@@ -279,6 +280,7 @@ export class UIManager {
             this.child2Display.textContent = ALLOCATABLE_BUDGET - response.child1investment;
             // Mark slider as touched since we're restoring a saved response
             this.investmentSlider.classList.add('slider-touched');
+            appState.markSliderTouched();
             this.enableNextButton();
         }
     }
@@ -300,6 +302,7 @@ export class UIManager {
     resetSliderForNewScenario() {
         if (this.investmentSlider) {
             this.investmentSlider.classList.remove('slider-touched');
+            appState.resetSliderTouched();
             this.disableNextButton();
         }
     }
@@ -396,7 +399,8 @@ export class UIManager {
             });
         }
 
-        // Initialize slider state - hide thumb and disable next button
+        // Initialize slider state - reset touch state and disable next button
+        appState.resetSliderTouched();
         this.disableNextButton();
 
         this.updateScenarioOptions();
