@@ -1,8 +1,9 @@
-const CACHE_NAME = 'resource-allocation-v2';
+const CACHE_NAME = 'resource-allocation-v11';
 const urlsToCache = [
   './',
   './index.html',
   './sessiondetail.html',
+  './session-json.html',
   './slider.html',
   './survey.html',
   './manifest.json',
