@@ -374,7 +374,7 @@ Use a dedicated config.py file to manage all Flask application configuration:
 ```python
 # Flask Core
 SECRET_KEY = os.getenv('SECRET_KEY') or secrets.token_hex(32)
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL') or 'sqlite:///learn.db'
+SQLALCHEMY_DATABASE_URI = os.getenv('DATABACKEND_URL') or 'sqlite:///learn.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask-Security-Too

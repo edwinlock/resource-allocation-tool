@@ -1,96 +1,59 @@
 import { API_CONFIG } from './constants.js';
 
-// Simple API service for uploading session data
-export class APIService {
+class APIService {
     constructor() {
-        this.baseURL = API_CONFIG.BASE_URL;
-        this.timeout = API_CONFIG.UPLOAD_TIMEOUT;
-        this.apiKey = null;
+        this.authToken = null;
+        this.email = null;
+        this.userId = null;
         this.loadStoredCredentials();
     }
 
-    // Load stored credentials from localStorage if available
     loadStoredCredentials() {
         try {
-            this.apiKey = localStorage.getItem('research_auth_token');
-            const storedBaseURL = localStorage.getItem('research_base_url');
-            this.enumeratorName = localStorage.getItem('research_enumerator_name');
-            this.enumeratorEmail = localStorage.getItem('research_enumerator_email');
-            this.enumeratorId = localStorage.getItem('research_enumerator_id') || '1';
-
-            if (storedBaseURL) {
-                this.baseURL = storedBaseURL;
-            }
-
-            // Backward compatibility: keep username for old code
-            this.username = this.enumeratorEmail || this.enumeratorName;
+            this.authToken = localStorage.getItem('auth_token');
+            this.email = localStorage.getItem('user_email');
+            this.userId = localStorage.getItem('user_id');
         } catch (error) {
             console.warn('Could not load stored credentials:', error);
         }
     }
 
-    // Store authentication token and user info securely in localStorage
-    setAuthToken(token, userInfo = {}, rememberMe = false) {
-        this.apiKey = token;
-        this.enumeratorName = userInfo.name || userInfo.username || 'Unknown';
-        this.enumeratorEmail = userInfo.email || userInfo.username || '';
-        this.enumeratorId = userInfo.enumeratorId || '1'; // Use placeholder value of 1 for now
-
+    storeCredentials(token, email, userId) {
         try {
-            if (token && rememberMe) {
-                localStorage.setItem('research_auth_token', token);
-                localStorage.setItem('research_enumerator_name', this.enumeratorName);
-                localStorage.setItem('research_enumerator_email', this.enumeratorEmail);
-                localStorage.setItem('research_enumerator_id', this.enumeratorId);
-                if (this.baseURL) {
-                    localStorage.setItem('research_base_url', this.baseURL);
-                }
-            } else if (!rememberMe) {
-                // Clear stored credentials if user doesn't want to be remembered
-                this.clearStoredCredentials();
-            }
+            localStorage.setItem('auth_token', token);
+            localStorage.setItem('user_email', email);
+            localStorage.setItem('user_id', userId);
+
+            this.authToken = token;
+            this.email = email;
+            this.userId = userId;
         } catch (error) {
-            console.warn('Could not store auth token:', error);
+            console.warn('Could not store credentials:', error);
         }
     }
 
-    // Clear only stored credentials, keep session token
-    clearStoredCredentials() {
-        try {
-            localStorage.removeItem('research_auth_token');
-            localStorage.removeItem('research_enumerator_name');
-            localStorage.removeItem('research_enumerator_email');
-            localStorage.removeItem('research_enumerator_id');
-            localStorage.removeItem('research_base_url');
-            // Backward compatibility
-            localStorage.removeItem('research_username');
-        } catch (error) {
-            console.warn('Could not clear stored credentials:', error);
-        }
-    }
-
-    // Check if we have authentication configured
-    isAuthenticated() {
-        return !!(this.apiKey && this.baseURL);
-    }
-
-    // Clear all credentials and log out
     clearCredentials() {
-        this.apiKey = null;
-        this.enumeratorName = null;
-        this.enumeratorEmail = null;
-        this.enumeratorId = null;
-        this.username = null; // Backward compatibility
-        this.clearStoredCredentials();
+        try {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('user_id');
+
+            this.authToken = null;
+            this.email = null;
+            this.userId = null;
+        } catch (error) {
+            console.warn('Could not clear credentials:', error);
+        }
     }
 
-    // Login with username and password to get auth token
-    async login(username, password, rememberMe = false) {
-        if (!this.baseURL) {
-            throw new Error('API base URL not configured');
-        }
+    isAuthenticated() {
+        return !!(this.authToken && this.email && this.userId);
+    }
 
-        const loginURL = `${this.baseURL}/login`;
+    async login(email, password) {
+        const loginURL = `${API_CONFIG.BACKEND_URL}${API_CONFIG.ENDPOINTS.LOGIN}?include_auth_token`;
+
+        console.log('Login attempt:', { url: loginURL, email: email });
 
         try {
             const response = await fetch(loginURL, {
@@ -99,108 +62,91 @@ export class APIService {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: username,  // flask-security-too uses email field
+                    email: email,
                     password: password
                 })
             });
 
             if (!response.ok) {
-                if (response.status === 400) {
-                    throw new Error('Invalid username or password');
-                } else if (response.status === 401) {
-                    throw new Error('Authentication failed - check credentials');
-                } else if (response.status >= 500) {
-                    throw new Error('Server error - please try again later');
-                } else {
-                    throw new Error(`Login failed - HTTP ${response.status}`);
+                let errorMessage = `HTTP ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    console.error('Login error response:', errorData);
+                    errorMessage = errorData.message || errorData.error || errorMessage;
+                } catch (e) {
+                    console.error('Could not parse error response as JSON');
                 }
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();
 
-            // flask-security-too returns the token in response.user.authentication_token
             if (result.response && result.response.user && result.response.user.authentication_token) {
                 const token = result.response.user.authentication_token;
-                const user = result.response.user;
 
-                // TODO: Replace with actual backend data when ready
-                const userInfo = {
-                    name: 'John Doe', // Dummy name
-                    email: username, // Use entered email
-                    enumeratorId: '1', // Dummy enumerator ID
-                    username: username
-                };
+                // Get user profile to get the user ID
+                const profileData = await this.getProfile(token);
 
-                this.setAuthToken(token, userInfo, rememberMe);
+                this.storeCredentials(token, email, profileData.user_id);
+
                 return {
                     success: true,
-                    token: token,
-                    user: user,
-                    userInfo: userInfo
+                    token,
+                    email,
+                    userId: profileData.user_id
                 };
             } else {
-                throw new Error('Invalid response format - no authentication token received');
+                throw new Error('Invalid response format');
             }
-
         } catch (error) {
-            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-                throw new Error('Network error - check internet connection and API URL');
-            } else {
-                throw error;
-            }
+            throw new Error(`Login failed: ${error.message}`);
         }
     }
 
-    // Check if current token is still valid
-    async validateToken() {
-        if (!this.apiKey || !this.baseURL) {
-            return false;
+    async getProfile(token = null) {
+        const authToken = token || this.authToken;
+        if (!authToken) {
+            throw new Error('No authentication token available');
         }
 
+        const profileURL = `${API_CONFIG.BACKEND_URL}${API_CONFIG.ENDPOINTS.PROFILE}`;
+
         try {
-            // Use a simple endpoint to test token validity
-            const response = await fetch(`${this.baseURL}/profile`, {
+            const response = await fetch(profileURL, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`,
-                    'Authentication-Token': this.apiKey
+                    'Authentication-Token': authToken
                 }
             });
 
-            return response.ok;
-        } catch (error) {
-            console.warn('Token validation failed:', error);
-            return false;
-        }
-    }
+            if (!response.ok) {
+                throw new Error('Failed to get user profile');
+            }
 
-    setBaseURL(url) {
-        this.baseURL = url;
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            throw new Error(`Profile request failed: ${error.message}`);
+        }
     }
 
     async uploadSession(sessionData) {
-        if (!this.baseURL) {
-            throw new Error('API base URL not configured');
-        }
-
-        if (!this.apiKey) {
+        if (!this.isAuthenticated()) {
             throw new Error('Not authenticated. Please log in first.');
         }
 
-        const uploadURL = `${this.baseURL}${API_CONFIG.ENDPOINTS.UPLOAD_SESSION}`;
+        const uploadURL = `${API_CONFIG.BACKEND_URL}${API_CONFIG.ENDPOINTS.UPLOAD_SESSION}`;
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-            const headers = {
-                'Content-Type': 'application/json',
-                'Authentication-Token': this.apiKey  // flask-security-too format
-            };
+            const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.UPLOAD_TIMEOUT);
 
             const response = await fetch(uploadURL, {
                 method: 'POST',
-                headers: headers,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication-Token': this.authToken
+                },
                 body: JSON.stringify(sessionData),
                 signal: controller.signal
             });
@@ -208,13 +154,8 @@ export class APIService {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                if (response.status >= 400 && response.status < 500) {
-                    throw new Error(`Upload failed - client error (${response.status})`);
-                } else if (response.status >= 500) {
-                    throw new Error(`Upload failed - server error (${response.status})`);
-                } else {
-                    throw new Error(`Upload failed - HTTP ${response.status}`);
-                }
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Upload failed - HTTP ${response.status}`);
             }
 
             const result = await response.json();
@@ -222,38 +163,9 @@ export class APIService {
 
         } catch (error) {
             if (error.name === 'AbortError') {
-                throw new Error('Upload failed - request timeout');
-            } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-                throw new Error('Upload failed - check internet connection');
-            } else {
-                throw error;
+                throw new Error('Upload timeout - request took too long');
             }
-        }
-    }
-
-    async testConnection() {
-        if (!this.baseURL) {
-            throw new Error('API base URL not configured');
-        }
-
-        const testURL = `${this.baseURL}${API_CONFIG.ENDPOINTS.HEALTH_CHECK}`;
-
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout for health check
-
-            const response = await fetch(testURL, {
-                method: 'GET',
-                signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            return response.ok;
-
-        } catch (error) {
-            console.warn('Connection test failed:', error.message);
-            return false;
+            throw error;
         }
     }
 }

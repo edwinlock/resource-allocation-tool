@@ -3,10 +3,6 @@ import { SessionRenderer } from './session-renderer.js';
 import { SessionUIUtils } from './shared-utils.js';
 import { apiService } from './api-service.js';
 
-console.log('UI-Index loaded, apiService:', apiService);
-console.log('apiService methods:', Object.getOwnPropertyNames(apiService));
-
-// UI Management for index.html page
 class IndexUIManager {
     constructor() {
         this.bindEvents();
@@ -16,6 +12,7 @@ class IndexUIManager {
         document.addEventListener('DOMContentLoaded', () => {
             this.setupFormHandlers();
             this.loadAndRenderSessions();
+            this.updateUIBasedOnAuthStatus();
         });
     }
 
@@ -23,33 +20,22 @@ class IndexUIManager {
         try {
             const allSessions = await sessionManager.loadSessions();
 
-            // Only show sessions if user is logged in
-            const isAuthenticated = apiService && typeof apiService.isAuthenticated === 'function' ? apiService.isAuthenticated() : false;
-            const currentEnumeratorId = apiService && apiService.enumeratorId ? apiService.enumeratorId : null;
-
-            const filteredSessions = isAuthenticated && currentEnumeratorId
-                ? allSessions.filter(session => session.enumeratorID === currentEnumeratorId)
-                : []; // Show nothing when logged out
-
-            // Separate current and uploaded sessions
-            const currentSessions = filteredSessions.filter(session => session.uploadStatus !== 'uploaded');
-            const uploadedSessions = filteredSessions.filter(session => session.uploadStatus === 'uploaded');
+            // Separate current and uploaded sessions (no filtering by enumerator)
+            const currentSessions = allSessions.filter(session => session.uploadStatus !== 'uploaded');
+            const uploadedSessions = allSessions.filter(session => session.uploadStatus === 'uploaded');
 
             // Render both tables
             await SessionRenderer.renderCurrentSessions(currentSessions);
             await SessionRenderer.renderUploadedSessions(uploadedSessions);
 
-            // Update counts in header (show filtered counts)
-            this.updateSessionCounts(currentSessions.length, uploadedSessions.length, filteredSessions.length);
+            // Update counts in header
+            this.updateSessionCounts(currentSessions.length, uploadedSessions.length, allSessions.length);
 
             // Update table badges
             this.updateTableBadges(currentSessions.length, uploadedSessions.length);
 
             // Update upload button state
             await this.updateUploadButtonState();
-
-            // Update login status notification
-            this.updateLoginStatusNotification();
 
         } catch (error) {
             console.error('Error loading sessions:', error);
@@ -82,7 +68,7 @@ class IndexUIManager {
         try {
             const uploadableSessions = await sessionManager.getUploadableSessions();
             const count = uploadableSessions.length;
-            const isAuthenticated = apiService && typeof apiService.isAuthenticated === 'function' ? apiService.isAuthenticated() : false;
+            const isAuthenticated = apiService.isAuthenticated();
 
             if (!isAuthenticated) {
                 uploadBtn.disabled = true;
@@ -102,12 +88,91 @@ class IndexUIManager {
         }
     }
 
+    updateUIBasedOnAuthStatus() {
+        const isAuthenticated = apiService.isAuthenticated();
+        const loginBtn = document.getElementById('loginBtn');
+        const loginStatus = document.getElementById('loginStatus');
+        const loggedInUser = document.getElementById('loggedInUser');
+        const loggedInUserId = document.getElementById('loggedInUserId');
+
+        if (isAuthenticated) {
+            // Hide login button
+            if (loginBtn) {
+                loginBtn.style.display = 'none';
+            }
+
+            // Show login status
+            if (loginStatus) {
+                loginStatus.style.display = 'block';
+            }
+            if (loggedInUser) {
+                loggedInUser.textContent = apiService.email;
+            }
+            if (loggedInUserId) {
+                loggedInUserId.textContent = apiService.userId;
+            }
+
+            // Auto-populate enumerator ID in create session modal
+            this.autoPopulateEnumeratorId();
+        } else {
+            // Show login button
+            if (loginBtn) {
+                loginBtn.style.display = 'block';
+            }
+
+            // Hide login status
+            if (loginStatus) {
+                loginStatus.style.display = 'none';
+            }
+
+            // Clear enumerator ID
+            this.clearEnumeratorId();
+        }
+    }
+
+    autoPopulateEnumeratorId() {
+        const enumeratorIdField = document.getElementById('enumeratorId');
+        if (enumeratorIdField && apiService.userId) {
+            enumeratorIdField.value = apiService.userId;
+        }
+    }
+
+    clearEnumeratorId() {
+        const enumeratorIdField = document.getElementById('enumeratorId');
+        if (enumeratorIdField) {
+            enumeratorIdField.value = '';
+        }
+    }
+
     setupFormHandlers() {
+        // Login button
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                this.showLoginModal();
+            });
+        }
+
+        // Logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                this.handleLogout();
+            });
+        }
+
+        // Login submit button
+        const loginSubmit = document.getElementById('loginSubmit');
+        if (loginSubmit) {
+            loginSubmit.addEventListener('click', () => {
+                this.handleLogin();
+            });
+        }
+
         // Create session button
         const createSessionBtn = document.getElementById('createSessionBtn');
         if (createSessionBtn) {
             createSessionBtn.addEventListener('click', () => {
-                // Clear any previous modal errors when opening
                 SessionUIUtils.hideModalError();
                 const modal = new bootstrap.Modal(document.getElementById('createSessionModal'));
                 modal.show();
@@ -127,45 +192,6 @@ class IndexUIManager {
         if (uploadCompletedBtn) {
             uploadCompletedBtn.addEventListener('click', () => {
                 this.handleBulkUpload();
-            });
-        }
-
-        // Login/Logout button in header
-        const loginLogoutBtn = document.getElementById('loginLogoutBtn');
-        if (loginLogoutBtn) {
-            loginLogoutBtn.addEventListener('click', () => {
-                const isAuthenticated = apiService && typeof apiService.isAuthenticated === 'function' ? apiService.isAuthenticated() : false;
-
-                if (isAuthenticated) {
-                    this.handleLogout();
-                } else {
-                    console.log('Login button clicked'); // Debug log
-                    this.showLoginModal();
-                }
-            });
-        }
-
-        // Login modal handlers
-        const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-        if (loginSubmitBtn) {
-            loginSubmitBtn.addEventListener('click', () => {
-                this.handleLogin();
-            });
-        }
-
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                this.handleLogout();
-            });
-        }
-
-
-
-        const togglePassword = document.getElementById('togglePassword');
-        if (togglePassword) {
-            togglePassword.addEventListener('click', () => {
-                this.togglePasswordVisibility();
             });
         }
 
@@ -189,7 +215,6 @@ class IndexUIManager {
         // Event delegation for session action buttons
         document.addEventListener('click', (event) => {
             if (event.target.classList.contains('session-action')) {
-                // Prevent action on disabled buttons
                 if (event.target.disabled || event.target.hasAttribute('disabled')) {
                     return;
                 }
@@ -225,7 +250,7 @@ class IndexUIManager {
             }
         });
 
-        // Clear modal errors when modal is closed
+        // Clear modal errors when modals are closed
         const createSessionModal = document.getElementById('createSessionModal');
         if (createSessionModal) {
             createSessionModal.addEventListener('hidden.bs.modal', () => {
@@ -234,16 +259,87 @@ class IndexUIManager {
             });
         }
 
-        // Clear login modal errors when modal is closed
         const loginModal = document.getElementById('loginModal');
         if (loginModal) {
             loginModal.addEventListener('hidden.bs.modal', () => {
-                this.hideLoginModalError();
-                const loginForm = document.getElementById('loginForm');
-                if (loginForm) {
-                    loginForm.reset();
-                }
+                this.clearLoginError();
+                document.getElementById('loginForm').reset();
             });
+        }
+    }
+
+    showLoginModal() {
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) {
+            const modal = new bootstrap.Modal(loginModal);
+            modal.show();
+        }
+    }
+
+    async handleLogin() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        this.clearLoginError();
+
+        if (!email || !password) {
+            this.showLoginError('Please enter both email and password');
+            return;
+        }
+
+        const loginSubmit = document.getElementById('loginSubmit');
+        if (loginSubmit) {
+            loginSubmit.disabled = true;
+            loginSubmit.textContent = 'Logging in...';
+        }
+
+        try {
+            const result = await apiService.login(email, password);
+
+            if (result.success) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                if (modal) {
+                    modal.hide();
+                }
+
+                SessionUIUtils.showSuccess(`Successfully logged in as ${email}`);
+                this.updateUIBasedOnAuthStatus();
+                await this.loadAndRenderSessions();
+            } else {
+                this.showLoginError('Login failed');
+            }
+        } catch (error) {
+            this.showLoginError(error.message);
+        } finally {
+            if (loginSubmit) {
+                loginSubmit.disabled = false;
+                loginSubmit.textContent = 'Login';
+            }
+        }
+    }
+
+    handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            apiService.clearCredentials();
+            SessionUIUtils.showSuccess('Successfully logged out');
+            this.updateUIBasedOnAuthStatus();
+            this.loadAndRenderSessions();
+        }
+    }
+
+    showLoginError(message) {
+        const loginError = document.getElementById('loginError');
+        if (loginError) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+        }
+    }
+
+    clearLoginError() {
+        const loginError = document.getElementById('loginError');
+        if (loginError) {
+            loginError.style.display = 'none';
         }
     }
 
@@ -257,8 +353,6 @@ class IndexUIManager {
         const child2Ability = parseInt(document.getElementById('child2Ability').value);
         const sessionType = document.querySelector('input[name="sessionType"]:checked')?.value;
 
-
-        // Clear any previous modal errors
         SessionUIUtils.hideModalError();
 
         if (!participantId || !enumeratorId || !child1Name || !child2Name || !school || !sessionType) {
@@ -266,7 +360,6 @@ class IndexUIManager {
             return;
         }
 
-        // Validate child abilities
         if (isNaN(child1Ability) || child1Ability < 0 || child1Ability > 100) {
             SessionUIUtils.showModalError('Child 1 ability must be a number between 0 and 100');
             return;
@@ -282,7 +375,6 @@ class IndexUIManager {
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Session created successfully');
 
-            // Close modal and reset form
             const modal = bootstrap.Modal.getInstance(document.getElementById('createSessionModal'));
             if (modal) {
                 modal.hide();
@@ -297,14 +389,12 @@ class IndexUIManager {
 
     async handleBulkUpload() {
         try {
-            // Disable the button during upload
             const uploadBtn = document.getElementById('uploadCompletedBtn');
             if (uploadBtn) {
                 uploadBtn.disabled = true;
                 uploadBtn.textContent = 'Uploading...';
             }
 
-            // Get all completed sessions that haven't been uploaded
             const uploadableSessions = await sessionManager.getUploadableSessions();
 
             if (uploadableSessions.length === 0) {
@@ -316,20 +406,16 @@ class IndexUIManager {
             let failureCount = 0;
             const errors = [];
 
-            // Upload each session one by one
             for (const session of uploadableSessions) {
                 try {
                     await sessionManager.uploadSession(session.id);
                     successCount++;
-                    console.log(`Successfully uploaded session ${session.id}`);
                 } catch (error) {
                     failureCount++;
                     errors.push(`Session ${session.id}: ${error.message}`);
-                    console.error(`Failed to upload session ${session.id}:`, error);
                 }
             }
 
-            // Show results
             if (failureCount === 0) {
                 SessionUIUtils.showSuccess(`Successfully uploaded ${successCount} session${successCount !== 1 ? 's' : ''}`);
             } else if (successCount === 0) {
@@ -338,18 +424,16 @@ class IndexUIManager {
                 SessionUIUtils.showError(`Uploaded ${successCount} session${successCount !== 1 ? 's' : ''}, but ${failureCount} failed. Errors: ${errors.join('; ')}`);
             }
 
-            // Refresh the session list to show updated upload status
             await this.loadAndRenderSessions();
 
         } catch (error) {
             console.error('Error during bulk upload:', error);
             SessionUIUtils.showError(`Bulk upload failed: ${error.message}`);
         } finally {
-            // Re-enable the button
             const uploadBtn = document.getElementById('uploadCompletedBtn');
             if (uploadBtn) {
                 uploadBtn.disabled = false;
-                uploadBtn.textContent = 'Upload Completed Sessions';
+                await this.updateUploadButtonState();
             }
         }
     }
@@ -360,7 +444,6 @@ class IndexUIManager {
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Database reset successfully');
 
-            // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('resetDbModal'));
             if (modal) {
                 modal.hide();
@@ -371,38 +454,7 @@ class IndexUIManager {
         }
     }
 
-    updateLoginStatusNotification() {
-        const notification = document.getElementById('loginStatusNotification');
-        const userDisplay = document.getElementById('currentUserDisplay');
-        const enumeratorIdDisplay = document.getElementById('currentEnumeratorId');
-        const loginLogoutBtn = document.getElementById('loginLogoutBtn');
-
-        const isAuthenticated = apiService && typeof apiService.isAuthenticated === 'function' ? apiService.isAuthenticated() : false;
-
-        if (isAuthenticated && (apiService.enumeratorName || apiService.username)) {
-            // Show notification
-            if (userDisplay) userDisplay.textContent = apiService.enumeratorName || apiService.username;
-            if (enumeratorIdDisplay) enumeratorIdDisplay.textContent = apiService.enumeratorId || '1';
-            if (notification) notification.style.display = 'block';
-
-            // Update header button to show "Logout"
-            if (loginLogoutBtn) {
-                loginLogoutBtn.textContent = '🚪 Logout';
-                loginLogoutBtn.className = 'btn btn-outline-danger';
-            }
-        } else {
-            // Hide notification
-            if (notification) notification.style.display = 'none';
-
-            // Update header button to show "Login"
-            if (loginLogoutBtn) {
-                loginLogoutBtn.textContent = '🔑 Login';
-                loginLogoutBtn.className = 'btn btn-outline-secondary';
-            }
-        }
-    }
-
-    // Action button handlers for onclick events
+    // Session action handlers
     async startChild1Survey(sessionId) {
         try {
             await sessionManager.markSurveyStarted(sessionId);
@@ -469,159 +521,9 @@ class IndexUIManager {
             }
         }
     }
-
-    // Login and Authentication handlers
-    showLoginModal() {
-        console.log('showLoginModal called'); // Debug log
-
-        // Get form elements
-        const loginUsername = document.getElementById('loginUsername');
-        const loginStatus = document.getElementById('loginStatus');
-        const currentUser = document.getElementById('currentUser');
-
-        // Clear form fields
-        if (loginUsername) loginUsername.value = '';
-        const loginPassword = document.getElementById('loginPassword');
-        if (loginPassword) loginPassword.value = '';
-
-        // Show current login status
-        const isAuth = apiService && typeof apiService.isAuthenticated === 'function' ? apiService.isAuthenticated() : false;
-
-        if (isAuth && apiService.username) {
-            if (loginStatus) loginStatus.style.display = 'block';
-            if (currentUser) currentUser.textContent = apiService.username;
-        } else {
-            if (loginStatus) loginStatus.style.display = 'none';
-        }
-
-        // Clear any previous errors
-        this.hideLoginModalError();
-
-        // Show modal
-        const loginModalElement = document.getElementById('loginModal');
-
-        if (loginModalElement) {
-            const modal = new bootstrap.Modal(loginModalElement);
-            modal.show();
-        } else {
-            console.error('Login modal element not found!');
-        }
-    }
-
-    async handleLogin() {
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
-        const rememberMe = document.getElementById('rememberMe').checked;
-
-        // Clear any previous errors
-        this.hideLoginModalError();
-
-        if (!username || !password) {
-            this.showLoginModalError('Please fill in username and password');
-            return;
-        }
-
-        try {
-            // API URL is configured in constants.js, no need to set it here
-
-            // Disable submit button during login
-            const submitBtn = document.getElementById('loginSubmitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Logging in...';
-            }
-
-            // Attempt login
-            const result = await apiService.login(username, password, rememberMe);
-
-            if (result.success) {
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                if (modal) {
-                    modal.hide();
-                }
-
-                SessionUIUtils.showSuccess(`Successfully logged in as ${username}`);
-
-                // Update upload button state and login notification
-                await this.updateUploadButtonState();
-                this.updateLoginStatusNotification();
-            } else {
-                this.showLoginModalError('Login failed - please check your credentials');
-            }
-
-        } catch (error) {
-            if (error.name === 'TypeError' && error.message.includes('URL')) {
-                this.showLoginModalError('Please enter a valid URL format (e.g., https://api.example.com)');
-            } else {
-                this.showLoginModalError(`Login failed: ${error.message}`);
-            }
-        } finally {
-            // Re-enable submit button
-            const submitBtn = document.getElementById('loginSubmitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
-            }
-        }
-    }
-
-    handleLogout() {
-        if (confirm('Are you sure you want to logout?')) {
-            apiService.clearCredentials();
-
-            // Update login status display
-            const loginStatus = document.getElementById('loginStatus');
-            if (loginStatus) loginStatus.style.display = 'none';
-
-            SessionUIUtils.showSuccess('Successfully logged out');
-
-            // Update upload button state and login notification
-            this.updateUploadButtonState();
-            this.updateLoginStatusNotification();
-
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            if (modal) {
-                modal.hide();
-            }
-        }
-    }
-
-
-    togglePasswordVisibility() {
-        const passwordInput = document.getElementById('loginPassword');
-        const toggleBtn = document.getElementById('togglePassword');
-
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleBtn.textContent = '🙈';
-        } else {
-            passwordInput.type = 'password';
-            toggleBtn.textContent = '👁️';
-        }
-    }
-
-    showLoginModalError(message) {
-        const errorDisplay = document.getElementById('loginModalErrorDisplay');
-        const errorMessage = document.getElementById('loginModalErrorMessage');
-        if (errorDisplay && errorMessage) {
-            errorMessage.textContent = message;
-            errorDisplay.style.display = 'block';
-        }
-    }
-
-    hideLoginModalError() {
-        const errorDisplay = document.getElementById('loginModalErrorDisplay');
-        if (errorDisplay) {
-            errorDisplay.style.display = 'none';
-        }
-    }
-
 }
 
 // Initialize the index UI manager
 const indexUI = new IndexUIManager();
 
-// Export indexUI for module access
 export { indexUI };

@@ -170,72 +170,8 @@ class SessionDetailUIManager {
 
     async previewData(sessionId) {
         try {
-            const data = await sessionManager.aggregateSessionData(sessionId);
-            const jsonString = JSON.stringify(data, null, 2);
-
-            // Open in new tab
-            try {
-                const newTab = window.open('', '_blank');
-                if (newTab) {
-                    newTab.document.write(`
-                        <html>
-                            <head>
-                                <title>Upload Data - Session ${sessionId.substring(0, 8)}</title>
-                                <style>
-                                    body { font-family: monospace; margin: 20px; line-height: 1.4; }
-                                    .json-container {
-                                        white-space: pre-wrap;
-                                        background: #f8f9fa;
-                                        padding: 20px;
-                                        border-radius: 8px;
-                                        border: 1px solid #dee2e6;
-                                        font-size: 12px;
-                                        overflow-x: auto;
-                                    }
-                                    .copy-btn {
-                                        margin-bottom: 15px;
-                                        padding: 8px 16px;
-                                        background: #007bff;
-                                        color: white;
-                                        border: none;
-                                        border-radius: 4px;
-                                        cursor: pointer;
-                                    }
-                                    .copy-btn:hover { background: #0056b3; }
-                                    h2 { color: #495057; }
-                                </style>
-                            </head>
-                            <body>
-                                <h2>📊 Upload Data JSON</h2>
-                                <p><strong>Session ID:</strong> ${sessionId}</p>
-                                <button class="copy-btn" onclick="copyToClipboard()">
-                                    📋 Copy to Clipboard
-                                </button>
-                                <div id="json-data" class="json-container">${jsonString}</div>
-                                <script>
-                                    function copyToClipboard() {
-                                        navigator.clipboard.writeText(document.getElementById('json-data').textContent).then(() => {
-                                            const btn = document.querySelector('.copy-btn');
-                                            const originalText = btn.textContent;
-                                            btn.textContent = '✓ Copied!';
-                                            setTimeout(() => btn.textContent = originalText, 2000);
-                                        }).catch(err => {
-                                            alert('Failed to copy to clipboard');
-                                        });
-                                    }
-                                </script>
-                            </body>
-                        </html>
-                    `);
-                    newTab.document.close();
-                } else {
-                    throw new Error('Tab blocked');
-                }
-            } catch (tabError) {
-                // Fallback: copy to clipboard and show alert
-                await navigator.clipboard.writeText(jsonString);
-                alert(`JSON data copied to clipboard!\n\nSession: ${sessionId}\nData size: ${new Blob([jsonString]).size} bytes`);
-            }
+            // Simply open the session JSON page with the session ID as a parameter
+            window.open(`session-json.html?sessionId=${sessionId}`, '_blank');
 
         } catch (error) {
             console.error('Error previewing data:', error);

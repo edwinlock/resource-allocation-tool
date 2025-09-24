@@ -196,63 +196,63 @@
             </div>
         </div>
 
-        <!-- Survey Responses -->
-        {% for survey_id, responses in survey_data.items() %}
+        <!-- Child 1 Survey Responses -->
         <div class="card mb-4">
             <div class="card-header">
-                <h6 class="mb-0">{{ survey_id }} Survey Responses</h6>
+                <h6 class="mb-0">Child 1 Survey - {{ session.child1_name }}</h6>
             </div>
             <div class="card-body">
-                {% if responses %}
-                    {% set columns = [
-                        ('Question ID', 'question_id'),
-                        ('Answer', 'answer'),
-                        ('Completed At', 'completed_at_formatted')
-                    ] %}
-                    {% set data = [] %}
-                    {% for response in responses %}
-                        {% set _ = data.append({
-                            'question_id': response.question_id,
-                            'answer': response.answer,
-                            'completed_at_formatted': response.completed_at.strftime('%Y-%m-%d %H:%M:%S')
-                        }) %}
-                    {% endfor %}
-                    {{ render_table(data, columns, table_id='survey-' + survey_id.lower() + '-table', table_classes='table table-sm table-striped') }}
-                {% else %}
-                    <p class="text-muted">No responses found.</p>
-                {% endif %}
+                {{ render_table(child1_responses, titles=[
+                    ('question_id', 'Question'),
+                    ('answer', 'Answer'),
+                    ('completed_at', 'Completed At')
+                ]) }}
             </div>
         </div>
-        {% endfor %}
+
+        <!-- Child 2 Survey Responses -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Child 2 Survey - {{ session.child2_name }}</h6>
+            </div>
+            <div class="card-body">
+                {{ render_table(child2_responses, titles=[
+                    ('question_id', 'Question'),
+                    ('answer', 'Answer'),
+                    ('completed_at', 'Completed At')
+                ]) }}
+            </div>
+        </div>
+
+        <!-- Parent Survey Responses -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Parent Survey - {{ session.session_type.title() }}</h6>
+            </div>
+            <div class="card-body">
+                {{ render_table(parent_responses, titles=[
+                    ('question_id', 'Question'),
+                    ('answer', 'Answer'),
+                    ('completed_at', 'Completed At')
+                ]) }}
+            </div>
+        </div>
 
         <!-- Slider Responses -->
-        {% if slider_data %}
         <div class="card mb-4">
             <div class="card-header">
-                <h6 class="mb-0">Slider Responses</h6>
+                <h6 class="mb-0">Resource Allocation Responses</h6>
             </div>
             <div class="card-body">
-                {% set columns = [
-                    ('Display Order', 'display_order'),
-                    ('Scenario Number', 'scenario_number'),
-                    ('Child 1 Investment', 'child1_investment'),
-                    ('Child 2 Investment', 'child2_investment'),
-                    ('Completed At', 'completed_at_formatted')
-                ] %}
-                {% set data = [] %}
-                {% for response in slider_data %}
-                    {% set _ = data.append({
-                        'display_order': response.display_order,
-                        'scenario_number': response.scenario_number,
-                        'child1_investment': response.child1_investment,
-                        'child2_investment': response.child2_investment,
-                        'completed_at_formatted': response.completed_at.strftime('%Y-%m-%d %H:%M:%S')
-                    }) %}
-                {% endfor %}
-                {{ render_table(data, columns, table_id='slider-responses-table', table_classes='table table-sm table-striped') }}
+                {{ render_table(slider_responses, titles=[
+                    ('display_order', 'Order'),
+                    ('scenario_number', 'Scenario'),
+                    ('child1_investment', session.child1_name + ' Investment'),
+                    ('child2_investment', session.child2_name + ' Investment'),
+                    ('completed_at', 'Completed At')
+                ]) }}
             </div>
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

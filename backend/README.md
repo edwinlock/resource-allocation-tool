@@ -110,7 +110,7 @@ SECRET_KEY=your_secret_key_here
 SECURITY_PASSWORD_SALT=your_password_salt_here
 
 # Optional - Database (defaults to SQLite)
-DATABASE_URL=sqlite:///learn.db
+DATABACKEND_URL=sqlite:///learn.db
 
 # Optional - Email (for password reset)
 SMTP2GO_USERNAME=your_smtp2go_username

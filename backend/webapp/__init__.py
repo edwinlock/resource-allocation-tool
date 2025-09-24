@@ -9,6 +9,7 @@ from flask_login.signals import user_logged_in
 from flask_babel import Babel
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
@@ -20,6 +21,13 @@ bootstrap = Bootstrap5(app)
 db = SQLAlchemy(app)
 mail = Mail(app)
 babel = Babel(app)
+
+# Configure CORS to allow frontend requests
+CORS(app,
+     origins=['http://localhost:8080', 'http://localhost:8081'],
+     supports_credentials=True,
+     allow_headers=['Content-Type', 'Authentication-Token', 'Authorization'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
 # Initialize rate limiter
 limiter = Limiter(

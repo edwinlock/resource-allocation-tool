@@ -108,7 +108,7 @@ export class SessionDB {
 
     async loadSessions() {
         if (!this.db) return [];
-        
+
         try {
             await this.ensureOpen();
             return await this.db.sessions.orderBy('id').reverse().toArray();
