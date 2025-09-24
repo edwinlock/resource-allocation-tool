@@ -36,11 +36,7 @@
 
 See example survey.json for how questions are encoded.
 
-# Notes:
-* We can replace variables in curly brackets with: return surveyHTML.replace(/{(\w+)}/g, (match, key) => variables[key] || match);
-* 
-
-
 # Offline functionality
 * Check the manifest file
 * Review the service workers
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LEARN{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+
+    <!-- Custom CSS -->
+    <style>
+        .timestamp {
+            cursor: help;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index_page') }}">LEARN</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.has_role('administrator') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('session_page') }}">Sessions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('enumerators_page') }}">Enumerators</a>
+                            </li>
+                        {% elif current_user.has_role('enumerator') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('session_page', enumerator_id=current_user.id) }}">My Sessions</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.has_role('enumerator') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for_security('change_password') }}">Change Password</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for_security('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for_security('register') }}">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for_security('login') }}">Log in</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    {{ bootstrap.load_js() }}
+
+    <!-- Timezone conversion script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const timestamps = document.querySelectorAll('.timestamp');
+        timestamps.forEach(function(element) {
+            const utcTime = element.getAttribute('data-timestamp');
+            if (utcTime) {
+                const localTime = new Date(utcTime).toLocaleString();
+                element.textContent = localTime;
+            }
+        });
+    });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

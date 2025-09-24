@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/table.html' import render_table %}
+
+{% block title %}Session {{ session.id[:8] }}... - LEARN{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Session Details</h1>
+            <a href="{{ url_for('session_page') }}" class="btn btn-outline-secondary">← Back to Sessions</a>
+        </div>
+
+        <!-- Session Metadata -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Session Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Session ID:</th>
+                                <td><code>{{ session.id }}</code></td>
+                            </tr>
+                            <tr>
+                                <th>Participant ID:</th>
+                                <td>{{ session.participant_id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Enumerator:</th>
+                                <td>{{ session.enumerator.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Session Type:</th>
+                                <td>
+                                    <span class="badge bg-{{ 'primary' if session.session_type == 'treatment' else 'secondary' }}">
+                                        {{ session.session_type.title() }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>School:</th>
+                                <td>{{ session.school }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Created At:</th>
+                                <td>
+                                    <span class="timestamp" data-timestamp="{{ session.created_at.isoformat() }}Z">
+                                        {{ session.created_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Upload Status:</th>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if session.upload_status == 'uploaded' else 'warning' }}">
+                                        {{ session.upload_status.replace('_', ' ').title() }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% if session.uploaded_at %}
+                            <tr>
+                                <th>Uploaded At:</th>
+                                <td>
+                                    <span class="timestamp" data-timestamp="{{ session.uploaded_at.isoformat() }}Z">
+                                        {{ session.uploaded_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Completion Status:</th>
+                                <td>
+                                    {% if session.is_complete() %}
+                                        <span class="badge bg-success">Complete</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Incomplete</span>
+                                        <br><small class="text-muted">Missing: {{ ', '.join(session.get_missing_components()) }}</small>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Children Information -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Child 1: {{ session.child1_name }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Ability Score:</strong> {{ session.child1_ability }}/100</p>
+                        <p><strong>Survey Status:</strong>
+                            <span class="badge bg-{{ 'success' if session.child1_survey_status == 'completed' else 'warning' }}">
+                                {{ session.child1_survey_status.replace('_', ' ').title() }}
+                            </span>
+                        </p>
+                        {% if session.child1_survey_completed_at %}
+                        <p><strong>Completed At:</strong>
+                            <span class="timestamp" data-timestamp="{{ session.child1_survey_completed_at.isoformat() }}Z">
+                                {{ session.child1_survey_completed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                            </span>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Child 2: {{ session.child2_name }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Ability Score:</strong> {{ session.child2_ability }}/100</p>
+                        <p><strong>Survey Status:</strong>
+                            <span class="badge bg-{{ 'success' if session.child2_survey_status == 'completed' else 'warning' }}">
+                                {{ session.child2_survey_status.replace('_', ' ').title() }}
+                            </span>
+                        </p>
+                        {% if session.child2_survey_completed_at %}
+                        <p><strong>Completed At:</strong>
+                            <span class="timestamp" data-timestamp="{{ session.child2_survey_completed_at.isoformat() }}Z">
+                                {{ session.child2_survey_completed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                            </span>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parent Survey Status -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Parent Survey ({{ session.session_type.title() }})</h6>
+            </div>
+            <div class="card-body">
+                {% if session.session_type == 'treatment' %}
+                    <p><strong>Treatment Survey Status:</strong>
+                        <span class="badge bg-{{ 'success' if session.treatment_survey_status == 'completed' else 'warning' }}">
+                            {{ session.treatment_survey_status.replace('_', ' ').title() }}
+                        </span>
+                    </p>
+                    {% if session.treatment_survey_completed_at %}
+                    <p><strong>Completed At:</strong>
+                        <span class="timestamp" data-timestamp="{{ session.treatment_survey_completed_at.isoformat() }}Z">
+                            {{ session.treatment_survey_completed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                        </span>
+                    </p>
+                    {% endif %}
+                {% else %}
+                    <p><strong>Control Survey Status:</strong>
+                        <span class="badge bg-{{ 'success' if session.control_survey_status == 'completed' else 'warning' }}">
+                            {{ session.control_survey_status.replace('_', ' ').title() }}
+                        </span>
+                    </p>
+                    {% if session.control_survey_completed_at %}
+                    <p><strong>Completed At:</strong>
+                        <span class="timestamp" data-timestamp="{{ session.control_survey_completed_at.isoformat() }}Z">
+                            {{ session.control_survey_completed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                        </span>
+                    </p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Slider Exercise Status -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Slider Exercise</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Status:</strong>
+                    <span class="badge bg-{{ 'success' if session.slider_status == 'completed' else 'warning' }}">
+                        {{ session.slider_status.replace('_', ' ').title() }}
+                    </span>
+                </p>
+                {% if session.slider_completed_at %}
+                <p><strong>Completed At:</strong>
+                    <span class="timestamp" data-timestamp="{{ session.slider_completed_at.isoformat() }}Z">
+                        {{ session.slider_completed_at.strftime('%Y-%m-%d %H:%M UTC') }}
+                    </span>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Survey Responses -->
+        {% for survey_id, responses in survey_data.items() %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">{{ survey_id }} Survey Responses</h6>
+            </div>
+            <div class="card-body">
+                {% if responses %}
+                    {% set columns = [
+                        ('Question ID', 'question_id'),
+                        ('Answer', 'answer'),
+                        ('Completed At', 'completed_at_formatted')
+                    ] %}
+                    {% set data = [] %}
+                    {% for response in responses %}
+                        {% set _ = data.append({
+                            'question_id': response.question_id,
+                            'answer': response.answer,
+                            'completed_at_formatted': response.completed_at.strftime('%Y-%m-%d %H:%M:%S')
+                        }) %}
+                    {% endfor %}
+                    {{ render_table(data, columns, table_id='survey-' + survey_id.lower() + '-table', table_classes='table table-sm table-striped') }}
+                {% else %}
+                    <p class="text-muted">No responses found.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Slider Responses -->
+        {% if slider_data %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Slider Responses</h6>
+            </div>
+            <div class="card-body">
+                {% set columns = [
+                    ('Display Order', 'display_order'),
+                    ('Scenario Number', 'scenario_number'),
+                    ('Child 1 Investment', 'child1_investment'),
+                    ('Child 2 Investment', 'child2_investment'),
+                    ('Completed At', 'completed_at_formatted')
+                ] %}
+                {% set data = [] %}
+                {% for response in slider_data %}
+                    {% set _ = data.append({
+                        'display_order': response.display_order,
+                        'scenario_number': response.scenario_number,
+                        'child1_investment': response.child1_investment,
+                        'child2_investment': response.child2_investment,
+                        'completed_at_formatted': response.completed_at.strftime('%Y-%m-%d %H:%M:%S')
+                    }) %}
+                {% endfor %}
+                {{ render_table(data, columns, table_id='slider-responses-table', table_classes='table table-sm table-striped') }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
