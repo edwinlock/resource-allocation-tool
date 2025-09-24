@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v13';
+const CACHE_NAME = 'resource-allocation-v14';
 const urlsToCache = [
   './',
   './index.html',

@@ -4,24 +4,11 @@ import { generateUUID, getUTCDate } from './utilities.js';
 export class SliderResponseDB {
     constructor() {
         this.db = null;
-        this._initPromise = null;
+        this.initializeDatabase();
     }
 
-    // Lazy database initialization - responses only
-    async initializeDatabase() {
-        // Return existing promise if initialization is already in progress
-        if (this._initPromise) {
-            return this._initPromise;
-        }
-
-        // Create initialization promise
-        this._initPromise = this._performInitialization();
-        return this._initPromise;
-    }
-
-    async _performInitialization() {
-        if (this.db) return; // Already initialized
-
+    // Database initialization - responses only
+    initializeDatabase() {
         if (typeof Dexie === 'undefined') {
             console.warn('Dexie not available, running without database persistence');
             this.db = null;
@@ -41,7 +28,6 @@ export class SliderResponseDB {
     }
 
     async ensureOpen() {
-        await this.initializeDatabase();
         if (this.db && !this.db.isOpen()) {
             await this.db.open();
         }
@@ -194,9 +180,3 @@ export class SliderResponseDB {
 // Create and export singleton instance
 export const sliderResponseDB = new SliderResponseDB();
 
-// Start background initialization immediately (non-blocking)
-setTimeout(() => {
-    sliderResponseDB.initializeDatabase().catch(err =>
-        console.warn('Background SliderResponseDB initialization failed:', err)
-    );
-}, 0);

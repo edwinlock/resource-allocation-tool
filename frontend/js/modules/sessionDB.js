@@ -4,24 +4,11 @@ import { generateUUID, getUTCDate } from './utilities.js';
 export class SessionDB {
     constructor() {
         this.db = null;
-        this._initPromise = null;
+        this.initializeDatabase();
     }
 
-    // Lazy database initialization - sessions only
-    async initializeDatabase() {
-        // Return existing promise if initialization is already in progress
-        if (this._initPromise) {
-            return this._initPromise;
-        }
-
-        // Create initialization promise
-        this._initPromise = this._performInitialization();
-        return this._initPromise;
-    }
-
-    async _performInitialization() {
-        if (this.db) return; // Already initialized
-
+    // Database initialization - sessions only
+    initializeDatabase() {
         if (typeof Dexie === 'undefined') {
             console.warn('Dexie not available, running without database persistence');
             this.db = null;
@@ -41,14 +28,12 @@ export class SessionDB {
     }
 
     async ensureOpen() {
-        await this.initializeDatabase();
         if (this.db && !this.db.isOpen()) {
             await this.db.open();
         }
     }
 
     async resetDatabase() {
-        await this.initializeDatabase();
         if (!this.db) return;
 
         try {
@@ -56,8 +41,7 @@ export class SessionDB {
                 this.db.close();
             }
             await this.db.delete();
-            this.db = null;
-            this._initPromise = null;
+            this.initializeDatabase();
             await this.ensureOpen();
         } catch (error) {
             console.error('Error resetting database:', error);
@@ -87,7 +71,7 @@ export class SessionDB {
         const sessionId = generateUUID();
         
         try {
-            await this.db.sessions.add({
+            const sessionData = {
                 id: sessionId,
                 participantId: participantId,
                 enumeratorID: enumeratorId,
@@ -111,7 +95,9 @@ export class SessionDB {
                 sessionType: sessionType,
                 uploadedAt: null,
                 uploadStatus: 'not_uploaded'
-            });
+            };
+
+            await this.db.sessions.add(sessionData);
         } catch (error) {
             if (error.name === 'ConstraintError') {
                 throw new Error(`A session already exists for Participant "${participantId}" and Enumerator "${enumeratorId}". Each participant-enumerator combination can only have one session.`);
@@ -197,9 +183,3 @@ export class SessionDB {
 // Create and export singleton instance
 export const sessionDB = new SessionDB();
 
-// Start background initialization immediately (non-blocking)
-setTimeout(() => {
-    sessionDB.initializeDatabase().catch(err =>
-        console.warn('Background SessionDB initialization failed:', err)
-    );
-}, 0);
