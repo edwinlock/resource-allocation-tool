@@ -1,0 +1,56 @@
+---
+title: "Slider"
+format: html
+---
+
+# Input Data
+
+- `{Child1name}` and `{Child2name}` from `{household_x}`
+
+- **Gap size scenario:** For each household, we <b>randomly</b> select whether they will be shown the `large_gap` (1-6) or `medium-gap` (5-2) scenario. The gap size scenario determines the number of initial lesson vouchers each child in a household receives, given their "performance"
+
+<p style="color:orange;">We may need to pre-randomize each Parent Survey.</p> That is, We know there will be 480 Surveys. Is there a way to guarantee that 240 see the `large_gap` and 240 see `medium_gap`? Ideally, this is stratified by school, such that we don't accidentally end up with all the large gaps in 20 schools out of 80. The number of schools is still being confirmed in the next days (today: 24 Sept.), and with the name of the school, we also get the number of families who are eligible for the experiment. Families cannot be forced to do the survey, it is voluntary, but the higher the number in a school the more families we might convince to join the study. 
+
+- **Voucher gaps:** (6-1) and (5-2)
+    
+    - Originally, `{Child1name}` and `{Child2name}` would be assigned a tag of `high` and `low` depending on who received the highest and the lowest grade on the test. 
+
+    - Given a pre-determined **gap size scenario** (see. bullet point 2), `{Child1name}-high` would either receive 6 vouchers, or 5 vouchers, and `{Child2name}-low` would then get the remainder 1 or 2 vouchers, accordingly.
+
+    - <p style="color:orange;"> NOW WE RANDOMIZE WHO GETS THE HIGH/LOW TAG. </p> Instead of determining it with a score. That is, instead of having an field to input the score of each child, we could get a button to randomly give each child the `high` or `low` tag. In an analog world, the enumerator would just randomly input 6 and 1 to any of the kids (if they are in a large gap scenario case), instead of the score that computes the number of initial vouchers. But because we are not in an analog world, we can randomly choose that. However, we do need to associate the initial number of received vouchers with a child name.
+
+- **Sigma-Theta Scenarios** Randomize the order in which they appear per survey. We need to be able to export the order, though. Something along the lines of:
+
+| Survey ID | Sigma-Theta | Slider Choice `high`| Slider Choice `low`| Final number of vouchers `high` | Final number of vouchers `low` 
+|-----------|-------------|---------------------|---------------------
+| unique_idx1 | Scenario 1 (cobb-douglas linear) | 0 | 9 | ... | ... |
+| unique_idx1 | Scenario 5 (cobb-douglas linear) | 9 | 0 | ... | ... |
+| unique_idx1 | Scenario 2 (cobb-douglas linear) | 4 | 5 | ... | ... |
+| unique_idx1 | Scenario 4 (cobb-douglas linear) | ... | ... | ... | ... |
+| unique_idx1 | Scenario 3 (cobb-douglas linear) | ... | ... | ... | ... |
+| unique_idx1 | Scenario 6 (cobb-douglas linear) | ... | ... | ... | ... |
+
+...
+
+:::{.callout-note icon="false"}
+# Computing the scenarios
+
+After we have chosen the **gap size scenario**, the and which child is `high` and which is `low`, the rest of the slider is computed exactly the same. 
+
+Y-label: "Total number of units" [We should probably make sure that the displayed scale on the chart is always the same. Some images start at 0 and end at 20, some 0-15 etc. Just for consistency]
+X-label: "Units"
+
+**Colors**: 
+
+    - {childOrange} = child-`high`
+    - {childBlue} = child-`low`
+    - Green = Total household vouchers.
+
+**Scenario Names:** A, B, C, D.. etc. is fine
+
+**Scenarios:** Originally we had 8. Julia indicated that the two scenarios from the Additive Production Function does not help us. So we can kick those two out.
+:::
+
+# Graph types
+
+Currently, the line chart is the leading man. In the end, the parents should not be able to see the "advanced" part. In the next days we need to know which graph type is preferred (bar charts etc.). I don't want to delete them as of now until we know this. 

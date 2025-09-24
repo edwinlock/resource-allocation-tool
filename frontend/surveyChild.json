@@ -1,6 +1,6 @@
 {
     "survey_id": "surveyChild",
-    "name": "Child Demographics Survey",
+    "name": "Child Survey",
     "questions": [
         {
             "question_id": "consent_child_survey",
