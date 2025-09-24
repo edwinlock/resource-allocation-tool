@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v11';
+const CACHE_NAME = 'resource-allocation-v12';
 const urlsToCache = [
   './',
   './index.html',
@@ -72,21 +72,27 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(
-    // Network-first strategy for all resources (development mode)
-    fetch(event.request).then(fetchResponse => {
-      // Cache the new response for future use
-      const responseClone = fetchResponse.clone();
-      caches.open(CACHE_NAME).then(cache => {
-        cache.put(event.request, responseClone);
-      });
-      return fetchResponse;
-    }).catch(() => {
-      // Network failed, fallback to cache
-      return caches.match(event.request).then(response => {
-        return response || new Response('Resource not available offline', {
-          status: 503,
-          statusText: 'Service Unavailable'
+    // Cache-first strategy for all resources (offline-first)
+    caches.match(event.request).then(response => {
+      if (response) {
+        // Return cached version immediately
+        return response;
+      }
+
+      // Not in cache, fetch from network
+      return fetch(event.request).then(fetchResponse => {
+        // Cache the new response for future use
+        const responseClone = fetchResponse.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
         });
+        return fetchResponse;
+      });
+    }).catch(() => {
+      // Both cache and network failed
+      return new Response('Resource not available', {
+        status: 503,
+        statusText: 'Service Unavailable'
       });
     })
   );

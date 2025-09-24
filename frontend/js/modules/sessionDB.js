@@ -4,11 +4,24 @@ import { generateUUID, getUTCDate } from './utilities.js';
 export class SessionDB {
     constructor() {
         this.db = null;
-        this.initializeDatabase();
+        this._initPromise = null;
     }
 
-    // Database initialization - sessions only
-    initializeDatabase() {
+    // Lazy database initialization - sessions only
+    async initializeDatabase() {
+        // Return existing promise if initialization is already in progress
+        if (this._initPromise) {
+            return this._initPromise;
+        }
+
+        // Create initialization promise
+        this._initPromise = this._performInitialization();
+        return this._initPromise;
+    }
+
+    async _performInitialization() {
+        if (this.db) return; // Already initialized
+
         if (typeof Dexie === 'undefined') {
             console.warn('Dexie not available, running without database persistence');
             this.db = null;
@@ -28,20 +41,23 @@ export class SessionDB {
     }
 
     async ensureOpen() {
+        await this.initializeDatabase();
         if (this.db && !this.db.isOpen()) {
             await this.db.open();
         }
     }
 
     async resetDatabase() {
+        await this.initializeDatabase();
         if (!this.db) return;
-        
+
         try {
             if (this.db.isOpen()) {
                 this.db.close();
             }
             await this.db.delete();
-            this.initializeDatabase();
+            this.db = null;
+            this._initPromise = null;
             await this.ensureOpen();
         } catch (error) {
             console.error('Error resetting database:', error);
@@ -180,3 +196,10 @@ export class SessionDB {
 
 // Create and export singleton instance
 export const sessionDB = new SessionDB();
+
+// Start background initialization immediately (non-blocking)
+setTimeout(() => {
+    sessionDB.initializeDatabase().catch(err =>
+        console.warn('Background SessionDB initialization failed:', err)
+    );
+}, 0);
