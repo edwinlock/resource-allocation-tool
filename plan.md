@@ -5,3 +5,7 @@
 3. Set up regular backups on backend
 4. Update survey JSON files
 5. Change workflow for parents so survey + sliders are all in one.
+6. Refactor the session creation: enumerators just choose from a list of pre-defined sessions instead of entering details manually.
+
+
+

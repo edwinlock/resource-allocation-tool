@@ -1,0 +1,30 @@
+{
+    "survey_id": "Exit",
+    "name": "Exit Survey",
+    "questions": [
+        {
+            "question_id": "exit_strategy",
+            "type": "open",
+            "query": "Describe the strategy or approach you used when making investment decisions between {child1name} and {child2name} in the scenarios.",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "exit_approach",
+            "type": "singleselect",
+            "query": "When making investment decisions between {child1name} and {child2name}, how did you typically approach their different abilities?",
+            "values": ["Invest equally regardless of ability", "Invest more in the higher-ability child", "Invest more in the lower-ability child", "Invest based on each child's specific needs"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "exit_difficulty",
+            "type": "likert",
+            "query": "How difficult did you find the investment decision-making scenarios?",
+            "prefix": "Rate the difficulty level (1 = Very easy, 5 = Very difficult)",
+            "min": 1,
+            "max": 5,
+            "required": true
+        }
+    ]
+}

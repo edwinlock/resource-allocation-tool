@@ -102,8 +102,24 @@ class SurveyUIManager {
                 result.responses
             );
 
-            // Show success state
-            this.showSuccess();
+            // Redirect based on survey type and session type
+            const surveyId = this.surveyManager.surveyId;
+            const sessionId = this.sessionData.id;
+
+            if (surveyId === 'Control') {
+                // Control group: go directly to thanks page
+                window.location.href = 'thanks.html';
+            } else if (surveyId === 'Treatment') {
+                // Treatment group: go to slider
+                await sessionManager.markSliderStarted(sessionId);
+                window.location.href = `slider.html?sessionId=${sessionId}`;
+            } else if (surveyId === 'Exit') {
+                // Exit survey: go to thanks page
+                window.location.href = 'thanks.html';
+            } else {
+                // Child surveys: go to thanks page
+                window.location.href = 'thanks.html';
+            }
 
         } catch (error) {
             console.error('Error submitting survey:', error);

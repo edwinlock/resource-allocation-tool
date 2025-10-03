@@ -13,44 +13,78 @@
         .container {
             max-width: 1200px;
         }
-        
+
+        /* Larger font sizes for tablet */
+        body {
+            font-size: 1.1rem;
+        }
+
         .session-table {
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
-        
+
+        /* Larger buttons for easier tablet interaction */
         .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            min-height: 44px; /* Touch target size */
         }
-        
+
+        .btn {
+            font-size: 1.1rem;
+            padding: 0.6rem 1rem;
+            min-height: 48px;
+        }
+
         .text-muted {
-            font-size: 0.85rem;
+            font-size: 1rem;
         }
-        
+
         .status-completed {
             color: #198754;
             font-weight: 500;
         }
-        
+
         .status-in-progress {
             color: #fd7e14;
             font-weight: 500;
         }
-        
+
         .status-not-started {
             color: #6c757d;
             font-weight: 500;
         }
-        
+
         /* Action buttons styling for proper wrapping */
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.25rem;
+            gap: 0.5rem;
         }
-        
+
         .action-buttons .btn {
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Larger headings */
+        h1 {
+            font-size: 2rem;
+        }
+
+        h5 {
+            font-size: 1.4rem;
+        }
+
+        /* Larger form inputs */
+        .form-control, .form-select {
+            font-size: 1.1rem;
+            padding: 0.6rem 0.75rem;
+            min-height: 48px;
+        }
+
+        .form-label {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
@@ -105,7 +139,6 @@
                                         <th>Session ID</th>
                                         <th>Participant ID</th>
                                         <th>Enumerator ID</th>
-                                        <th>Children</th>
                                         <th>Type</th>
                                         <th>Upload Status</th>
                                         <th>Actions</th>
@@ -113,7 +146,7 @@
                                 </thead>
                                 <tbody id="currentSessionsTableBody">
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted py-4">
+                                        <td colspan="6" class="text-center text-muted py-4">
                                             Loading current sessions...
                                         </td>
                                     </tr>
@@ -137,7 +170,6 @@
                                         <th>Session ID</th>
                                         <th>Participant ID</th>
                                         <th>Enumerator ID</th>
-                                        <th>Children</th>
                                         <th>Type</th>
                                         <th>Uploaded At</th>
                                         <th>Actions</th>
@@ -145,7 +177,7 @@
                                 </thead>
                                 <tbody id="uploadedSessionsTableBody">
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted py-4">
+                                        <td colspan="6" class="text-center text-muted py-4">
                                             No uploaded sessions yet.
                                         </td>
                                     </tr>

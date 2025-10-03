@@ -20,6 +20,15 @@ export class SessionDB {
             this.db.version(1).stores({
                 sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
             });
+            this.db.version(2).stores({
+                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, exitSurveyStatus, exitSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
+            }).upgrade(tx => {
+                // Add exitSurveyStatus and exitSurveyCompletedAt to existing sessions
+                return tx.table('sessions').toCollection().modify(session => {
+                    session.exitSurveyStatus = session.exitSurveyStatus || 'not_started';
+                    session.exitSurveyCompletedAt = session.exitSurveyCompletedAt || null;
+                });
+            });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
             this.db = null;
@@ -84,6 +93,8 @@ export class SessionDB {
                 treatmentSurveyCompletedAt: null,
                 controlSurveyStatus: 'not_started',
                 controlSurveyCompletedAt: null,
+                exitSurveyStatus: 'not_started',
+                exitSurveyCompletedAt: null,
                 sliderStartedAt: null,
                 sliderCompletedAt: null,
                 sliderStatus: 'not_started',

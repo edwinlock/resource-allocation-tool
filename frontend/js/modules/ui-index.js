@@ -233,14 +233,8 @@ class IndexUIManager {
                         case 'startChild2Survey':
                             this.startChild2Survey(sessionId);
                             break;
-                        case 'startTreatmentSurvey':
-                            this.startTreatmentSurvey(sessionId);
-                            break;
-                        case 'startControlSurvey':
-                            this.startControlSurvey(sessionId);
-                            break;
-                        case 'startSlider':
-                            this.startSlider(sessionId);
+                        case 'startParentSurvey':
+                            this.startParentSurvey(sessionId);
                             break;
                         case 'deleteSession':
                             this.deleteSession(sessionId);
@@ -475,33 +469,22 @@ class IndexUIManager {
         }
     }
 
-    async startTreatmentSurvey(sessionId) {
+    async startParentSurvey(sessionId) {
         try {
-            await sessionManager.markSurveyStarted(sessionId);
-            window.location.href = `survey.html?survey_id=Treatment&session_id=${sessionId}`;
-        } catch (error) {
-            console.error('Error starting treatment survey:', error);
-            SessionUIUtils.showError('Failed to start treatment survey');
-        }
-    }
+            // Get session to determine type
+            const session = await sessionManager.getSession(sessionId);
+            if (!session) {
+                throw new Error('Session not found');
+            }
 
-    async startControlSurvey(sessionId) {
-        try {
             await sessionManager.markSurveyStarted(sessionId);
-            window.location.href = `survey.html?survey_id=Control&session_id=${sessionId}`;
-        } catch (error) {
-            console.error('Error starting control survey:', error);
-            SessionUIUtils.showError('Failed to start control survey');
-        }
-    }
 
-    async startSlider(sessionId) {
-        try {
-            await sessionManager.markSliderStarted(sessionId);
-            window.location.href = `slider.html?sessionId=${sessionId}`;
+            // Route to appropriate survey based on session type
+            const surveyId = session.sessionType === 'treatment' ? 'Treatment' : 'Control';
+            window.location.href = `survey.html?survey_id=${surveyId}&session_id=${sessionId}`;
         } catch (error) {
-            console.error('Error starting slider:', error);
-            SessionUIUtils.showError('Failed to start slider');
+            console.error('Error starting parent survey:', error);
+            SessionUIUtils.showError('Failed to start parent survey');
         }
     }
 

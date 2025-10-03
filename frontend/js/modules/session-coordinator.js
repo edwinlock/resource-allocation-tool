@@ -231,17 +231,20 @@ export class SessionCoordinator {
         // Check all required surveys are completed
         const child1Complete = session.child1SurveyStatus === 'completed';
         const child2Complete = session.child2SurveyStatus === 'completed';
-        const sliderComplete = session.sliderStatus === 'completed';
 
-        // Check parent survey based on session type
-        let parentSurveyComplete = false;
+        // Check parent workflow based on session type
+        let parentWorkflowComplete = false;
         if (session.sessionType === 'treatment') {
-            parentSurveyComplete = session.treatmentSurveyStatus === 'completed';
+            // Treatment: requires parent survey, slider, and exit survey
+            parentWorkflowComplete = session.treatmentSurveyStatus === 'completed' &&
+                                    session.sliderStatus === 'completed' &&
+                                    session.exitSurveyStatus === 'completed';
         } else if (session.sessionType === 'control') {
-            parentSurveyComplete = session.controlSurveyStatus === 'completed';
+            // Control: only requires parent survey
+            parentWorkflowComplete = session.controlSurveyStatus === 'completed';
         }
 
-        return child1Complete && child2Complete && parentSurveyComplete && sliderComplete;
+        return child1Complete && child2Complete && parentWorkflowComplete;
     }
 
     getMissingComponents(session) {
@@ -250,19 +253,23 @@ export class SessionCoordinator {
         const missing = [];
 
         if (session.child1SurveyStatus !== 'completed') {
-            missing.push('Child 1 Survey');
+            missing.push(session.child1name || 'Child 1');
         }
         if (session.child2SurveyStatus !== 'completed') {
-            missing.push('Child 2 Survey');
+            missing.push(session.child2name || 'Child 2');
         }
-        if (session.sessionType === 'treatment' && session.treatmentSurveyStatus !== 'completed') {
-            missing.push('Parent Survey (Treatment)');
+
+        // For treatment: check parent survey, slider, and exit survey
+        if (session.sessionType === 'treatment') {
+            if (session.treatmentSurveyStatus !== 'completed' ||
+                session.sliderStatus !== 'completed' ||
+                session.exitSurveyStatus !== 'completed') {
+                missing.push('Parent');
+            }
         }
-        if (session.sessionType === 'control' && session.controlSurveyStatus !== 'completed') {
-            missing.push('Parent Survey (Control)');
-        }
-        if (session.sliderStatus !== 'completed') {
-            missing.push('Slider Exercise');
+        // For control: only check parent survey
+        else if (session.sessionType === 'control' && session.controlSurveyStatus !== 'completed') {
+            missing.push('Parent');
         }
 
         return missing;

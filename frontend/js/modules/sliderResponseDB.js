@@ -36,9 +36,16 @@ export class SliderResponseDB {
     // Response CRUD operations
     async saveAllResponses(sessionId, responses) {
         if (!this.db) return;
-        
+
         await this.ensureOpen();
-        
+
+        // First, delete any existing responses for this session
+        // This handles the case where a user restarts the slider
+        await this.db.pageResponses
+            .where('sessionId')
+            .equals(sessionId)
+            .delete();
+
         // Convert responses array to database records
         const responseRecords = responses.map(response => ({
             id: generateUUID(),

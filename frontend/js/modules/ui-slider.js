@@ -185,12 +185,13 @@ export class UIManager {
         try {
             // Use SessionManager for business logic
             const result = await sessionManager.processNextScenario();
-            
+
             if (result.completed) {
-                // Session completed - redirect to session manager
-                window.location.href = 'index.html';
+                // Session completed - redirect to exit survey
+                const sessionId = appState.sliderState.sessionId;
+                window.location.href = `survey.html?survey_id=Exit&session_id=${sessionId}`;
             }
-            
+
             return result;
         } catch (error) {
             console.error('Error processing response:', error);

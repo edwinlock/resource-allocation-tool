@@ -50,7 +50,7 @@ export class OpenQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         return `
-            <div class="mb-3">
+            <div class="mb-4">
                 <fieldset>
                     <legend class="form-label">${query}</legend>
                     <input type="${inputType}" class="form-control" id="q_${this.questionId}"
@@ -85,7 +85,7 @@ export class MultiOpenQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-3">
+            <div class="mb-4">
                 <fieldset>
                     <legend class="form-label">${query}</legend>
         `;
@@ -159,7 +159,7 @@ export class SingleSelectQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-3">
+            <div class="mb-4">
                 <fieldset>
                     <legend class="form-label">${query}</legend>
         `;
@@ -209,7 +209,7 @@ export class MultiSelectQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-3">
+            <div class="mb-4">
                 <fieldset>
                     <legend class="form-label">${query}</legend>
         `;
@@ -269,7 +269,7 @@ export class GridQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-3">
+            <div class="mb-4">
                 <fieldset>
                     <legend class="form-label">${query}</legend>
                     <div class="table-responsive">
@@ -342,7 +342,7 @@ export class MPLQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-3">
+            <div class="mb-4">
                 <fieldset>
                     <legend class="form-label">${query}</legend>
                     <div class="table-responsive">
@@ -449,7 +449,7 @@ export class PlainTextQuestion extends SurveyQuestion {
     render(variables = {}) {
         const text = this.substituteVariables(this.text, variables);
         return `
-            <div class="mb-3">
+            <div class="mb-4">
                 <div class="alert alert-info">
                     ${text}
                 </div>
@@ -539,7 +539,7 @@ export class LikertQuestion extends SurveyQuestion {
             <div class="mb-4">
                 <fieldset>
                     <legend class="h5">${query}</legend>
-                    ${prefix ? `<div class="mb-3 text-muted">${prefix}</div>` : ''}
+                    ${prefix ? `<div class="mb-5 text-muted">${prefix}</div>` : ''}
                     <div class="likert-scale">
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-muted small">${this.min}</span>

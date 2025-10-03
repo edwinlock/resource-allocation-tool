@@ -20,6 +20,9 @@ export class SurveyResponseDB {
             this.db.version(1).stores({
                 surveyResponses: 'id, sessionId, surveyId, questionId, answer, completedAt'
             });
+            this.db.version(2).stores({
+                surveyResponses: 'id, sessionId, surveyId, questionId, answer, completedAt, [sessionId+surveyId]'
+            });
         } catch (error) {
             console.error('Failed to initialize SurveyResponsesDB:', error);
             this.db = null;
@@ -38,6 +41,13 @@ export class SurveyResponseDB {
         if (!this.db) return;
 
         await this.ensureOpen();
+
+        // First, delete any existing responses for this session+survey combination
+        // This handles the case where a user retakes a survey
+        await this.db.surveyResponses
+            .where(['sessionId', 'surveyId'])
+            .equals([sessionId, surveyId])
+            .delete();
 
         // Convert responses object to database records
         const responseRecords = Object.entries(responses).map(([questionId, answer]) => ({
