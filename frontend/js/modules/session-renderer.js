@@ -10,31 +10,29 @@ export class SessionRenderer {
             // Always show Details button first
             buttons.push(`<button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>`);
 
-            // Child 1 button - always show, gray out if completed
-            const child1Completed = session.child1SurveyStatus === 'completed';
-            const child1BtnClass = child1Completed ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-primary';
-            const child1BtnDisabled = child1Completed ? 'disabled' : '';
-            const child1Name = session.child1name || 'Child 1';
-            const child1BtnText = child1Completed ? `${child1Name} ✓` : child1Name;
-            buttons.push(`<button class="${child1BtnClass} session-action" data-action="startChild1Survey" data-session-id="${session.id}" ${child1BtnDisabled}>${child1BtnText}</button>`);
+            // Always show Start button - gray out if completed
+            if (session.sessionType === 'child') {
+                // Child session - one survey button, always visible
+                const surveyCompleted = session.surveyStatus === 'completed';
+                const btnClass = surveyCompleted ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-primary';
+                const btnDisabled = surveyCompleted ? 'disabled' : '';
+                const btnText = surveyCompleted ? 'Start ✓' : 'Start';
+                buttons.push(`<button class="${btnClass} session-action" data-action="startChildSurvey" data-session-id="${session.id}" ${btnDisabled}>${btnText}</button>`);
+            } else if (session.sessionType === 'parent') {
+                // Parent session - Start button always visible, grayed out when complete
+                const allCompleted = session.groupType === 'treatment'
+                    ? (session.surveyStatus === 'completed' && session.sliderStatus === 'completed' && session.exitSurveyStatus === 'completed')
+                    : session.surveyStatus === 'completed';
+                const btnClass = allCompleted ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-success';
+                const btnDisabled = allCompleted ? 'disabled' : '';
+                const btnText = allCompleted ? 'Start ✓' : 'Start';
+                buttons.push(`<button class="${btnClass} session-action" data-action="startParentSession" data-session-id="${session.id}" ${btnDisabled}>${btnText}</button>`);
+            } else {
+                // Unknown session type - show disabled button
+                buttons.push(`<button class="btn btn-sm btn-outline-secondary session-action" disabled>Start</button>`);
+            }
 
-            // Child 2 button - always show, gray out if completed
-            const child2Completed = session.child2SurveyStatus === 'completed';
-            const child2BtnClass = child2Completed ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-primary';
-            const child2BtnDisabled = child2Completed ? 'disabled' : '';
-            const child2Name = session.child2name || 'Child 2';
-            const child2BtnText = child2Completed ? `${child2Name} ✓` : child2Name;
-            buttons.push(`<button class="${child2BtnClass} session-action" data-action="startChild2Survey" data-session-id="${session.id}" ${child2BtnDisabled}>${child2BtnText}</button>`);
-
-            // Parent button - unified for both treatment and control
-            const parentCompleted = session.sessionType === 'treatment'
-                ? (session.treatmentSurveyStatus === 'completed' && session.sliderStatus === 'completed' && session.exitSurveyStatus === 'completed')
-                : session.controlSurveyStatus === 'completed';
-            const parentBtnClass = parentCompleted ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-secondary';
-            const parentBtnDisabled = parentCompleted ? 'disabled' : '';
-            const parentBtnText = parentCompleted ? 'Parent ✓' : 'Parent';
-            buttons.push(`<button class="${parentBtnClass} session-action" data-action="startParentSurvey" data-session-id="${session.id}" ${parentBtnDisabled}>${parentBtnText}</button>`);
-
+            // Always show Delete button
             buttons.push(`<button class="btn btn-sm btn-outline-danger session-action" data-action="deleteSession" data-session-id="${session.id}">Delete</button>`);
 
             return `<div class="action-buttons">${buttons.join('')}</div>`;
@@ -62,18 +60,19 @@ export class SessionRenderer {
         const isSessionComplete = (session) => {
             if (!session) return false;
 
-            const child1Complete = session.child1SurveyStatus === 'completed';
-            const child2Complete = session.child2SurveyStatus === 'completed';
-            const sliderComplete = session.sliderStatus === 'completed';
-
-            let parentSurveyComplete = false;
-            if (session.sessionType === 'treatment') {
-                parentSurveyComplete = session.treatmentSurveyStatus === 'completed';
-            } else if (session.sessionType === 'control') {
-                parentSurveyComplete = session.controlSurveyStatus === 'completed';
+            if (session.sessionType === 'child') {
+                return session.surveyStatus === 'completed';
+            } else if (session.sessionType === 'parent') {
+                const surveyDone = session.surveyStatus === 'completed';
+                if (session.groupType === 'treatment') {
+                    return surveyDone &&
+                           session.sliderStatus === 'completed' &&
+                           session.exitSurveyStatus === 'completed';
+                } else {
+                    return surveyDone;
+                }
             }
-
-            return child1Complete && child2Complete && parentSurveyComplete && sliderComplete;
+            return false;
         };
 
         const getMissingComponents = (session) => {
@@ -81,24 +80,22 @@ export class SessionRenderer {
 
             const missing = [];
 
-            if (session.child1SurveyStatus !== 'completed') {
-                missing.push(session.child1name || 'Child 1');
-            }
-            if (session.child2SurveyStatus !== 'completed') {
-                missing.push(session.child2name || 'Child 2');
-            }
-
-            // For treatment: check parent survey, slider, and exit survey
-            if (session.sessionType === 'treatment') {
-                if (session.treatmentSurveyStatus !== 'completed' ||
-                    session.sliderStatus !== 'completed' ||
-                    session.exitSurveyStatus !== 'completed') {
-                    missing.push('Parent');
+            if (session.sessionType === 'child') {
+                if (session.surveyStatus !== 'completed') {
+                    missing.push('Child Survey');
                 }
-            }
-            // For control: only check parent survey
-            else if (session.sessionType === 'control' && session.controlSurveyStatus !== 'completed') {
-                missing.push('Parent');
+            } else if (session.sessionType === 'parent') {
+                if (session.surveyStatus !== 'completed') {
+                    missing.push('Parent Survey');
+                }
+                if (session.groupType === 'treatment') {
+                    if (session.sliderStatus !== 'completed') {
+                        missing.push('Slider Exercise');
+                    }
+                    if (session.exitSurveyStatus !== 'completed') {
+                        missing.push('Exit Survey');
+                    }
+                }
             }
 
             return missing;
@@ -112,15 +109,15 @@ export class SessionRenderer {
             ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)
             : 'Unknown';
 
-        const badgeColor = session.sessionType === 'treatment' ? 'primary' :
-                          session.sessionType === 'control' ? 'secondary' : 'warning';
+        const rowClass = session.sessionType === 'child' ? 'session-row-child' :
+                        session.sessionType === 'parent' ? 'session-row-parent' : '';
 
         return `
-            <tr>
+            <tr class="${rowClass}">
                 <td><code>${session.id.substring(0, 8)}...</code></td>
-                <td>${session.participantId || '-'}</td>
-                <td>${session.enumeratorID || '-'}</td>
-                <td><span class="badge bg-${badgeColor}">${sessionTypeDisplay}</span></td>
+                <td>${session.familyId || '-'}</td>
+                <td>${session.enumeratorId || '-'}</td>
+                <td>${sessionTypeDisplay}</td>
                 <td>${getUploadStatusBadge(session)}</td>
                 <td>${getActionButtons(session)}</td>
             </tr>
@@ -170,15 +167,15 @@ export class SessionRenderer {
             ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)
             : 'Unknown';
 
-        const badgeColor = session.sessionType === 'treatment' ? 'primary' :
-                          session.sessionType === 'control' ? 'secondary' : 'warning';
+        const rowClass = session.sessionType === 'child' ? 'session-row-child' :
+                        session.sessionType === 'parent' ? 'session-row-parent' : '';
 
         return `
-            <tr>
+            <tr class="${rowClass}">
                 <td><code>${session.id.substring(0, 8)}...</code></td>
-                <td>${session.participantId || '-'}</td>
-                <td>${session.enumeratorID || '-'}</td>
-                <td><span class="badge bg-${badgeColor}">${sessionTypeDisplay}</span></td>
+                <td>${session.familyId || '-'}</td>
+                <td>${session.enumeratorId || '-'}</td>
+                <td>${sessionTypeDisplay}</td>
                 <td>${SessionUIUtils.formatDate(session.uploadedAt)}</td>
                 <td>
                     <div class="action-buttons">
@@ -193,50 +190,86 @@ export class SessionRenderer {
         // Hide loading, show content
         const loadingState = document.getElementById('loadingState');
         const sessionContent = document.getElementById('sessionContent');
-        
+
         if (loadingState) loadingState.style.display = 'none';
         if (sessionContent) sessionContent.style.display = 'block';
 
-        // Session Overview
+        // Common Session Overview Fields
         SessionUIUtils.updateElementText('sessionId', session.id);
-        SessionUIUtils.updateElementText('participantId', session.participantId || '-');
-        SessionUIUtils.updateElementText('enumeratorId', session.enumeratorID || '-');
+        SessionUIUtils.updateElementText('familyId', session.familyId || '-');
+        SessionUIUtils.updateElementText('enumeratorId', session.enumeratorId || '-');
         SessionUIUtils.updateElementText('createdAt', SessionUIUtils.formatDate(session.createdAt));
-        SessionUIUtils.updateElementText('child1Name', session.child1name || '-');
-        SessionUIUtils.updateElementText('child2Name', session.child2name || '-');
-        SessionUIUtils.updateElementText('child1Ability', session.child1ability || '-');
-        SessionUIUtils.updateElementText('child2Ability', session.child2ability || '-');
         SessionUIUtils.updateElementText('school', session.school || '-');
         SessionUIUtils.updateElementText('sessionType', session.sessionType ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1) : '-');
 
-        // Status Timeline - Individual Survey Statuses
-        SessionUIUtils.updateElementHTML('child1SurveyStatus', SessionUIUtils.getStatusDisplay(session.child1SurveyStatus || 'not_started'));
-        SessionUIUtils.updateElementText('child1SurveyCompleted', SessionUIUtils.formatDate(session.child1SurveyCompletedAt));
+        // Show/hide session-type specific fields and status cards
+        const childSessionFields = document.getElementById('childSessionFields');
+        const parentSessionFields = document.getElementById('parentSessionFields');
+        const childStatusCard = document.getElementById('childStatusCard');
+        const parentStatusCard = document.getElementById('parentStatusCard');
+        const sliderDataCard = document.getElementById('sliderDataCard');
 
-        SessionUIUtils.updateElementHTML('child2SurveyStatus', SessionUIUtils.getStatusDisplay(session.child2SurveyStatus || 'not_started'));
-        SessionUIUtils.updateElementText('child2SurveyCompleted', SessionUIUtils.formatDate(session.child2SurveyCompletedAt));
+        if (session.sessionType === 'child') {
+            // Child Session: show child fields and child status
+            if (childSessionFields) childSessionFields.style.display = 'block';
+            if (parentSessionFields) parentSessionFields.style.display = 'none';
+            if (childStatusCard) childStatusCard.style.display = 'block';
+            if (parentStatusCard) parentStatusCard.style.display = 'none';
+            if (sliderDataCard) sliderDataCard.style.display = 'none';
 
-        // Parent survey (Treatment or Control based on session type)
-        const mainSurveyTitle = document.getElementById('mainSurveyTitle');
-        if (mainSurveyTitle) {
-            mainSurveyTitle.textContent = 'Parent Survey';
+            SessionUIUtils.updateElementText('childName', session.name || '-');
+            SessionUIUtils.updateElementText('childId', session.childId || '-');
+
+            // Child status
+            SessionUIUtils.updateElementHTML('childSurveyStatus', SessionUIUtils.getStatusDisplay(session.surveyStatus || 'not_started'));
+            SessionUIUtils.updateElementText('childSurveyCompleted', SessionUIUtils.formatDate(session.surveyCompletedAt));
+
+        } else if (session.sessionType === 'parent') {
+            // Parent Session: show parent fields and parent status
+            if (childSessionFields) childSessionFields.style.display = 'none';
+            if (parentSessionFields) parentSessionFields.style.display = 'block';
+            if (childStatusCard) childStatusCard.style.display = 'none';
+            if (parentStatusCard) parentStatusCard.style.display = 'block';
+
+            SessionUIUtils.updateElementText('child1Name', session.child1Name || '-');
+            SessionUIUtils.updateElementText('child2Name', session.child2Name || '-');
+            SessionUIUtils.updateElementText('child1PreEarnings', session.preEarnings1 || '-');
+            SessionUIUtils.updateElementText('child2PreEarnings', session.preEarnings2 || '-');
+            SessionUIUtils.updateElementText('groupType', session.groupType ? session.groupType.charAt(0).toUpperCase() + session.groupType.slice(1) : '-');
+
+            // Parent status
+            SessionUIUtils.updateElementHTML('parentSurveyStatus', SessionUIUtils.getStatusDisplay(session.surveyStatus || 'not_started'));
+            SessionUIUtils.updateElementText('parentSurveyCompleted', SessionUIUtils.formatDate(session.surveyCompletedAt));
+
+            // Show slider and exit survey columns only for treatment group
+            const sliderStatusCol = document.getElementById('sliderStatusCol');
+            const exitSurveyCol = document.getElementById('exitSurveyCol');
+
+            if (session.groupType === 'treatment') {
+                if (sliderStatusCol) sliderStatusCol.style.display = 'block';
+                if (exitSurveyCol) exitSurveyCol.style.display = 'block';
+                if (sliderDataCard) sliderDataCard.style.display = 'block';
+
+                SessionUIUtils.updateElementHTML('sliderStatus', SessionUIUtils.getStatusDisplay(session.sliderStatus || 'not_started'));
+                SessionUIUtils.updateElementText('sliderStarted', SessionUIUtils.formatDate(session.sliderStartedAt));
+                SessionUIUtils.updateElementText('sliderCompleted', SessionUIUtils.formatDate(session.sliderCompletedAt));
+
+                SessionUIUtils.updateElementHTML('exitSurveyStatus', SessionUIUtils.getStatusDisplay(session.exitSurveyStatus || 'not_started'));
+                SessionUIUtils.updateElementText('exitSurveyCompleted', SessionUIUtils.formatDate(session.exitSurveyCompletedAt));
+            } else {
+                if (sliderStatusCol) sliderStatusCol.style.display = 'none';
+                if (exitSurveyCol) exitSurveyCol.style.display = 'none';
+                if (sliderDataCard) sliderDataCard.style.display = 'none';
+            }
         }
-
-        const mainSurveyStatus = session.sessionType === 'treatment' ? session.treatmentSurveyStatus : session.controlSurveyStatus;
-        const mainSurveyCompleted = session.sessionType === 'treatment' ? session.treatmentSurveyCompletedAt : session.controlSurveyCompletedAt;
-
-        SessionUIUtils.updateElementHTML('mainSurveyStatus', SessionUIUtils.getStatusDisplay(mainSurveyStatus || 'not_started'));
-        SessionUIUtils.updateElementText('mainSurveyCompleted', SessionUIUtils.formatDate(mainSurveyCompleted));
-
-        SessionUIUtils.updateElementHTML('sliderStatus', SessionUIUtils.getStatusDisplay(session.sliderStatus));
-        SessionUIUtils.updateElementText('sliderStarted', SessionUIUtils.formatDate(session.sliderStartedAt));
-        SessionUIUtils.updateElementText('sliderCompleted', SessionUIUtils.formatDate(session.sliderCompletedAt));
 
         // Survey Response Data
         this.displaySurveyResponseData(surveyResponses);
 
-        // Slider Response Data
-        this.displayResponseData(sliderResponses);
+        // Slider Response Data (only shown if card is visible)
+        if (sliderDataCard && sliderDataCard.style.display !== 'none') {
+            this.displayResponseData(sliderResponses);
+        }
     }
 
     static displaySurveyResponseData(surveyResponses) {

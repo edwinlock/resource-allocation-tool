@@ -12,121 +12,192 @@ class Role(db.Model, fsqla.FsRoleMixin):
 class User(db.Model, fsqla.FsUserMixin):
     pass
 
+# Base Session class with polymorphic inheritance
 class Session(db.Model):
+    __tablename__ = 'session'
+
     id = db.Column(db.String(255), primary_key=True)  # UUID from frontend
-    participant_id = db.Column(db.String(255), nullable=False)
+    session_type = db.Column(db.String(50), nullable=False)  # 'child' or 'parent'
     enumerator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
-    # Survey status tracking
-    child1_survey_status = db.Column(db.String(50), default='not_started')
-    child1_survey_completed_at = db.Column(db.DateTime, nullable=True)
-    child2_survey_status = db.Column(db.String(50), default='not_started')
-    child2_survey_completed_at = db.Column(db.DateTime, nullable=True)
-    treatment_survey_status = db.Column(db.String(50), default='not_started')
-    treatment_survey_completed_at = db.Column(db.DateTime, nullable=True)
-    control_survey_status = db.Column(db.String(50), default='not_started')
-    control_survey_completed_at = db.Column(db.DateTime, nullable=True)
-
-    # Slider tracking
-    slider_started_at = db.Column(db.DateTime, nullable=True)
-    slider_completed_at = db.Column(db.DateTime, nullable=True)
-    slider_status = db.Column(db.String(50), default='not_started')
-
-    # Session data
-    child1_ability = db.Column(db.Integer, nullable=False)
-    child2_ability = db.Column(db.Integer, nullable=False)
-    child1_name = db.Column(db.String(255), nullable=False)
-    child2_name = db.Column(db.String(255), nullable=False)
-    school = db.Column(db.String(255), nullable=False)
-    session_type = db.Column(db.String(50), nullable=False)  # 'treatment' or 'control'
 
     # Upload tracking
     uploaded_at = db.Column(db.DateTime, nullable=True)
     upload_status = db.Column(db.String(50), default='not_uploaded')
 
-    # Relationships
+    # Polymorphic configuration
+    __mapper_args__ = {
+        'polymorphic_on': session_type,
+        'polymorphic_identity': 'session',
+        'with_polymorphic': '*'
+    }
+
+    # Relationship - works for both child and parent sessions
     survey_responses = db.relationship('SurveyResponse', backref='session', lazy='dynamic',
-                                     cascade='all, delete-orphan')
-    slider_responses = db.relationship('SliderResponse', backref='session', lazy='dynamic',
-                                     cascade='all, delete-orphan')
+                                      cascade='all, delete-orphan')
 
     # Constraints
     __table_args__ = (
-        db.UniqueConstraint('participant_id', 'enumerator_id', name='unique_participant_enumerator'),
         db.Index('idx_enumerator_id', 'enumerator_id'),
-        db.CheckConstraint('child1_ability >= 0 AND child1_ability <= 100', name='check_child1_ability'),
-        db.CheckConstraint('child2_ability >= 0 AND child2_ability <= 100', name='check_child2_ability'),
-        db.CheckConstraint("session_type IN ('treatment', 'control')", name='check_session_type'),
+        db.CheckConstraint("session_type IN ('child', 'parent')", name='check_session_type'),
+    )
+
+    def to_dict(self):
+        """Convert session to dictionary for JSON serialization."""
+        base_dict = {
+            'id': self.id,
+            'session_type': self.session_type,
+            'enumerator_id': self.enumerator_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None,
+            'upload_status': self.upload_status,
+        }
+        return base_dict
+
+
+class ChildSession(Session):
+    __tablename__ = 'child_session'
+
+    id = db.Column(db.String(255), db.ForeignKey('session.id'), primary_key=True)
+    family_id = db.Column(db.String(255), nullable=False)
+    child_id = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    school = db.Column(db.String(255), nullable=False)
+
+    # Survey status tracking
+    survey_status = db.Column(db.String(50), default='not_started')
+    survey_completed_at = db.Column(db.DateTime, nullable=True)
+
+    # Polymorphic configuration
+    __mapper_args__ = {
+        'polymorphic_identity': 'child'
+    }
+
+    # Constraints
+    __table_args__ = (
+        db.Index('idx_child_family', 'family_id'),
+        db.UniqueConstraint('family_id', 'child_id', name='unique_family_child'),
     )
 
     def is_complete(self):
-        """Returns True if all required components of the session are completed."""
-        # Check if both child surveys are completed
-        child_surveys_done = (self.child1_survey_status == 'completed' and
-                             self.child2_survey_status == 'completed')
+        """Returns True if child session is completed."""
+        return self.survey_status == 'completed'
 
-        # Check if appropriate parent survey is completed based on session type
-        parent_survey_done = False
-        if self.session_type == 'treatment':
-            parent_survey_done = self.treatment_survey_status == 'completed'
-        elif self.session_type == 'control':
-            parent_survey_done = self.control_survey_status == 'completed'
+    def get_missing_components(self):
+        """Returns list of missing components."""
+        if self.survey_status != 'completed':
+            return ['Child Survey']
+        return []
 
-        # Check if slider is completed
+    def to_dict(self):
+        """Convert child session to dictionary for JSON serialization."""
+        base_dict = super().to_dict()
+        base_dict.update({
+            'family_id': self.family_id,
+            'child_id': self.child_id,
+            'name': self.name,
+            'school': self.school,
+            'survey_status': self.survey_status,
+            'survey_completed_at': self.survey_completed_at.isoformat() if self.survey_completed_at else None,
+            'is_complete': self.is_complete(),
+            'missing_components': self.get_missing_components()
+        })
+        return base_dict
+
+
+class ParentSession(Session):
+    __tablename__ = 'parent_session'
+
+    id = db.Column(db.String(255), db.ForeignKey('session.id'), primary_key=True)
+    family_id = db.Column(db.String(255), nullable=False)
+    child1_name = db.Column(db.String(255), nullable=False)
+    child2_name = db.Column(db.String(255), nullable=False)
+    school = db.Column(db.String(255), nullable=False)
+    group_type = db.Column(db.String(50), nullable=False)  # 'treatment' or 'control'
+
+    # Pre-earnings for economic model
+    preEarnings1 = db.Column(db.Integer, nullable=False)
+    preEarnings2 = db.Column(db.Integer, nullable=False)
+
+    # Survey status tracking
+    survey_status = db.Column(db.String(50), default='not_started')
+    survey_completed_at = db.Column(db.DateTime, nullable=True)
+    exit_survey_status = db.Column(db.String(50), default='not_started')
+    exit_survey_completed_at = db.Column(db.DateTime, nullable=True)
+
+    # Slider tracking
+    slider_status = db.Column(db.String(50), default='not_started')
+    slider_started_at = db.Column(db.DateTime, nullable=True)
+    slider_completed_at = db.Column(db.DateTime, nullable=True)
+
+    # Polymorphic configuration
+    __mapper_args__ = {
+        'polymorphic_identity': 'parent'
+    }
+
+    # Parent sessions have slider responses
+    slider_responses = db.relationship('SliderResponse', backref='parent_session', lazy='dynamic',
+                                      cascade='all, delete-orphan')
+
+    # Constraints
+    __table_args__ = (
+        db.Index('idx_parent_family', 'family_id'),
+        db.CheckConstraint('preEarnings1 >= 1 AND preEarnings1 <= 6', name='check_preEarnings1'),
+        db.CheckConstraint('preEarnings2 >= 1 AND preEarnings2 <= 6', name='check_preEarnings2'),
+        db.CheckConstraint("group_type IN ('treatment', 'control')", name='check_group_type'),
+    )
+
+    def is_complete(self):
+        """Returns True if all required components of the parent session are completed."""
+        survey_done = self.survey_status == 'completed'
         slider_done = self.slider_status == 'completed'
+        exit_done = self.exit_survey_status == 'completed'
 
-        return child_surveys_done and parent_survey_done and slider_done
+        if self.group_type == 'treatment':
+            return survey_done and slider_done and exit_done
+        else:  # control
+            return survey_done
 
     def get_missing_components(self):
         """Returns list of missing components needed to complete the session."""
         missing = []
-        if self.child1_survey_status != 'completed':
-            missing.append('Child 1 Survey')
-        if self.child2_survey_status != 'completed':
-            missing.append('Child 2 Survey')
-        if self.session_type == 'treatment' and self.treatment_survey_status != 'completed':
-            missing.append('Treatment Survey')
-        if self.session_type == 'control' and self.control_survey_status != 'completed':
-            missing.append('Control Survey')
-        if self.slider_status != 'completed':
-            missing.append('Slider Exercise')
+        if self.survey_status != 'completed':
+            missing.append('Parent Survey')
+        if self.group_type == 'treatment':
+            if self.slider_status != 'completed':
+                missing.append('Slider Exercise')
+            if self.exit_survey_status != 'completed':
+                missing.append('Exit Survey')
         return missing
 
     def to_dict(self):
-        """Convert session to dictionary for JSON serialization."""
-        return {
-            'id': self.id,
-            'participant_id': self.participant_id,
-            'enumerator_id': self.enumerator_id,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'child1_survey_status': self.child1_survey_status,
-            'child1_survey_completed_at': self.child1_survey_completed_at.isoformat() if self.child1_survey_completed_at else None,
-            'child2_survey_status': self.child2_survey_status,
-            'child2_survey_completed_at': self.child2_survey_completed_at.isoformat() if self.child2_survey_completed_at else None,
-            'treatment_survey_status': self.treatment_survey_status,
-            'treatment_survey_completed_at': self.treatment_survey_completed_at.isoformat() if self.treatment_survey_completed_at else None,
-            'control_survey_status': self.control_survey_status,
-            'control_survey_completed_at': self.control_survey_completed_at.isoformat() if self.control_survey_completed_at else None,
-            'slider_started_at': self.slider_started_at.isoformat() if self.slider_started_at else None,
-            'slider_completed_at': self.slider_completed_at.isoformat() if self.slider_completed_at else None,
-            'slider_status': self.slider_status,
-            'child1_ability': self.child1_ability,
-            'child2_ability': self.child2_ability,
+        """Convert parent session to dictionary for JSON serialization."""
+        base_dict = super().to_dict()
+        base_dict.update({
+            'family_id': self.family_id,
             'child1_name': self.child1_name,
             'child2_name': self.child2_name,
             'school': self.school,
-            'session_type': self.session_type,
-            'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None,
-            'upload_status': self.upload_status,
+            'group_type': self.group_type,
+            'preEarnings1': self.preEarnings1,
+            'preEarnings2': self.preEarnings2,
+            'survey_status': self.survey_status,
+            'survey_completed_at': self.survey_completed_at.isoformat() if self.survey_completed_at else None,
+            'exit_survey_status': self.exit_survey_status,
+            'exit_survey_completed_at': self.exit_survey_completed_at.isoformat() if self.exit_survey_completed_at else None,
+            'slider_status': self.slider_status,
+            'slider_started_at': self.slider_started_at.isoformat() if self.slider_started_at else None,
+            'slider_completed_at': self.slider_completed_at.isoformat() if self.slider_completed_at else None,
             'is_complete': self.is_complete(),
             'missing_components': self.get_missing_components()
-        }
+        })
+        return base_dict
+
 
 class SurveyResponse(db.Model):
     id = db.Column(db.String(255), primary_key=True)  # UUID from frontend
     session_id = db.Column(db.String(255), db.ForeignKey('session.id'), nullable=False)
-    survey_id = db.Column(db.String(50), nullable=False)  # 'Child1', 'Child2', 'Treatment', 'Control'
+    survey_id = db.Column(db.String(50), nullable=False)  # 'Child', 'Parent', 'Treatment', 'Control', 'Exit'
     question_id = db.Column(db.String(255), nullable=False)
     answer = db.Column(db.Text, nullable=False)  # JSON for complex answers, plain text for simple
     completed_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -154,9 +225,10 @@ class SurveyResponse(db.Model):
             'completed_at': self.completed_at.isoformat() if self.completed_at else None
         }
 
+
 class SliderResponse(db.Model):
     id = db.Column(db.String(255), primary_key=True)  # UUID from frontend
-    session_id = db.Column(db.String(255), db.ForeignKey('session.id'), nullable=False)
+    parent_session_id = db.Column(db.String(255), db.ForeignKey('parent_session.id'), nullable=False)
     scenario_number = db.Column(db.Integer, nullable=False)
     display_order = db.Column(db.Integer, nullable=False)
     child1_investment = db.Column(db.Integer, nullable=False)
@@ -164,7 +236,7 @@ class SliderResponse(db.Model):
 
     # Constraints
     __table_args__ = (
-        db.Index('idx_session_display_order', 'session_id', 'display_order'),
+        db.Index('idx_parent_session_display_order', 'parent_session_id', 'display_order'),
         db.CheckConstraint('child1_investment >= 0 AND child1_investment <= 9', name='check_child1_investment'),
     )
 
@@ -177,13 +249,14 @@ class SliderResponse(db.Model):
         """Convert slider response to dictionary for JSON serialization."""
         return {
             'id': self.id,
-            'session_id': self.session_id,
+            'parent_session_id': self.parent_session_id,
             'scenario_number': self.scenario_number,
             'display_order': self.display_order,
             'child1_investment': self.child1_investment,
             'child2_investment': self.child2_investment,
             'completed_at': self.completed_at.isoformat() if self.completed_at else None
         }
+
 
 # Add relationships after all models are defined
 User.sessions = db.relationship('Session', backref='enumerator', lazy='dynamic')

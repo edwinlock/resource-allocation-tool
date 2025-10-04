@@ -5,47 +5,85 @@
         {
             "question_id": "consent_child_survey",
             "type": "consent",
-            "query": "I consent to participate in this demographic survey about my children",
-            "text": "<h5>Research Study Consent - Child Demographics Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study</p><p><strong>Purpose:</strong> We are conducting research to understand how parents make decisions about investing in their children's development. This survey will collect basic demographic information about you and your children.</p><p><strong>What you will do:</strong> Answer questions about your background and your children. This should take approximately 5 minutes.</p><p><strong>Confidentiality:</strong> Your responses will be kept confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Your participation is completely voluntary. You may stop at any time without penalty.</p>"
+            "query": "I consent to participate in this child survey",
+            "text": "<h5>Research Study Consent - Child Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study</p><p><strong>Purpose:</strong> We are conducting research to understand how children perceive their educational experiences. This survey will collect information about your school experiences and preferences.</p><p><strong>What you will do:</strong> Answer questions about your school life and activities. This should take approximately 5-10 minutes.</p><p><strong>Confidentiality:</strong> Your responses will be kept confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Your participation is completely voluntary. You may stop at any time without penalty.</p>"
         },
         {
-            "question_id": "demo_age",
-            "type": "open",
-            "query": "What is your age?",
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "demo_education",
-            "type": "singleselect",
-            "query": "What is your highest level of education?",
-            "values": ["High school", "University degree", "Graduate degree"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "demo_children_ages",
-            "type": "multiopen",
-            "query": "Please provide the ages of your children:",
-            "prefixes": [
-                "{child1name} age (years)",
-                "{child2name} age (years)"
-            ],
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "demo_priorities",
-            "type": "multiselect",
-            "query": "Which are important priorities when investing in your children's education? (Select all that apply)",
-            "values": ["Academic achievement", "Character development", "Social skills", "Creativity and arts"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "demo_intro",
+            "question_id": "child_intro",
             "type": "plaintext",
-            "text": "Thank you for providing information about {child1name} and {child2name}. This completes the demographic section."
+            "text": "Hello {childName}! We would like to learn about your experiences at {school}. Please answer the following questions honestly. There are no right or wrong answers."
+        },
+        {
+            "question_id": "child_age",
+            "type": "open",
+            "query": "How old are you?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "child_grade",
+            "type": "singleselect",
+            "query": "What grade are you in?",
+            "values": ["1st grade", "2nd grade", "3rd grade", "4th grade", "5th grade", "6th grade"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "child_favorite_subject",
+            "type": "open",
+            "query": "What is your favorite subject at school?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "child_school_enjoyment",
+            "type": "likert",
+            "query": "How much do you enjoy going to school?",
+            "prefix": "Rate your enjoyment (1 = Not at all, 5 = Very much)",
+            "min": 1,
+            "max": 5,
+            "required": true
+        },
+        {
+            "question_id": "child_activities",
+            "type": "multiselect",
+            "query": "Which activities do you enjoy doing? (Select all that apply)",
+            "values": ["Reading books", "Playing sports", "Drawing or painting", "Playing music", "Math problems", "Playing with friends"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "child_homework_time",
+            "type": "open",
+            "query": "About how many hours do you spend on homework each week?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "child_effort_ratings",
+            "type": "multilikert",
+            "query": "Rate how hard you try at the following (1 = Not hard at all, 5 = Very hard):",
+            "prefixes": [
+                "Doing my homework",
+                "Participating in class",
+                "Studying for tests",
+                "Helping at home"
+            ],
+            "min": 1,
+            "max": 5,
+            "required": true
+        },
+        {
+            "question_id": "child_future_goals",
+            "type": "open",
+            "query": "What do you want to be when you grow up?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "child_outro",
+            "type": "plaintext",
+            "text": "Thank you {childName} for sharing your thoughts with us! Your answers will help us better understand how to support students at {school}."
         }
     ]
 }

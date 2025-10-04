@@ -11,8 +11,8 @@ class SurveyUIManager {
 
     async initialize() {
         try {
-            // Get URL parameters
-            const { sessionId, surveyId } = this.surveyManager.initializeFromURL();
+            // Get URL parameters (initializeFromURL is now async)
+            const { sessionId, surveyId } = await this.surveyManager.initializeFromURL();
 
             // Load session data to get variables for substitution
             this.sessionData = await sessionManager.getSession(sessionId);
@@ -26,18 +26,24 @@ class SurveyUIManager {
             // Load and render survey
             await this.surveyManager.loadSurvey(surveyId);
 
-            // Create variables for substitution
+            // Create variables for substitution based on session type
             const variables = {
-                child1ability: this.sessionData.child1ability || 50,
-                child2ability: this.sessionData.child2ability || 20,
-                child1name: this.sessionData.child1name || 'Child 1',
-                child2name: this.sessionData.child2name || 'Child 2',
-                child1school: this.sessionData.school || 'School',
-                child2school: this.sessionData.school || 'School',
-                participant: this.sessionData.participantId || 'Participant',
-                enumerator: this.sessionData.enumeratorID || 'Enumerator',
-                sessionType: this.sessionData.sessionType || 'unknown'
+                sessionType: this.sessionData.sessionType || 'unknown',
+                enumerator: this.sessionData.enumeratorId || 'Enumerator',
+                familyId: this.sessionData.familyId || 'Family',
+                school: this.sessionData.school || 'School'
             };
+
+            // Add session-type specific variables
+            if (this.sessionData.sessionType === 'child') {
+                variables.childName = this.sessionData.name || 'Child';
+                variables.childId = this.sessionData.childId || '';
+            } else if (this.sessionData.sessionType === 'parent') {
+                variables.preEarnings1 = this.sessionData.preEarnings1 || 5;
+                variables.preEarnings2 = this.sessionData.preEarnings2 || 2;
+                variables.child1name = this.sessionData.child1Name || 'Child 1';
+                variables.child2name = this.sessionData.child2Name || 'Child 2';
+            }
 
             // Render survey
             const surveyHTML = await this.surveyManager.renderSurvey(variables);
@@ -60,9 +66,9 @@ class SurveyUIManager {
         document.getElementById('session-id').textContent =
             this.sessionData.id ? this.sessionData.id.substring(0, 8) + '...' : '-';
         document.getElementById('participant-id').textContent =
-            this.sessionData.participantId || '-';
+            this.sessionData.familyId || '-';
         document.getElementById('enumerator-id').textContent =
-            this.sessionData.enumeratorID || '-';
+            this.sessionData.enumeratorId || '-';
     }
 
     setupFormHandlers() {
@@ -102,22 +108,33 @@ class SurveyUIManager {
                 result.responses
             );
 
-            // Redirect based on survey type and session type
-            const surveyId = this.surveyManager.surveyId;
+            // Redirect based on session type
             const sessionId = this.sessionData.id;
 
-            if (surveyId === 'Control') {
-                // Control group: go directly to thanks page
+            if (this.sessionData.sessionType === 'child') {
+                // Child session: go to thanks page
                 window.location.href = 'thanks.html';
-            } else if (surveyId === 'Treatment') {
-                // Treatment group: go to slider
-                await sessionManager.markSliderStarted(sessionId);
-                window.location.href = `slider.html?sessionId=${sessionId}`;
-            } else if (surveyId === 'Exit') {
-                // Exit survey: go to thanks page
-                window.location.href = 'thanks.html';
+            } else if (this.sessionData.sessionType === 'parent') {
+                // Parent session: check if treatment or control
+                if (this.sessionData.groupType === 'treatment') {
+                    // Check if this is the treatment survey or exit survey
+                    if (this.surveyManager.surveyId === 'Treatment') {
+                        // After treatment survey, go to slider
+                        await sessionManager.markSliderStarted(sessionId);
+                        window.location.href = `slider.html?sessionId=${sessionId}`;
+                    } else if (this.surveyManager.surveyId === 'Exit') {
+                        // After exit survey, go to thanks page
+                        window.location.href = 'thanks.html';
+                    } else {
+                        // Unknown survey in treatment workflow
+                        window.location.href = 'thanks.html';
+                    }
+                } else {
+                    // Control group: go directly to thanks page
+                    window.location.href = 'thanks.html';
+                }
             } else {
-                // Child surveys: go to thanks page
+                // Unknown session type: go to index
                 window.location.href = 'thanks.html';
             }
 

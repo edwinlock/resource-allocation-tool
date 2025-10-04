@@ -68,15 +68,34 @@ class APIService {
             });
 
             if (!response.ok) {
-                let errorMessage = `HTTP ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    console.error('Login error response:', errorData);
-                    errorMessage = errorData.message || errorData.error || errorMessage;
-                } catch (e) {
-                    console.error('Could not parse error response as JSON');
+                // Handle different HTTP error codes with specific messages
+                if (response.status === 400) {
+                    // Bad request - typically wrong credentials format
+                    throw new Error('Invalid credentials. Please check your email and password.');
+                } else if (response.status === 401) {
+                    // Unauthorized - wrong credentials
+                    throw new Error('Invalid credentials. Please check your email and password.');
+                } else if (response.status === 403) {
+                    // Forbidden - account may be disabled or lacks permission
+                    throw new Error('Access forbidden. Your account may be disabled. Please contact support.');
+                } else if (response.status === 404) {
+                    throw new Error('Authentication endpoint not found. Please contact support.');
+                } else if (response.status === 500) {
+                    throw new Error('Server error. Please try again later.');
+                } else if (response.status === 503) {
+                    throw new Error('Server is temporarily unavailable. Please try again later.');
+                } else {
+                    // Try to get error message from response
+                    let errorMessage = `Server error (HTTP ${response.status})`;
+                    try {
+                        const errorData = await response.json();
+                        console.error('Login error response:', errorData);
+                        errorMessage = errorData.message || errorData.error || errorMessage;
+                    } catch (e) {
+                        console.error('Could not parse error response as JSON');
+                    }
+                    throw new Error(errorMessage);
                 }
-                throw new Error(errorMessage);
             }
 
             const result = await response.json();
@@ -96,10 +115,27 @@ class APIService {
                     userId: profileData.user_id
                 };
             } else {
-                throw new Error('Invalid response format');
+                throw new Error('Invalid response format from server. Please contact support.');
             }
         } catch (error) {
-            throw new Error(`Login failed: ${error.message}`);
+            // CORS errors
+            if (error instanceof TypeError && (
+                error.message.includes('CORS') ||
+                error.message.includes('Access-Control-Allow-Origin') ||
+                error.message.includes('NetworkError')
+            )) {
+                throw new Error('Server blocked request (CORS error). The backend server needs to allow requests from this domain.');
+            }
+            // Network errors (server not reachable)
+            if (error instanceof TypeError && error.message.includes('fetch')) {
+                throw new Error('Cannot reach server. Please check your internet connection or verify the server is running.');
+            }
+            // Timeout errors
+            if (error.name === 'AbortError') {
+                throw new Error('Login request timed out. Please try again.');
+            }
+            // Re-throw our custom errors
+            throw error;
         }
     }
 

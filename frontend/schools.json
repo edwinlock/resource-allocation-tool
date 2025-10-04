@@ -1,0 +1,62 @@
+[
+  {
+    "school_id": "SCH001",
+    "name": "Escuela Primaria Benito Juárez",
+    "type": "treatment"
+  },
+  {
+    "school_id": "SCH002",
+    "name": "Escuela Primaria Miguel Hidalgo",
+    "type": "control"
+  },
+  {
+    "school_id": "SCH003",
+    "name": "Escuela José María Morelos",
+    "type": "treatment"
+  },
+  {
+    "school_id": "SCH004",
+    "name": "Escuela Primaria Emiliano Zapata",
+    "type": "control"
+  },
+  {
+    "school_id": "SCH005",
+    "name": "Escuela Lázaro Cárdenas",
+    "type": "treatment"
+  },
+  {
+    "school_id": "SCH006",
+    "name": "Escuela Francisco Villa",
+    "type": "control"
+  },
+  {
+    "school_id": "SCH007",
+    "name": "Escuela Primaria Sor Juana Inés de la Cruz",
+    "type": "treatment"
+  },
+  {
+    "school_id": "SCH008",
+    "name": "Escuela Guadalupe Victoria",
+    "type": "control"
+  },
+  {
+    "school_id": "SCH009",
+    "name": "Escuela Vicente Guerrero",
+    "type": "treatment"
+  },
+  {
+    "school_id": "SCH010",
+    "name": "Escuela Primaria Cuauhtémoc",
+    "type": "control"
+  },
+  {
+    "school_id": "SCH011",
+    "name": "Escuela Ignacio Zaragoza",
+    "type": "treatment"
+  },
+  {
+    "school_id": "SCH012",
+    "name": "Escuela Primaria Josefa Ortiz de Domínguez",
+    "type": "control"
+  }
+]

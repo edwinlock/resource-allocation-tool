@@ -1,13 +1,13 @@
 import { generateUUID, getUTCDate } from './utilities.js';
 
-// Session Database Manager - handles session-related database operations only
+// Session Database Manager - handles session-related database operations with Joined Table Inheritance pattern
 export class SessionDB {
     constructor() {
         this.db = null;
         this.initializeDatabase();
     }
 
-    // Database initialization - sessions only
+    // Database initialization with separate tables for base and session-type-specific data
     initializeDatabase() {
         if (typeof Dexie === 'undefined') {
             console.warn('Dexie not available, running without database persistence');
@@ -17,17 +17,17 @@ export class SessionDB {
 
         try {
             this.db = new Dexie('SessionsDB');
-            this.db.version(1).stores({
-                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
-            });
-            this.db.version(2).stores({
-                sessions: 'id, participantId, enumeratorID, createdAt, child1SurveyStatus, child1SurveyCompletedAt, child2SurveyStatus, child2SurveyCompletedAt, treatmentSurveyStatus, treatmentSurveyCompletedAt, controlSurveyStatus, controlSurveyCompletedAt, exitSurveyStatus, exitSurveyCompletedAt, sliderStartedAt, sliderCompletedAt, sliderStatus, child1ability, child2ability, child1name, child2name, school, sessionType, uploadedAt, uploadStatus, [participantId+enumeratorID]'
-            }).upgrade(tx => {
-                // Add exitSurveyStatus and exitSurveyCompletedAt to existing sessions
-                return tx.table('sessions').toCollection().modify(session => {
-                    session.exitSurveyStatus = session.exitSurveyStatus || 'not_started';
-                    session.exitSurveyCompletedAt = session.exitSurveyCompletedAt || null;
-                });
+
+            // Version 4: New Joined Table Inheritance pattern
+            this.db.version(4).stores({
+                // Base session table with discriminator
+                sessions: 'id, sessionType, enumeratorId, createdAt, uploadStatus, uploadedAt',
+
+                // Child session details (separate table)
+                childSessionDetails: 'id, familyId, childId, name, school, surveyStatus',
+
+                // Parent session details (separate table)
+                parentSessionDetails: 'id, familyId, school, groupType, preEarnings1, preEarnings2, surveyStatus, sliderStatus',
             });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
@@ -45,152 +45,339 @@ export class SessionDB {
     async resetDatabase() {
         if (!this.db) return;
 
-        try {
-            if (this.db.isOpen()) {
-                this.db.close();
-            }
-            await this.db.delete();
-            this.initializeDatabase();
-            await this.ensureOpen();
-        } catch (error) {
-            console.error('Error resetting database:', error);
-            throw error;
-        }
+        await this.db.delete();
+        this.db = null;
+        this.initializeDatabase();
+        await this.ensureOpen();
     }
 
-    // Session CRUD operations
-    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType) {
+    // ===== CHILD SESSION OPERATIONS =====
+
+    async createChildSession(enumeratorId, familyId, childId, name, school) {
         if (!this.db) {
             throw new Error('Database not available');
         }
 
-
         await this.ensureOpen();
-        
-        // Check for existing session with same participant and enumerator
-        const existingSession = await this.db.sessions
-            .where('[participantId+enumeratorID]')
-            .equals([participantId, enumeratorId])
-            .first();
-            
-        if (existingSession) {
-            throw new Error(`A session already exists for Participant "${participantId}" and Enumerator "${enumeratorId}". Each participant-enumerator combination can only have one session.`);
-        }
 
         const sessionId = generateUUID();
-        
-        try {
-            const sessionData = {
-                id: sessionId,
-                participantId: participantId,
-                enumeratorID: enumeratorId,
-                createdAt: getUTCDate(),
-                child1SurveyStatus: 'not_started',
-                child1SurveyCompletedAt: null,
-                child2SurveyStatus: 'not_started',
-                child2SurveyCompletedAt: null,
-                treatmentSurveyStatus: 'not_started',
-                treatmentSurveyCompletedAt: null,
-                controlSurveyStatus: 'not_started',
-                controlSurveyCompletedAt: null,
-                exitSurveyStatus: 'not_started',
-                exitSurveyCompletedAt: null,
-                sliderStartedAt: null,
-                sliderCompletedAt: null,
-                sliderStatus: 'not_started',
-                child1ability: child1Ability,
-                child2ability: child2Ability,
-                child1name: child1Name,
-                child2name: child2Name,
-                school: school,
-                sessionType: sessionType,
-                uploadedAt: null,
-                uploadStatus: 'not_uploaded'
-            };
 
-            await this.db.sessions.add(sessionData);
+        try {
+            await this.db.transaction('rw', this.db.sessions, this.db.childSessionDetails, async () => {
+                // Insert base session record
+                await this.db.sessions.add({
+                    id: sessionId,
+                    sessionType: 'child',
+                    enumeratorId: enumeratorId,
+                    createdAt: getUTCDate(),
+                    uploadStatus: 'not_uploaded',
+                    uploadedAt: null
+                });
+
+                // Insert child-specific details
+                await this.db.childSessionDetails.add({
+                    id: sessionId,
+                    familyId: familyId,
+                    childId: childId,
+                    name: name,
+                    school: school,
+                    surveyStatus: 'not_started',
+                    surveyCompletedAt: null
+                });
+            });
         } catch (error) {
-            if (error.name === 'ConstraintError') {
-                throw new Error(`A session already exists for Participant "${participantId}" and Enumerator "${enumeratorId}". Each participant-enumerator combination can only have one session.`);
-            }
+            console.error('Error creating child session:', error);
             throw error;
         }
-        
+
         return sessionId;
     }
+
+    // ===== PARENT SESSION OPERATIONS =====
+
+    async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType, preEarnings1, preEarnings2) {
+        if (!this.db) {
+            throw new Error('Database not available');
+        }
+
+        await this.ensureOpen();
+
+        const sessionId = generateUUID();
+
+        try {
+            await this.db.transaction('rw', this.db.sessions, this.db.parentSessionDetails, async () => {
+                // Insert base session record
+                await this.db.sessions.add({
+                    id: sessionId,
+                    sessionType: 'parent',
+                    enumeratorId: enumeratorId,
+                    createdAt: getUTCDate(),
+                    uploadStatus: 'not_uploaded',
+                    uploadedAt: null
+                });
+
+                // Insert parent-specific details
+                await this.db.parentSessionDetails.add({
+                    id: sessionId,
+                    familyId: familyId,
+                    child1Name: child1Name,
+                    child2Name: child2Name,
+                    school: school,
+                    groupType: groupType,
+                    preEarnings1: preEarnings1,
+                    preEarnings2: preEarnings2,
+                    surveyStatus: 'not_started',
+                    surveyCompletedAt: null,
+                    exitSurveyStatus: 'not_started',
+                    exitSurveyCompletedAt: null,
+                    sliderStatus: 'not_started',
+                    sliderStartedAt: null,
+                    sliderCompletedAt: null
+                });
+            });
+        } catch (error) {
+            console.error('Error creating parent session:', error);
+            throw error;
+        }
+
+        return sessionId;
+    }
+
+    // ===== QUERY OPERATIONS =====
 
     async loadSessions() {
         if (!this.db) return [];
 
-        try {
-            await this.ensureOpen();
-            return await this.db.sessions.orderBy('id').reverse().toArray();
-        } catch (error) {
-            console.error('Error loading sessions:', error);
-            throw error;
-        }
+        await this.ensureOpen();
+
+        const baseSessions = await this.db.sessions.toArray();
+
+        // Join with appropriate details table based on sessionType
+        const fullSessions = await Promise.all(baseSessions.map(async (base) => {
+            if (base.sessionType === 'child') {
+                const details = await this.db.childSessionDetails.get(base.id);
+                return { ...base, ...details, type: 'child' };
+            } else {
+                const details = await this.db.parentSessionDetails.get(base.id);
+                return { ...base, ...details, type: 'parent' };
+            }
+        }));
+
+        return fullSessions;
     }
 
     async getSession(sessionId) {
         if (!this.db) return null;
-        
-        try {
-            await this.ensureOpen();
-            return await this.db.sessions.get(sessionId);
-        } catch (error) {
-            console.error('Error getting session:', error);
-            throw error;
-        }
-    }
 
-    async updateSessionStatus(sessionId, updates) {
-        if (!this.db) return;
-        
-        try {
-            await this.ensureOpen();
-            await this.db.sessions.update(sessionId, updates);
-        } catch (error) {
-            console.error('Error updating session:', error);
-            throw error;
+        await this.ensureOpen();
+
+        const base = await this.db.sessions.get(sessionId);
+        if (!base) return null;
+
+        if (base.sessionType === 'child') {
+            const details = await this.db.childSessionDetails.get(sessionId);
+            return { ...base, ...details, type: 'child' };
+        } else {
+            const details = await this.db.parentSessionDetails.get(sessionId);
+            return { ...base, ...details, type: 'parent' };
         }
     }
 
     async deleteSession(sessionId) {
-        if (!this.db) return;
-        
-        try {
-            await this.ensureOpen();
-            await this.db.sessions.delete(sessionId);
-            // Note: Response deletion is handled by SliderResponseDB
-        } catch (error) {
-            console.error('Error deleting session:', error);
-            throw error;
+        if (!this.db) {
+            throw new Error('Database not available');
         }
+
+        await this.ensureOpen();
+
+        const session = await this.db.sessions.get(sessionId);
+        if (!session) {
+            throw new Error('Session not found');
+        }
+
+        await this.db.transaction('rw', this.db.sessions, this.db.childSessionDetails, this.db.parentSessionDetails, async () => {
+            // Delete from appropriate details table
+            if (session.sessionType === 'child') {
+                await this.db.childSessionDetails.delete(sessionId);
+            } else {
+                await this.db.parentSessionDetails.delete(sessionId);
+            }
+
+            // Delete from base sessions table
+            await this.db.sessions.delete(sessionId);
+        });
     }
 
-    // Helper methods for UI operations
-    async markSurveyStarted(sessionId) {
-        await this.updateSessionStatus(sessionId, {
-            surveyStartedAt: getUTCDate(),
-            surveyStatus: 'in_progress'
+    // ===== STATUS UPDATE OPERATIONS =====
+
+    async markChildSurveyStarted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.childSessionDetails.update(sessionId, {
+            surveyStatus: 'in_progress',
+            surveyStartedAt: getUTCDate()
+        });
+    }
+
+    async markChildSurveyCompleted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.childSessionDetails.update(sessionId, {
+            surveyStatus: 'completed',
+            surveyCompletedAt: getUTCDate()
+        });
+    }
+
+    async markParentSurveyStarted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            surveyStatus: 'in_progress',
+            surveyStartedAt: getUTCDate()
+        });
+    }
+
+    async markParentSurveyCompleted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            surveyStatus: 'completed',
+            surveyCompletedAt: getUTCDate()
+        });
+    }
+
+    async markExitSurveyStarted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            exitSurveyStatus: 'in_progress',
+            exitSurveyStartedAt: getUTCDate()
+        });
+    }
+
+    async markExitSurveyCompleted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            exitSurveyStatus: 'completed',
+            exitSurveyCompletedAt: getUTCDate()
         });
     }
 
     async markSliderStarted(sessionId) {
-        await this.updateSessionStatus(sessionId, {
-            sliderStartedAt: getUTCDate(),
-            sliderStatus: 'in_progress'
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            sliderStatus: 'in_progress',
+            sliderStartedAt: getUTCDate()
         });
     }
 
     async markSliderCompleted(sessionId) {
-        await this.updateSessionStatus(sessionId, {
-            sliderCompletedAt: getUTCDate(),
-            sliderStatus: 'completed'
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            sliderStatus: 'completed',
+            sliderCompletedAt: getUTCDate()
         });
+    }
+
+    // ===== UPLOAD OPERATIONS =====
+
+    async updateSessionStatus(sessionId, updates) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.sessions.update(sessionId, updates);
+    }
+
+    async markSessionUploaded(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.sessions.update(sessionId, {
+            uploadStatus: 'uploaded',
+            uploadedAt: getUTCDate()
+        });
+    }
+
+    async getCompletedSessions() {
+        if (!this.db) return [];
+
+        await this.ensureOpen();
+
+        const allSessions = await this.loadSessions();
+
+        // Filter for completed sessions based on type
+        return allSessions.filter(session => {
+            if (session.sessionType === 'child') {
+                return session.surveyStatus === 'completed';
+            } else {
+                // Parent session
+                const surveyDone = session.surveyStatus === 'completed';
+                const sliderDone = session.sliderStatus === 'completed';
+                const exitDone = session.exitSurveyStatus === 'completed';
+
+                if (session.groupType === 'treatment') {
+                    return surveyDone && sliderDone && exitDone;
+                } else {
+                    return surveyDone;
+                }
+            }
+        });
+    }
+
+    async getUploadedSessions() {
+        if (!this.db) return [];
+
+        await this.ensureOpen();
+
+        const uploadedBases = await this.db.sessions
+            .where('uploadStatus').equals('uploaded')
+            .toArray();
+
+        const fullSessions = await Promise.all(uploadedBases.map(async (base) => {
+            if (base.sessionType === 'child') {
+                const details = await this.db.childSessionDetails.get(base.id);
+                return { ...base, ...details, type: 'child' };
+            } else {
+                const details = await this.db.parentSessionDetails.get(base.id);
+                return { ...base, ...details, type: 'parent' };
+            }
+        }));
+
+        return fullSessions;
+    }
+
+    async getCurrentSessions() {
+        if (!this.db) return [];
+
+        await this.ensureOpen();
+
+        const currentBases = await this.db.sessions
+            .where('uploadStatus').notEqual('uploaded')
+            .toArray();
+
+        const fullSessions = await Promise.all(currentBases.map(async (base) => {
+            if (base.sessionType === 'child') {
+                const details = await this.db.childSessionDetails.get(base.id);
+                return { ...base, ...details, type: 'child' };
+            } else {
+                const details = await this.db.parentSessionDetails.get(base.id);
+                return { ...base, ...details, type: 'parent' };
+            }
+        }));
+
+        return fullSessions;
     }
 }
 
-// Create and export singleton instance
 export const sessionDB = new SessionDB();
-

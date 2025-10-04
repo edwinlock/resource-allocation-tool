@@ -17,36 +17,19 @@ format: html
 
 ## Variable Substitution
 
-Use `{variableName}` in any text field to inject session data. **Available variables depend on the session type.**
-
-### Variables Available for ALL Session Types
+Use `{variableName}` in any text field to inject session data:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `{sessionType}` | Session type | "child" or "parent" |
-| `{enumerator}` | Enumerator ID | 101 |
-| `{familyId}` | Family ID | "FAM001" |
-| `{school}` | School name | "Escuela Primaria Benito Juárez" |
-
-### Variables ONLY for Child Sessions (sessionType = "child")
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `{childName}` | Child's name | "María" |
-| `{childId}` | Child's ID within family | "C1" or "C2" |
-
-**⚠️ Important:** In child surveys, you **cannot** use `{child1name}` or `{child2name}` since the session is for one child only.
-
-### Variables ONLY for Parent Sessions (sessionType = "parent")
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `{child1name}` | First child's name | "María" |
-| `{child2name}` | Second child's name | "Carlos" |
-| `{preEarnings1}` | First child's pre-earnings | 1, 2, 5, or 6 |
-| `{preEarnings2}` | Second child's pre-earnings | 1, 2, 5, or 6 |
-
-**Note:** preEarnings values are always one of four pairs: [1,6], [2,5], [5,2], or [6,1]
+| `{child1name}` | Child 1's name | "Sarah" |
+| `{child2name}` | Child 2's name | "John" |
+| `{child1ability}` | Child 1's ability score | 75 |
+| `{child2ability}` | Child 2's ability score | 45 |
+| `{child1school}` | Child 1's school | "Lincoln Elementary" |
+| `{child2school}` | Child 2's school | "Washington Middle" |
+| `{participant}` | Participant ID | "P001" |
+| `{enumerator}` | Enumerator ID | "E001" |
+| `{sessionType}` | Session type | "treatment" or "control" |
 
 ## Question Types
 
@@ -93,22 +76,6 @@ Use `{variableName}` in any text field to inject session data. **Available varia
 }
 ```
 
-**With images (displays horizontally):**
-
-```json
-{
-    "question_id": "animal_choice",
-    "type": "singleselect",
-    "query": "Which animal do you prefer?",
-    "values": ["Dog", "Cat", "Bird"],
-    "images": ["images/dog.jpg", "images/cat.jpg", "images/bird.jpg"],
-    "datatype": "text",
-    "required": true
-}
-```
-
-**Note:** When `images` array is provided and has the same length as `values`, the options display horizontally with images. Otherwise, they display vertically without images.
-
 ### 4. multiselect - Checkboxes (multiple choices)
 
 ```json
@@ -121,22 +88,6 @@ Use `{variableName}` in any text field to inject session data. **Available varia
     "required": true  // Note: multiselect always validates as true
 }
 ```
-
-**With images (displays horizontally):**
-
-```json
-{
-    "question_id": "activities",
-    "type": "multiselect",
-    "query": "Which activities interest you? (select all that apply)",
-    "values": ["Sports", "Music", "Art", "Reading"],
-    "images": ["images/sports.jpg", "images/music.jpg", "images/art.jpg", "images/reading.jpg"],
-    "datatype": "text",
-    "required": true
-}
-```
-
-**Note:** When `images` array is provided and has the same length as `values`, the options display horizontally with images. Otherwise, they display vertically without images.
 
 ### 5. grid - Table with radio buttons per row
 
@@ -244,7 +195,6 @@ Same structure as `grid`, but selecting option in row k automatically:
 - `datatype`: "text" or "number" (for input questions)
 - `required`: true/false (defaults to false)
 - `values`: Array of choices (for select questions)
-- `image`: Single image URL (for singleselect/multiselect; displays image above question with horizontal options)
 - `prefixes`: Array of row labels (for multiopen/grid/mpl/multilikert)
 - `options`: 2D array of choices per row (for grid/mpl)
 - `text`: Display content (for plaintext/consent)

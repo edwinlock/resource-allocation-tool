@@ -13,8 +13,8 @@ class AppState {
             enumerator_id: null,
             date_created: getUTCDate(),
             date_modified: getUTCDate(),
-            abilityScore1: 50, // Default ability scores
-            abilityScore2: 20,
+            preEarnings1: 5, // Default pre-earnings
+            preEarnings2: 2,
         };
 
         // Economic calculation results

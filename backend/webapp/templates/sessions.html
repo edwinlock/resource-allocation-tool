@@ -24,7 +24,23 @@
             </div>
             <div class="card-body">
                 {% if sessions|length > 0 %}
-                    {{ render_table(sessions) }}
+                    {{ render_table(sessions,
+                        titles=[
+                            ('id_short', 'ID'),
+                            ('session_type_badge', 'Session'),
+                            ('school', 'School'),
+                            ('family_id', 'Family ID'),
+                            ('enumerator_id', 'Enumerator ID'),
+                            ('created_at_formatted', 'Created At')
+                        ],
+                        table_classes='table-hover',
+                        show_actions=True,
+                        custom_actions=[
+                            ('View Details', 'info-circle', ('session_details_page', [('id', ':id')]))
+                        ],
+                        actions_title='',
+                        safe_columns=['session_type_badge']
+                    ) }}
                 {% else %}
                     <div class="text-center text-muted py-4">
                         <p>No sessions found.</p>

@@ -1,0 +1,86 @@
+/* Shared styles for consistent UI across all pages */
+
+/* Larger font sizes for tablet/mobile */
+body {
+    font-size: 1.1rem;
+}
+
+/* Larger buttons for easier interaction */
+.btn {
+    font-size: 1.1rem;
+    padding: 0.6rem 1rem;
+    min-height: 48px;
+    min-width: 100px;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    min-height: 44px; /* Touch target size */
+    min-width: 80px;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.25rem;
+    min-height: 56px;
+    min-width: 120px;
+}
+
+/* Larger form inputs */
+.form-control, .form-select {
+    font-size: 1.1rem;
+    padding: 0.6rem 0.75rem;
+    min-height: 48px;
+}
+
+.form-label {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Larger headings */
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.3rem;
+}
+
+h5 {
+    font-size: 1.4rem;
+}
+
+h6 {
+    font-size: 1.1rem;
+}
+
+/* Text sizing */
+.text-muted {
+    font-size: 1rem;
+}
+
+/* Status indicators */
+.status-completed {
+    color: #198754;
+    font-weight: 500;
+}
+
+.status-in-progress {
+    color: #fd7e14;
+    font-weight: 500;
+}
+
+.status-not-started {
+    color: #6c757d;
+    font-weight: 500;
+}

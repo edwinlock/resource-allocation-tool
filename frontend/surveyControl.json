@@ -1,41 +1,174 @@
 {
     "survey_id": "surveyControl",
-    "name": "Post-Experiment Reflection Survey (Control)",
+    "name": "Parent Survey (Control Group)",
     "questions": [
         {
             "question_id": "consent_control_survey",
             "type": "consent",
-            "query": "I consent to participate in this control group post-experiment reflection survey",
-            "text": "<h5>Research Study Consent - Control Group Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Control Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the control group. This survey collects your reflections about your experience in the resource allocation experiment.</p><p><strong>What you will do:</strong> Reflect on your experience with the investment decisions and provide feedback. This should take approximately 5 minutes.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time.</p>"
+            "query": "I consent to participate in this parent survey",
+            "text": "<h5>Research Study Consent - Parent Survey (Control Group)</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Control Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the control group. This survey examines your attitudes and beliefs about educational investment decisions for your children.</p><p><strong>What you will do:</strong> Answer questions about your parenting approach and investment philosophy. This should take approximately 10-15 minutes.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time.</p>"
         },
         {
-            "question_id": "ref_intro",
+            "question_id": "parent_intro",
             "type": "plaintext",
-            "text": "Thank you for completing the investment scenarios involving {child1name} and {child2name}. This final survey asks about your experience."
+            "text": "Thank you for participating in this study. This survey asks about your approach to investing in {child1name} and {child2name}'s education and development."
         },
         {
-            "question_id": "ref_strategy",
+            "question_id": "parent_age",
             "type": "open",
-            "query": "Describe the strategy or approach you used when making investment decisions between {child1name} and {child2name} in the scenarios.",
-            "datatype": "text",
+            "query": "What is your age?",
+            "datatype": "number",
             "required": true
         },
         {
-            "question_id": "ref_approach",
+            "question_id": "parent_education",
             "type": "singleselect",
-            "query": "When making investment decisions between {child1name} and {child2name}, how did you typically approach their different abilities?",
-            "values": ["Invest equally regardless of ability", "Invest more in the higher-ability child", "Invest more in the lower-ability child", "Invest based on each child's specific needs"],
+            "query": "What is your highest level of education?",
+            "values": ["Primary school", "Secondary school", "High school", "University degree", "Graduate degree"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "ref_difficulty",
+            "question_id": "parent_occupation",
+            "type": "open",
+            "query": "What is your current occupation?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "children_ages",
+            "type": "multiopen",
+            "query": "Please provide the ages of your children (in years):",
+            "prefixes": [
+                "{child1name}'s age",
+                "{child2name}'s age"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "education_satisfaction",
+            "type": "multilikert",
+            "query": "How satisfied are you with each child's current educational progress? (1 = Very dissatisfied, 5 = Very satisfied):",
+            "prefixes": [
+                "{child1name}'s educational progress",
+                "{child2name}'s educational progress"
+            ],
+            "min": 1,
+            "max": 5,
+            "required": true
+        },
+        {
+            "question_id": "child_motivation",
+            "type": "multilikert",
+            "query": "Rate each child's motivation to learn (1 = Very low, 5 = Very high):",
+            "prefixes": [
+                "{child1name}'s motivation to learn",
+                "{child2name}'s motivation to learn"
+            ],
+            "min": 1,
+            "max": 5,
+            "required": true
+        },
+        {
+            "question_id": "child_effort",
+            "type": "multilikert",
+            "query": "Rate each child's effort level in school (1 = Very low, 5 = Very high):",
+            "prefixes": [
+                "{child1name}'s effort in school",
+                "{child2name}'s effort in school"
+            ],
+            "min": 1,
+            "max": 5,
+            "required": true
+        },
+        {
+            "question_id": "time_investment",
+            "type": "multiopen",
+            "query": "Approximately how many hours per week do you spend on the following activities?",
+            "prefixes": [
+                "Helping {child1name} with homework",
+                "Helping {child2name} with homework",
+                "Individual time with {child1name}",
+                "Individual time with {child2name}"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "investment_priorities",
+            "type": "multiselect",
+            "query": "Which factors are most important to you when deciding how to invest in your children's education? (Select all that apply)",
+            "values": [
+                "Current academic performance",
+                "Motivation and effort",
+                "Natural abilities and talents",
+                "Future career prospects",
+                "Each child's specific interests",
+                "Treating both children equally"
+            ],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "equal_investment_belief",
+            "type": "singleselect",
+            "query": "Do you believe parents should invest equally in all children regardless of their abilities?",
+            "values": [
+                "Strongly agree - Always invest equally",
+                "Somewhat agree - Usually invest equally",
+                "Neutral",
+                "Somewhat disagree - Investment should vary based on needs",
+                "Strongly disagree - Investment should be based on potential"
+            ],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "resource_allocation_philosophy",
+            "type": "open",
+            "query": "In your own words, describe your philosophy about how to allocate educational resources (like tutoring, extra lessons, or learning materials) between {child1name} and {child2name}.",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "hypothetical_scenarios",
+            "type": "grid",
+            "query": "For each hypothetical scenario, which child would you prioritize?",
+            "prefixes": [
+                "Extra tutoring opportunity becomes available",
+                "One child can attend a special summer program",
+                "Budget for music lessons for one child",
+                "Opportunity for advanced math course"
+            ],
+            "options": [
+                ["{child1name}", "{child2name}", "Both equally", "Depends on interest"],
+                ["{child1name}", "{child2name}", "Both equally", "Depends on interest"],
+                ["{child1name}", "{child2name}", "Both equally", "Depends on interest"],
+                ["{child1name}", "{child2name}", "Both equally", "Depends on interest"]
+            ],
+            "required": true
+        },
+        {
+            "question_id": "decision_difficulty",
             "type": "likert",
-            "query": "How difficult did you find the investment decision-making scenarios?",
+            "query": "How difficult do you find it to make decisions about allocating educational resources between {child1name} and {child2name}?",
             "prefix": "Rate the difficulty level (1 = Very easy, 5 = Very difficult)",
             "min": 1,
             "max": 5,
             "required": true
+        },
+        {
+            "question_id": "decision_factors",
+            "type": "open",
+            "query": "What factors make it difficult (or easy) for you to decide how to allocate resources between {child1name} and {child2name}?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "outro",
+            "type": "plaintext",
+            "text": "Thank you for completing this survey. Your responses will help us better understand how parents make educational investment decisions for their children."
         }
     ]
 }

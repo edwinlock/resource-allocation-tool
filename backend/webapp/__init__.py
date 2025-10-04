@@ -15,19 +15,25 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 app = Flask(__name__)
 app.config.from_object('webapp.config.Config')
 
-# Initialise plugins
+# Initialise plugins
 csrf = CSRFProtect(app)
 bootstrap = Bootstrap5(app)
 db = SQLAlchemy(app)
 mail = Mail(app)
 babel = Babel(app)
 
-# Configure CORS to allow frontend requests
+# Configure CORS for development - allow localhost origins with credentials
 CORS(app,
-     origins=['http://localhost:8080', 'http://localhost:8081'],
-     supports_credentials=True,
-     allow_headers=['Content-Type', 'Authentication-Token', 'Authorization'],
-     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+    #  origins=['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:8080', 'http://127.0.0.1:8080'],
+     supports_credentials=True)
+# CORS(
+#     app,
+#     supports_credentials=True,  # needed for cross domain cookie support
+#     resources="/*",
+#     allow_headers="*",
+#     origins="https://www.example.com",
+#     expose_headers="Authorization,Content-Type,Authentication-Token,XSRF-TOKEN",
+# )
 
 # Initialize rate limiter
 limiter = Limiter(
@@ -63,7 +69,7 @@ def create_users():
         db.session.add(enum_role)
 
     db.session.commit()
-    
+
     # Create demo users if they don't exist
 
     # Create administrator
@@ -98,7 +104,7 @@ def create_users():
         user_datastore.add_role_to_user(edwin_user, enum_role)
 
     db.session.commit()
-    
+
 with app.app_context():
     db.create_all()
     create_users()

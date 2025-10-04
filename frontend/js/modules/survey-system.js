@@ -152,6 +152,7 @@ export class SingleSelectQuestion extends SurveyQuestion {
     constructor(questionData) {
         super(questionData);
         this.values = questionData.values || [];
+        this.image = questionData.image || null;
     }
 
     render(variables = {}) {
@@ -164,19 +165,50 @@ export class SingleSelectQuestion extends SurveyQuestion {
                     <legend class="form-label">${query}</legend>
         `;
 
-        this.values.forEach((value, index) => {
-            const displayValue = this.substituteVariables(String(value), variables);
+        // Display image if provided
+        if (this.image) {
             html += `
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="q_${this.questionId}"
-                           id="q_${this.questionId}_${index}" value="${value}"
-                           data-question-id="${this.questionId}" ${requiredAttr}>
-                    <label class="form-check-label" for="q_${this.questionId}_${index}">
-                        ${displayValue}
-                    </label>
+                <div class="text-center mb-3">
+                    <img src="${this.image}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
                 </div>
             `;
-        });
+        }
+
+        // Horizontal layout when image is present, vertical otherwise
+        if (this.image) {
+            html += `<div class="row justify-content-center">`;
+            this.values.forEach((value, index) => {
+                const displayValue = this.substituteVariables(String(value), variables);
+                html += `
+                    <div class="col-auto mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="q_${this.questionId}"
+                                   id="q_${this.questionId}_${index}" value="${value}"
+                                   data-question-id="${this.questionId}" ${requiredAttr}>
+                            <label class="form-check-label" for="q_${this.questionId}_${index}">
+                                ${displayValue}
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        } else {
+            // Vertical layout without image
+            this.values.forEach((value, index) => {
+                const displayValue = this.substituteVariables(String(value), variables);
+                html += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q_${this.questionId}"
+                               id="q_${this.questionId}_${index}" value="${value}"
+                               data-question-id="${this.questionId}" ${requiredAttr}>
+                        <label class="form-check-label" for="q_${this.questionId}_${index}">
+                            ${displayValue}
+                        </label>
+                    </div>
+                `;
+            });
+        }
 
         html += `
                 </fieldset>
@@ -202,6 +234,7 @@ export class MultiSelectQuestion extends SurveyQuestion {
     constructor(questionData) {
         super(questionData);
         this.values = questionData.values || [];
+        this.image = questionData.image || null;
     }
 
     render(variables = {}) {
@@ -214,19 +247,50 @@ export class MultiSelectQuestion extends SurveyQuestion {
                     <legend class="form-label">${query}</legend>
         `;
 
-        this.values.forEach((value, index) => {
-            const displayValue = this.substituteVariables(String(value), variables);
+        // Display image if provided
+        if (this.image) {
             html += `
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox"
-                           id="q_${this.questionId}_${index}" value="${value}"
-                           data-question-id="${this.questionId}" data-index="${index}">
-                    <label class="form-check-label" for="q_${this.questionId}_${index}">
-                        ${displayValue}
-                    </label>
+                <div class="text-center mb-3">
+                    <img src="${this.image}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
                 </div>
             `;
-        });
+        }
+
+        // Horizontal layout when image is present, vertical otherwise
+        if (this.image) {
+            html += `<div class="row justify-content-center">`;
+            this.values.forEach((value, index) => {
+                const displayValue = this.substituteVariables(String(value), variables);
+                html += `
+                    <div class="col-auto mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   id="q_${this.questionId}_${index}" value="${value}"
+                                   data-question-id="${this.questionId}" data-index="${index}">
+                            <label class="form-check-label" for="q_${this.questionId}_${index}">
+                                ${displayValue}
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        } else {
+            // Vertical layout without image
+            this.values.forEach((value, index) => {
+                const displayValue = this.substituteVariables(String(value), variables);
+                html += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               id="q_${this.questionId}_${index}" value="${value}"
+                               data-question-id="${this.questionId}" data-index="${index}">
+                        <label class="form-check-label" for="q_${this.questionId}_${index}">
+                            ${displayValue}
+                        </label>
+                    </div>
+                `;
+            });
+        }
 
         html += `
                 </fieldset>
@@ -541,8 +605,7 @@ export class LikertQuestion extends SurveyQuestion {
                     <legend class="h5">${query}</legend>
                     ${prefix ? `<div class="mb-5 text-muted">${prefix}</div>` : ''}
                     <div class="likert-scale">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small">${this.min}</span>
+                        <div class="d-flex justify-content-center">
                             <div class="d-flex gap-3">
         `;
 
@@ -564,7 +627,6 @@ export class LikertQuestion extends SurveyQuestion {
 
         html += `
                             </div>
-                            <span class="text-muted small">${this.max}</span>
                         </div>
                     </div>
                 </fieldset>
@@ -650,10 +712,6 @@ export class MultiLikertQuestion extends SurveyQuestion {
         html += `
                             </tbody>
                         </table>
-                        <div class="d-flex justify-content-between mt-2">
-                            <span class="text-muted small">${this.min} (Minimum)</span>
-                            <span class="text-muted small">${this.max} (Maximum)</span>
-                        </div>
                     </div>
                 </fieldset>
             </div>
@@ -820,16 +878,32 @@ export class SurveyManager {
     }
 
     // Initialize from URL parameters
-    initializeFromURL() {
+    async initializeFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
         this.sessionId = urlParams.get('session_id');
-        this.surveyId = urlParams.get('survey_id');
+        this.surveyId = urlParams.get('survey_id'); // Optional - can be inferred from session
 
         if (!this.sessionId) {
             throw new Error('No session_id provided in URL');
         }
+
+        // If surveyId not provided, detect from session type
         if (!this.surveyId) {
-            throw new Error('No survey_id provided in URL');
+            const { sessionManager } = await import('./session-coordinator.js');
+            const session = await sessionManager.getSession(this.sessionId);
+
+            if (!session) {
+                throw new Error('Session not found');
+            }
+
+            if (session.sessionType === 'child') {
+                this.surveyId = 'Child';
+            } else if (session.sessionType === 'parent') {
+                // For parent sessions, use Treatment or Control based on group type
+                this.surveyId = session.groupType === 'treatment' ? 'Treatment' : 'Control';
+            } else {
+                throw new Error(`Unknown session type: ${session.sessionType}`);
+            }
         }
 
         return { sessionId: this.sessionId, surveyId: this.surveyId };

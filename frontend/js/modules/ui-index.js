@@ -5,15 +5,47 @@ import { apiService } from './api-service.js';
 
 class IndexUIManager {
     constructor() {
+        this.schools = [];  // Schools loaded from schools.json
         this.bindEvents();
     }
 
     bindEvents() {
         document.addEventListener('DOMContentLoaded', () => {
+            this.loadSchools();
             this.setupFormHandlers();
             this.loadAndRenderSessions();
             this.updateUIBasedOnAuthStatus();
         });
+    }
+
+    async loadSchools() {
+        try {
+            const response = await fetch('schools.json');
+            if (!response.ok) {
+                throw new Error('Failed to load schools.json');
+            }
+            this.schools = await response.json();
+            this.populateSchoolDropdowns();
+        } catch (error) {
+            console.error('Error loading schools:', error);
+            SessionUIUtils.showError('Failed to load schools list');
+        }
+    }
+
+    populateSchoolDropdowns() {
+        const childSchoolSelect = document.getElementById('childSchool');
+        const parentSchoolSelect = document.getElementById('parentSchool');
+
+        const options = this.schools.map(school =>
+            `<option value="${school.school_id}" data-type="${school.type}">${school.name}</option>`
+        ).join('');
+
+        if (childSchoolSelect) {
+            childSchoolSelect.innerHTML = '<option value="">Select a school...</option>' + options;
+        }
+        if (parentSchoolSelect) {
+            parentSchoolSelect.innerHTML = '<option value="">Select a school...</option>' + options;
+        }
     }
 
     async loadAndRenderSessions() {
@@ -169,21 +201,57 @@ class IndexUIManager {
             });
         }
 
-        // Create session button
-        const createSessionBtn = document.getElementById('createSessionBtn');
-        if (createSessionBtn) {
-            createSessionBtn.addEventListener('click', () => {
-                SessionUIUtils.hideModalError();
-                const modal = new bootstrap.Modal(document.getElementById('createSessionModal'));
+        // Create child session button
+        const createChildSessionBtn = document.getElementById('createChildSessionBtn');
+        if (createChildSessionBtn) {
+            createChildSessionBtn.addEventListener('click', () => {
+                this.hideChildModalError();
+                const childEnumeratorIdField = document.getElementById('childEnumeratorId');
+                // Auto-populate and disable enumerator ID if logged in
+                if (apiService.isAuthenticated() && apiService.userId) {
+                    childEnumeratorIdField.value = apiService.userId;
+                    childEnumeratorIdField.disabled = true;
+                } else {
+                    childEnumeratorIdField.value = '';
+                    childEnumeratorIdField.disabled = false;
+                }
+                const modal = new bootstrap.Modal(document.getElementById('createChildSessionModal'));
                 modal.show();
             });
         }
 
-        // Save session button
-        const saveSessionBtn = document.getElementById('saveSessionBtn');
-        if (saveSessionBtn) {
-            saveSessionBtn.addEventListener('click', () => {
-                this.handleCreateSession();
+        // Create parent session button
+        const createParentSessionBtn = document.getElementById('createParentSessionBtn');
+        if (createParentSessionBtn) {
+            createParentSessionBtn.addEventListener('click', () => {
+                this.hideParentModalError();
+                const parentEnumeratorIdField = document.getElementById('parentEnumeratorId');
+                // Auto-populate and disable enumerator ID if logged in
+                if (apiService.isAuthenticated() && apiService.userId) {
+                    parentEnumeratorIdField.value = apiService.userId;
+                    parentEnumeratorIdField.disabled = true;
+                } else {
+                    parentEnumeratorIdField.value = '';
+                    parentEnumeratorIdField.disabled = false;
+                }
+                const modal = new bootstrap.Modal(document.getElementById('createParentSessionModal'));
+                modal.show();
+            });
+        }
+
+        // Save child session button
+        const saveChildSessionBtn = document.getElementById('saveChildSessionBtn');
+        if (saveChildSessionBtn) {
+            saveChildSessionBtn.addEventListener('click', () => {
+                this.handleCreateChildSession();
+            });
+        }
+
+        // Save parent session button
+        const saveParentSessionBtn = document.getElementById('saveParentSessionBtn');
+        if (saveParentSessionBtn) {
+            saveParentSessionBtn.addEventListener('click', () => {
+                this.handleCreateParentSession();
             });
         }
 
@@ -227,14 +295,11 @@ class IndexUIManager {
                         case 'viewSessionDetails':
                             this.viewSessionDetails(sessionId);
                             break;
-                        case 'startChild1Survey':
-                            this.startChild1Survey(sessionId);
+                        case 'startChildSurvey':
+                            this.startChildSurvey(sessionId);
                             break;
-                        case 'startChild2Survey':
-                            this.startChild2Survey(sessionId);
-                            break;
-                        case 'startParentSurvey':
-                            this.startParentSurvey(sessionId);
+                        case 'startParentSession':
+                            this.startParentSession(sessionId);
                             break;
                         case 'deleteSession':
                             this.deleteSession(sessionId);
@@ -245,11 +310,19 @@ class IndexUIManager {
         });
 
         // Clear modal errors when modals are closed
-        const createSessionModal = document.getElementById('createSessionModal');
-        if (createSessionModal) {
-            createSessionModal.addEventListener('hidden.bs.modal', () => {
-                SessionUIUtils.hideModalError();
-                document.getElementById('createSessionForm').reset();
+        const createChildSessionModal = document.getElementById('createChildSessionModal');
+        if (createChildSessionModal) {
+            createChildSessionModal.addEventListener('hidden.bs.modal', () => {
+                this.hideChildModalError();
+                document.getElementById('createChildSessionForm').reset();
+            });
+        }
+
+        const createParentSessionModal = document.getElementById('createParentSessionModal');
+        if (createParentSessionModal) {
+            createParentSessionModal.addEventListener('hidden.bs.modal', () => {
+                this.hideParentModalError();
+                document.getElementById('createParentSessionForm').reset();
             });
         }
 
@@ -337,47 +410,149 @@ class IndexUIManager {
         }
     }
 
-    async handleCreateSession() {
-        const participantId = document.getElementById('participantId').value.trim();
-        const enumeratorId = document.getElementById('enumeratorId').value.trim();
-        const child1Name = document.getElementById('child1Name').value.trim();
-        const child2Name = document.getElementById('child2Name').value.trim();
-        const school = document.getElementById('school').value.trim();
-        const child1Ability = parseInt(document.getElementById('child1Ability').value);
-        const child2Ability = parseInt(document.getElementById('child2Ability').value);
-        const sessionType = document.querySelector('input[name="sessionType"]:checked')?.value;
+    // Modal error display helpers
+    showChildModalError(message) {
+        const errorDisplay = document.getElementById('childModalErrorDisplay');
+        const errorMessage = document.getElementById('childModalErrorMessage');
+        if (errorDisplay && errorMessage) {
+            errorMessage.textContent = message;
+            errorDisplay.style.display = 'block';
+        }
+    }
 
-        SessionUIUtils.hideModalError();
+    hideChildModalError() {
+        const errorDisplay = document.getElementById('childModalErrorDisplay');
+        if (errorDisplay) {
+            errorDisplay.style.display = 'none';
+        }
+    }
 
-        if (!participantId || !enumeratorId || !child1Name || !child2Name || !school || !sessionType) {
-            SessionUIUtils.showModalError('Please fill in all fields');
+    showParentModalError(message) {
+        const errorDisplay = document.getElementById('parentModalErrorDisplay');
+        const errorMessage = document.getElementById('parentModalErrorMessage');
+        if (errorDisplay && errorMessage) {
+            errorMessage.textContent = message;
+            errorDisplay.style.display = 'block';
+        }
+    }
+
+    hideParentModalError() {
+        const errorDisplay = document.getElementById('parentModalErrorDisplay');
+        if (errorDisplay) {
+            errorDisplay.style.display = 'none';
+        }
+    }
+
+    // Child session creation
+    async handleCreateChildSession() {
+        this.hideChildModalError();
+
+        // Get form values
+        const enumeratorId = parseInt(document.getElementById('childEnumeratorId').value);
+        const schoolId = document.getElementById('childSchool').value;
+        const familyId = document.getElementById('childFamilyId').value.trim();
+        const childId = document.getElementById('childChildId').value.trim();
+        const name = document.getElementById('childName').value.trim();
+
+        // Validation
+        if (!enumeratorId || isNaN(enumeratorId)) {
+            this.showChildModalError('Please enter a valid enumerator ID');
+            return;
+        }
+        if (!schoolId) {
+            this.showChildModalError('Please select a school');
+            return;
+        }
+        if (!familyId || !childId || !name) {
+            this.showChildModalError('Please fill in all fields');
             return;
         }
 
-        if (isNaN(child1Ability) || child1Ability < 0 || child1Ability > 100) {
-            SessionUIUtils.showModalError('Child 1 ability must be a number between 0 and 100');
-            return;
-        }
-
-        if (isNaN(child2Ability) || child2Ability < 0 || child2Ability > 100) {
-            SessionUIUtils.showModalError('Child 2 ability must be a number between 0 and 100');
-            return;
-        }
+        // Get school name from schools array
+        const school = this.schools.find(s => s.school_id === schoolId);
+        const schoolName = school ? school.name : schoolId;
 
         try {
-            await sessionManager.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType);
+            await sessionManager.createChildSession(enumeratorId, familyId, childId, name, schoolName);
             await this.loadAndRenderSessions();
-            SessionUIUtils.showSuccess('Session created successfully');
+            SessionUIUtils.showSuccess('Child session created successfully');
 
-            const modal = bootstrap.Modal.getInstance(document.getElementById('createSessionModal'));
+            // Close modal and reset
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createChildSessionModal'));
             if (modal) {
                 modal.hide();
-                document.getElementById('createSessionForm').reset();
-                SessionUIUtils.hideModalError();
+                document.getElementById('createChildSessionForm').reset();
             }
         } catch (error) {
-            console.error('Error creating session:', error);
-            SessionUIUtils.showModalError(error.message);
+            console.error('Error creating child session:', error);
+            this.showChildModalError(error.message);
+        }
+    }
+
+    // Parent session creation
+    async handleCreateParentSession() {
+        this.hideParentModalError();
+
+        // Get form values
+        const enumeratorId = parseInt(document.getElementById('parentEnumeratorId').value);
+        const schoolId = document.getElementById('parentSchool').value;
+        const familyId = document.getElementById('parentFamilyId').value.trim();
+        const child1Name = document.getElementById('parentChild1Name').value.trim();
+        const child2Name = document.getElementById('parentChild2Name').value.trim();
+
+        // Validation
+        if (!enumeratorId || isNaN(enumeratorId)) {
+            this.showParentModalError('Please enter a valid enumerator ID');
+            return;
+        }
+        if (!schoolId) {
+            this.showParentModalError('Please select a school');
+            return;
+        }
+        if (!familyId || !child1Name || !child2Name) {
+            this.showParentModalError('Please fill in all fields');
+            return;
+        }
+
+        // Get school details from schools array
+        const school = this.schools.find(s => s.school_id === schoolId);
+        if (!school) {
+            this.showParentModalError('Invalid school selected');
+            return;
+        }
+
+        const schoolName = school.name;
+        const groupType = school.type; // 'treatment' or 'control'
+
+        // Generate preEarnings from one of four specific pairs: [1,6], [2,5], [5,2], [6,1]
+        const preEarningsPairs = [[1,6], [2,5], [5,2], [6,1]];
+        const randomPair = preEarningsPairs[Math.floor(Math.random() * 4)];
+        const preEarnings1 = randomPair[0];
+        const preEarnings2 = randomPair[1];
+
+        try {
+            await sessionManager.createParentSession(
+                enumeratorId,
+                familyId,
+                child1Name,
+                child2Name,
+                schoolName,
+                groupType,
+                preEarnings1,
+                preEarnings2
+            );
+            await this.loadAndRenderSessions();
+            SessionUIUtils.showSuccess('Parent session created successfully');
+
+            // Close modal and reset
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createParentSessionModal'));
+            if (modal) {
+                modal.hide();
+                document.getElementById('createParentSessionForm').reset();
+            }
+        } catch (error) {
+            console.error('Error creating parent session:', error);
+            this.showParentModalError(error.message);
         }
     }
 
@@ -449,42 +624,31 @@ class IndexUIManager {
     }
 
     // Session action handlers
-    async startChild1Survey(sessionId) {
+    async startChildSurvey(sessionId) {
         try {
-            await sessionManager.markSurveyStarted(sessionId);
-            window.location.href = `survey.html?survey_id=Child1&session_id=${sessionId}`;
+            await sessionManager.markChildSurveyStarted(sessionId);
+            window.location.href = `survey.html?session_id=${sessionId}`;
         } catch (error) {
-            console.error('Error starting child 1 survey:', error);
-            SessionUIUtils.showError('Failed to start child 1 survey');
+            console.error('Error starting child survey:', error);
+            SessionUIUtils.showError('Failed to start child survey');
         }
     }
 
-    async startChild2Survey(sessionId) {
+    async startParentSession(sessionId) {
         try {
-            await sessionManager.markSurveyStarted(sessionId);
-            window.location.href = `survey.html?survey_id=Child2&session_id=${sessionId}`;
-        } catch (error) {
-            console.error('Error starting child 2 survey:', error);
-            SessionUIUtils.showError('Failed to start child 2 survey');
-        }
-    }
-
-    async startParentSurvey(sessionId) {
-        try {
-            // Get session to determine type
+            // Get session to determine group type
             const session = await sessionManager.getSession(sessionId);
             if (!session) {
                 throw new Error('Session not found');
             }
 
-            await sessionManager.markSurveyStarted(sessionId);
+            await sessionManager.markParentSurveyStarted(sessionId);
 
-            // Route to appropriate survey based on session type
-            const surveyId = session.sessionType === 'treatment' ? 'Treatment' : 'Control';
-            window.location.href = `survey.html?survey_id=${surveyId}&session_id=${sessionId}`;
+            // Route to parent survey
+            window.location.href = `survey.html?session_id=${sessionId}`;
         } catch (error) {
-            console.error('Error starting parent survey:', error);
-            SessionUIUtils.showError('Failed to start parent survey');
+            console.error('Error starting parent session:', error);
+            SessionUIUtils.showError('Failed to start parent session');
         }
     }
 
@@ -508,5 +672,8 @@ class IndexUIManager {
 
 // Initialize the index UI manager
 const indexUI = new IndexUIManager();
+
+// Make it globally accessible for onclick handlers
+window.indexUIManager = indexUI;
 
 export { indexUI };

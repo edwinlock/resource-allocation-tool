@@ -54,13 +54,13 @@ function getLayoutConfig(chartType) {
     return {};
 }
 
-function getScalesConfig(chartType, scenarioData) {
+function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     const maxEarnings = scenarioData.maximumEarningsRounded || 100; // fallback value
     const baseY = {
         beginAtZero: true,
         max: maxEarnings * 1.1
     };
-    
+
     if (chartType === 'singleBar') {
         return {
             x: {
@@ -75,11 +75,11 @@ function getScalesConfig(chartType, scenarioData) {
             }
         };
     }
-    
+
     if (chartType === 'line') {
         return {
             x: {
-                title: { display: true, text: 'Investment into Child 1' },
+                title: { display: true, text: `Investment into ${child1Name}` },
                 grid: { display: true, color: '#f0f0f0' }
             },
             y: {
@@ -89,11 +89,11 @@ function getScalesConfig(chartType, scenarioData) {
             }
         };
     }
-    
+
     if (chartType === 'multiBar') {
         return {
             x: {
-                title: { display: true, text: 'Investment into Child 1' },
+                title: { display: true, text: `Investment into ${child1Name}` },
                 grid: { display: false },
                 stacked: true
             },
@@ -105,15 +105,15 @@ function getScalesConfig(chartType, scenarioData) {
             }
         };
     }
-    
+
     return {};
 }
 
-function getLegendConfig(chartType) {
+function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 2') {
     if (chartType === 'singleBar') {
         return { display: false };
     }
-    
+
     if (chartType === 'line') {
         return {
             display: true,
@@ -121,13 +121,13 @@ function getLegendConfig(chartType) {
             labels: {
                 generateLabels: function(chart) {
                     return [{
-                        text: 'Child 1',
+                        text: child1Name,
                         fillStyle: CHILD1_COLOR,
                         strokeStyle: CHILD1_COLOR,
                         lineWidth: 0,
                         datasetIndex: 0
                     }, {
-                        text: 'Child 2',
+                        text: child2Name,
                         fillStyle: CHILD2_COLOR,
                         strokeStyle: CHILD2_COLOR,
                         lineWidth: 0,
@@ -151,13 +151,13 @@ function getLegendConfig(chartType) {
             labels: {
                 generateLabels: function(chart) {
                     return [{
-                        text: 'Child 1',
+                        text: child1Name,
                         fillStyle: CHILD1_BG_COLOR,
                         strokeStyle: CHILD1_COLOR,
                         lineWidth: 0,
                         datasetIndex: 0
                     }, {
-                        text: 'Child 2', 
+                        text: child2Name,
                         fillStyle: CHILD2_BG_COLOR,
                         strokeStyle: CHILD2_COLOR,
                         lineWidth: 0,
@@ -249,10 +249,10 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
                 return appState.sliderTouched && context.dataIndex === selectedIndex;
             },
             anchor: function(context) {
-                return context.datasetIndex === 0 ? 'end' : 'start';
+                return context.datasetIndex === 0 ? 'start' : 'end';
             },
             align: function(context) {
-                return context.datasetIndex === 0 ? 'top' : 'bottom';
+                return context.datasetIndex === 0 ? 'bottom' : 'top';
             },
             offset: 8,
             font: { weight: 'bold', size: 11 },
@@ -268,19 +268,19 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
     return baseConfig;
 }
 
-function getLabels(chartType) {
+function getLabels(chartType, child1Name = 'Child 1', child2Name = 'Child 2') {
     if (chartType === 'singleBar') {
-        return ['Child 1', 'Child 2', 'Combined'];
+        return [child1Name, child2Name, 'Combined'];
     }
-    
+
     if (chartType === 'line' || chartType === 'multiBar') {
         return Array.from({length: ALLOCATABLE_BUDGET + 1}, (_, i) => i);
     }
-    
+
     return [];
 }
 
-function createChild1DisplayConfig(chartType, scenarioData) {
+function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'singleBar') {
         // For single bar chart, Child1 data is just the current value
         return {
@@ -296,7 +296,7 @@ function createChild1DisplayConfig(chartType, scenarioData) {
     
     if (chartType === 'line') {
         return {
-            label: 'Child 1',
+            label: child1Name,
             data: scenarioData.postEarnings1Rounded,
             borderColor: CHILD1_COLOR,
             backgroundColor: CHILD1_BG_COLOR,
@@ -312,7 +312,7 @@ function createChild1DisplayConfig(chartType, scenarioData) {
     
     if (chartType === 'multiBar') {
         return {
-            label: 'Child 1',
+            label: child1Name,
             data: scenarioData.postEarnings1Rounded,
             backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR),
             borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
@@ -325,15 +325,15 @@ function createChild1DisplayConfig(chartType, scenarioData) {
     return {};
 }
 
-function createChild2DisplayConfig(chartType, scenarioData) {
+function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 2') {
     if (chartType === 'singleBar') {
         // Single bar chart handles all data in one dataset
         return null;
     }
-    
+
     if (chartType === 'line') {
         return {
-            label: 'Child 2', 
+            label: child2Name, 
             data: scenarioData.postEarnings2Rounded,
             borderColor: CHILD2_COLOR,
             backgroundColor: CHILD2_BG_COLOR,
@@ -349,7 +349,7 @@ function createChild2DisplayConfig(chartType, scenarioData) {
     
     if (chartType === 'multiBar') {
         return {
-            label: 'Child 2',
+            label: child2Name,
             data: scenarioData.postEarnings2Rounded,
             backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR),
             borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
@@ -392,18 +392,18 @@ function createCombinedDisplayConfig(chartType, scenarioData) {
     return {};
 }
 
-function createAllDatasets(chartType, scenarioData) {
+function createAllDatasets(chartType, scenarioData, child1Name = 'Child 1', child2Name = 'Child 2') {
     const datasets = [];
-    
-    const child1Config = createChild1DisplayConfig(chartType, scenarioData);
+
+    const child1Config = createChild1DisplayConfig(chartType, scenarioData, child1Name);
     if (child1Config) datasets.push(child1Config);
-    
-    const child2Config = createChild2DisplayConfig(chartType, scenarioData);
+
+    const child2Config = createChild2DisplayConfig(chartType, scenarioData, child2Name);
     if (child2Config) datasets.push(child2Config);
-    
+
     const combinedConfig = createCombinedDisplayConfig(chartType, scenarioData);
     if (combinedConfig) datasets.push(combinedConfig);
-    
+
     return datasets;
 }
 
@@ -413,15 +413,17 @@ export function createChart(type, context, scenarioData, options = {}) {
         console.error('Chart.js is not loaded!');
         return null;
     }
-    
+
     const selectedIndex = options.selectedIndex || 0;
-    
+    const child1Name = options.child1Name || 'Child 1';
+    const child2Name = options.child2Name || 'Child 2';
+
     // Handle chart type specific configurations
     let chartConfig = {
         type: (type === 'singleBar' || type === 'multiBar') ? 'bar' : type,
         data: {
-            labels: getLabels(type),
-            datasets: createAllDatasets(type, scenarioData)
+            labels: getLabels(type, child1Name, child2Name),
+            datasets: createAllDatasets(type, scenarioData, child1Name, child2Name)
         },
         options: {
             responsive: true,
@@ -429,10 +431,10 @@ export function createChart(type, context, scenarioData, options = {}) {
             animation: getAnimationConfig(),
             plugins: {
                 tooltip: getTooltipConfig(),
-                legend: getLegendConfig(type),
+                legend: getLegendConfig(type, child1Name, child2Name),
                 datalabels: getDataLabelsConfig(type, selectedIndex, scenarioData)
             },
-            scales: getScalesConfig(type, scenarioData),
+            scales: getScalesConfig(type, scenarioData, child1Name),
             layout: getLayoutConfig(type)
         }
     };
@@ -454,12 +456,14 @@ export function createChart(type, context, scenarioData, options = {}) {
 
 // Chart management class for handling chart instances and updates
 export class ChartManager {
-    constructor() {
+    constructor(child1Name = 'Child 1', child2Name = 'Child 2') {
         this.charts = {
             barChart: null,
             lineChart: null,
             multiBarChart: null
         };
+        this.child1Name = child1Name;
+        this.child2Name = child2Name;
     }
 
     // Properly destroy a single chart instance
@@ -498,7 +502,9 @@ export class ChartManager {
         // Create single bar chart
         if (uiManager.ctx) {
             this.charts.barChart = createChart('singleBar', uiManager.ctx, sd, {
-                selectedIndex: appState.selectedInvestment
+                selectedIndex: appState.selectedInvestment,
+                child1Name: this.child1Name,
+                child2Name: this.child2Name
             });
             appState.setChart('barChart', this.charts.barChart);
         }
@@ -506,7 +512,9 @@ export class ChartManager {
         // Create line chart
         if (uiManager.lineCtx) {
             this.charts.lineChart = createChart('line', uiManager.lineCtx, sd, {
-                selectedIndex: appState.selectedInvestment
+                selectedIndex: appState.selectedInvestment,
+                child1Name: this.child1Name,
+                child2Name: this.child2Name
             });
             appState.setChart('lineChart', this.charts.lineChart);
         }
@@ -514,7 +522,9 @@ export class ChartManager {
         // Create multi-bar chart
         if (uiManager.multiBarCtx) {
             this.charts.multiBarChart = createChart('multiBar', uiManager.multiBarCtx, sd, {
-                selectedIndex: appState.selectedInvestment
+                selectedIndex: appState.selectedInvestment,
+                child1Name: this.child1Name,
+                child2Name: this.child2Name
             });
             appState.setChart('multiBarChart', this.charts.multiBarChart);
         }

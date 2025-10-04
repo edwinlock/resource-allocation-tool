@@ -146,10 +146,14 @@ export class SessionCoordinator {
     // Debug utilities
 
     // Delegate methods to appropriate DB classes
-    
+
     // Session operations
-    async createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType) {
-        return await this.sessionDB.createSession(participantId, enumeratorId, child1Ability, child2Ability, child1Name, child2Name, school, sessionType);
+    async createChildSession(enumeratorId, familyId, childId, name, school) {
+        return await this.sessionDB.createChildSession(enumeratorId, familyId, childId, name, school);
+    }
+
+    async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType, preEarnings1, preEarnings2) {
+        return await this.sessionDB.createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType, preEarnings1, preEarnings2);
     }
 
     async loadSessions() {
@@ -164,12 +168,36 @@ export class SessionCoordinator {
         return await this.sessionDB.updateSessionStatus(sessionId, updates);
     }
 
-    async markSurveyStarted(sessionId) {
-        return await this.sessionDB.markSurveyStarted(sessionId);
+    async markChildSurveyStarted(sessionId) {
+        return await this.sessionDB.markChildSurveyStarted(sessionId);
+    }
+
+    async markChildSurveyCompleted(sessionId) {
+        return await this.sessionDB.markChildSurveyCompleted(sessionId);
+    }
+
+    async markParentSurveyStarted(sessionId) {
+        return await this.sessionDB.markParentSurveyStarted(sessionId);
+    }
+
+    async markParentSurveyCompleted(sessionId) {
+        return await this.sessionDB.markParentSurveyCompleted(sessionId);
     }
 
     async markSliderStarted(sessionId) {
         return await this.sessionDB.markSliderStarted(sessionId);
+    }
+
+    async markSliderCompleted(sessionId) {
+        return await this.sessionDB.markSliderCompleted(sessionId);
+    }
+
+    async markExitSurveyStarted(sessionId) {
+        return await this.sessionDB.markExitSurveyStarted(sessionId);
+    }
+
+    async markExitSurveyCompleted(sessionId) {
+        return await this.sessionDB.markExitSurveyCompleted(sessionId);
     }
 
     // Response operations
@@ -201,15 +229,21 @@ export class SessionCoordinator {
         try {
             // Save all survey responses first
             await this.surveyResponseDB.completeSurveySession(sessionId, surveyId, responses);
-            // Then mark specific survey as completed
-            const surveyStatusField = `${surveyId.toLowerCase()}SurveyStatus`;
-            const surveyCompletedField = `${surveyId.toLowerCase()}SurveyCompletedAt`;
 
-            const statusUpdate = {};
-            statusUpdate[surveyStatusField] = 'completed';
-            statusUpdate[surveyCompletedField] = new Date().toISOString();
+            // Get session to determine type
+            const session = await this.getSession(sessionId);
 
-            await this.sessionDB.updateSessionStatus(sessionId, statusUpdate);
+            // Mark appropriate survey as completed based on session type
+            if (session.sessionType === 'child') {
+                await this.markChildSurveyCompleted(sessionId);
+            } else if (session.sessionType === 'parent') {
+                // For parent sessions, check if it's the main survey (Treatment/Control) or Exit
+                if (surveyId === 'Treatment' || surveyId === 'Control') {
+                    await this.markParentSurveyCompleted(sessionId);
+                } else if (surveyId === 'Exit') {
+                    await this.markExitSurveyCompleted(sessionId);
+                }
+            }
         } catch (error) {
             console.error('Error in coordinated survey completion:', error);
             throw error;
@@ -228,23 +262,25 @@ export class SessionCoordinator {
     isSessionComplete(session) {
         if (!session) return false;
 
-        // Check all required surveys are completed
-        const child1Complete = session.child1SurveyStatus === 'completed';
-        const child2Complete = session.child2SurveyStatus === 'completed';
+        if (session.sessionType === 'child') {
+            // Child session is complete when survey is done
+            return session.surveyStatus === 'completed';
+        } else if (session.sessionType === 'parent') {
+            // Parent session completion depends on group type
+            const surveyDone = session.surveyStatus === 'completed';
 
-        // Check parent workflow based on session type
-        let parentWorkflowComplete = false;
-        if (session.sessionType === 'treatment') {
-            // Treatment: requires parent survey, slider, and exit survey
-            parentWorkflowComplete = session.treatmentSurveyStatus === 'completed' &&
-                                    session.sliderStatus === 'completed' &&
-                                    session.exitSurveyStatus === 'completed';
-        } else if (session.sessionType === 'control') {
-            // Control: only requires parent survey
-            parentWorkflowComplete = session.controlSurveyStatus === 'completed';
+            if (session.groupType === 'treatment') {
+                // Treatment: requires survey, slider, and exit survey
+                return surveyDone &&
+                       session.sliderStatus === 'completed' &&
+                       session.exitSurveyStatus === 'completed';
+            } else {
+                // Control: only requires survey
+                return surveyDone;
+            }
         }
 
-        return child1Complete && child2Complete && parentWorkflowComplete;
+        return false;
     }
 
     getMissingComponents(session) {
@@ -252,24 +288,22 @@ export class SessionCoordinator {
 
         const missing = [];
 
-        if (session.child1SurveyStatus !== 'completed') {
-            missing.push(session.child1name || 'Child 1');
-        }
-        if (session.child2SurveyStatus !== 'completed') {
-            missing.push(session.child2name || 'Child 2');
-        }
-
-        // For treatment: check parent survey, slider, and exit survey
-        if (session.sessionType === 'treatment') {
-            if (session.treatmentSurveyStatus !== 'completed' ||
-                session.sliderStatus !== 'completed' ||
-                session.exitSurveyStatus !== 'completed') {
-                missing.push('Parent');
+        if (session.sessionType === 'child') {
+            if (session.surveyStatus !== 'completed') {
+                missing.push('Child Survey');
             }
-        }
-        // For control: only check parent survey
-        else if (session.sessionType === 'control' && session.controlSurveyStatus !== 'completed') {
-            missing.push('Parent');
+        } else if (session.sessionType === 'parent') {
+            if (session.surveyStatus !== 'completed') {
+                missing.push('Parent Survey');
+            }
+            if (session.groupType === 'treatment') {
+                if (session.sliderStatus !== 'completed') {
+                    missing.push('Slider Exercise');
+                }
+                if (session.exitSurveyStatus !== 'completed') {
+                    missing.push('Exit Survey');
+                }
+            }
         }
 
         return missing;
@@ -296,80 +330,57 @@ export class SessionCoordinator {
             // Get all survey responses
             const surveyResponses = await this.getSessionSurveyResponses(sessionId);
 
-            // Get slider responses
-            const sliderResponses = await this.getSessionSliderResponses(sessionId);
-
-            // Aggregate survey responses by survey type
-            const surveysByType = {
-                child1Survey: [],
-                child2Survey: [],
-                parentSurvey: []
-            };
-
-            surveyResponses.forEach(response => {
-                if (response.surveyId === 'Child1') {
-                    surveysByType.child1Survey.push({
-                        questionId: response.questionId,
-                        answer: response.answer,
-                        completedAt: response.completedAt
-                    });
-                } else if (response.surveyId === 'Child2') {
-                    surveysByType.child2Survey.push({
-                        questionId: response.questionId,
-                        answer: response.answer,
-                        completedAt: response.completedAt
-                    });
-                } else if (response.surveyId === 'Treatment' || response.surveyId === 'Control') {
-                    surveysByType.parentSurvey.push({
-                        questionId: response.questionId,
-                        answer: response.answer,
-                        completedAt: response.completedAt
-                    });
-                }
-            });
-
-            // Format slider responses
-            const formattedSliderResponses = sliderResponses.map(response => ({
-                scenarioNumber: response.scenarioNumber,
-                displayOrder: response.displayOrder,
-                child1Investment: response.child1investment,
-                child2Investment: response.child1investment ? (100 - response.child1investment) : null,
-                completedAt: response.completedAt
-            }));
-
-            // Create aggregated data structure
+            // Build base aggregated data structure
             const aggregatedData = {
                 sessionMetadata: {
                     sessionId: session.id,
-                    participantId: session.participantId,
-                    enumeratorId: session.enumeratorID,
                     sessionType: session.sessionType,
+                    enumeratorId: session.enumeratorId,
                     createdAt: session.createdAt,
-                    completedAt: session.sliderCompletedAt || new Date().toISOString(),
-                    children: {
-                        child1: {
-                            name: session.child1name,
-                            ability: session.child1ability,
-                            school: session.school
-                        },
-                        child2: {
-                            name: session.child2name,
-                            ability: session.child2ability,
-                            school: session.school
-                        }
-                    }
+                    familyId: session.familyId,
+                    school: session.school
                 },
-                surveyResponses: surveysByType,
-                sliderResponses: formattedSliderResponses,
-                completionTimestamps: {
-                    child1SurveyCompleted: session.child1SurveyCompletedAt,
-                    child2SurveyCompleted: session.child2SurveyCompletedAt,
-                    parentSurveyCompleted: session.sessionType === 'treatment'
-                        ? session.treatmentSurveyCompletedAt
-                        : session.controlSurveyCompletedAt,
-                    sliderCompleted: session.sliderCompletedAt
-                }
+                surveyResponses: surveyResponses.map(response => ({
+                    id: response.id,
+                    surveyId: response.surveyId,
+                    questionId: response.questionId,
+                    answer: response.answer,
+                    completedAt: response.completedAt
+                }))
             };
+
+            // Add session-type-specific data
+            if (session.sessionType === 'child') {
+                aggregatedData.sessionMetadata.childId = session.childId;
+                aggregatedData.sessionMetadata.childName = session.name;
+                aggregatedData.completionTimestamps = {
+                    surveyCompleted: session.surveyCompletedAt
+                };
+            } else if (session.sessionType === 'parent') {
+                aggregatedData.sessionMetadata.child1Name = session.child1Name;
+                aggregatedData.sessionMetadata.child2Name = session.child2Name;
+                aggregatedData.sessionMetadata.groupType = session.groupType;
+                aggregatedData.sessionMetadata.preEarnings1 = session.preEarnings1;
+                aggregatedData.sessionMetadata.preEarnings2 = session.preEarnings2;
+
+                aggregatedData.completionTimestamps = {
+                    surveyCompleted: session.surveyCompletedAt
+                };
+
+                // Include slider responses for treatment group
+                if (session.groupType === 'treatment') {
+                    const sliderResponses = await this.getSessionSliderResponses(sessionId);
+                    aggregatedData.sliderResponses = sliderResponses.map(response => ({
+                        scenarioNumber: response.scenarioNumber,
+                        displayOrder: response.displayOrder,
+                        child1Investment: response.child1investment,
+                        child2Investment: response.child1investment ? (9 - response.child1investment) : null,
+                        completedAt: response.completedAt
+                    }));
+                    aggregatedData.completionTimestamps.sliderCompleted = session.sliderCompletedAt;
+                    aggregatedData.completionTimestamps.exitSurveyCompleted = session.exitSurveyCompletedAt;
+                }
+            }
 
             return aggregatedData;
 

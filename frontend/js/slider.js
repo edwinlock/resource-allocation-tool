@@ -9,7 +9,7 @@ import { getUTCDate } from './modules/utilities.js';
 // Application initialization
 class SliderApp {
     constructor() {
-        this.chartManager = new ChartManager();
+        this.chartManager = null; // Will be initialized after loading session
     }
 
     // Parse URL parameters to get session ID
@@ -30,21 +30,15 @@ class SliderApp {
 
     // Update session info display at top of page
     updateSessionInfo(session) {
-        document.getElementById('session-id').textContent = session.id ? session.id.substring(0, 8) + '...' : '-';
-        document.getElementById('participant-id').textContent = session.participantId || '-';
-        document.getElementById('enumerator-id').textContent = session.enumeratorID || '-';
-    }
+        document.getElementById('family-id').textContent = session.familyId || '-';
+        document.getElementById('enumerator-id').textContent = session.enumeratorId || '-';
 
-    // Update child ability input fields with database values
-    updateChildAbilityInputs(session) {
-        const child1AbilityInput = document.getElementById('child1-ability');
-        const child2AbilityInput = document.getElementById('child2-ability');
-        
-        if (child1AbilityInput) {
-            child1AbilityInput.value = session.child1ability || 50;
+        // Update child names in slider section
+        if (session.child1Name) {
+            document.getElementById('child1-name').textContent = session.child1Name;
         }
-        if (child2AbilityInput) {
-            child2AbilityInput.value = session.child2ability || 20;
+        if (session.child2Name) {
+            document.getElementById('child2-name').textContent = session.child2Name;
         }
     }
 
@@ -68,23 +62,26 @@ class SliderApp {
             // Update session info display
             this.updateSessionInfo(session);
 
-            // Update child ability input fields with database values
-            this.updateChildAbilityInputs(session);
+            // Initialize ChartManager with child names from session
+            this.chartManager = new ChartManager(
+                session.child1Name || 'Child 1',
+                session.child2Name || 'Child 2'
+            );
 
             // Update app state with real session data
             appState.updateSession({
                 id: session.id,
-                participant_id: session.participantId,
-                enumerator_id: session.enumeratorID,
+                participant_id: session.familyId,
+                enumerator_id: session.enumeratorId,
                 date_created: session.createdAt || getUTCDate(),
                 date_modified: session.sliderStartedAt || getUTCDate(),
-                abilityScore1: session.child1ability || 50, // Default values if not set
-                abilityScore2: session.child2ability || 20
+                preEarnings1: session.preEarnings1 || 5, // Default values if not set
+                preEarnings2: session.preEarnings2 || 2
             });
-            
+
             // Initialize UI manager
             uiManager.initialize();
-            
+
             // Setup chart-UI integration
             this.chartManager.setupUIChartIntegration(uiManager, appState, CONFIG);
             

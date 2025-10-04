@@ -1,23 +1,6 @@
 import { CONFIG } from './constants.js';
 
-const { ALLOCATABLE_BUDGET, GAP_THRESHOLD, MAX_SESSIONS } = CONFIG;
-
-// Mapping ability scores to 'performance ratios':
-// Raw scores are between 0 and 100
-// There are two kinds of gap: *medium* and *large*
-// need to distinguish between child 1 being better than child 2 and vice versa
-function computePreEarnings(abilityScore1, abilityScore2) {
-    let gap = abilityScore1 - abilityScore2;
-    if (gap > GAP_THRESHOLD) {  // child1 is much better
-        return [6, 1];
-    } else if (gap >= 0 && gap <= GAP_THRESHOLD) { // child1 is slightly better
-        return [5, 2];
-    } else if (gap >= -GAP_THRESHOLD && gap < 0) { // child2 is slightly better
-        return [2, 5];
-    } else { // child2 is much better
-        return [1, 6];
-    }
-}
+const { ALLOCATABLE_BUDGET, MAX_SESSIONS } = CONFIG;
 
 // Compute child-specific human capital, as a combination of ability and parental investment
 function humanCapital(ability, investment, scenario) {
@@ -46,10 +29,9 @@ function earnings(ability, investment, scenario, alpha) {
 // Main function to compute all economic outcomes for a scenario
 // Returns the data instead of mutating global state
 export function computeOutcomes(session, scenario) {
-    const pre = computePreEarnings(session.abilityScore1, session.abilityScore2);
-    const preEarnings1 = pre[0];
-    const preEarnings2 = pre[1];
-    
+    const preEarnings1 = session.preEarnings1;
+    const preEarnings2 = session.preEarnings2;
+
     // Compute alpha first since earnings depend on it
     const alpha = computeAlpha(preEarnings1, preEarnings2, scenario);
     

@@ -1,0 +1,98 @@
+[
+  {
+    "participantId": "P001",
+    "enumeratorId": 1,
+    "preEarnings1": 6,
+    "preEarnings2": 1,
+    "school": "Escuela Primaria Benito Juárez",
+    "sessionType": "treatment"
+  },
+  {
+    "participantId": "P002",
+    "enumeratorId": 1,
+    "preEarnings1": 5,
+    "preEarnings2": 2,
+    "school": "Escuela Primaria Miguel Hidalgo",
+    "sessionType": "control"
+  },
+  {
+    "participantId": "P003",
+    "enumeratorId": 1,
+    "preEarnings1": 2,
+    "preEarnings2": 5,
+    "school": "Escuela José María Morelos",
+    "sessionType": "treatment"
+  },
+  {
+    "participantId": "P004",
+    "enumeratorId": 1,
+    "preEarnings1": 1,
+    "preEarnings2": 6,
+    "school": "Escuela Primaria Emiliano Zapata",
+    "sessionType": "control"
+  },
+  {
+    "participantId": "P005",
+    "enumeratorId": 2,
+    "preEarnings1": 6,
+    "preEarnings2": 1,
+    "school": "Escuela Lázaro Cárdenas",
+    "sessionType": "treatment"
+  },
+  {
+    "participantId": "P006",
+    "enumeratorId": 2,
+    "preEarnings1": 5,
+    "preEarnings2": 2,
+    "school": "Escuela Francisco Villa",
+    "sessionType": "control"
+  },
+  {
+    "participantId": "P007",
+    "enumeratorId": 2,
+    "preEarnings1": 2,
+    "preEarnings2": 5,
+    "school": "Escuela Primaria Sor Juana Inés de la Cruz",
+    "sessionType": "treatment"
+  },
+  {
+    "participantId": "P008",
+    "enumeratorId": 2,
+    "preEarnings1": 1,
+    "preEarnings2": 6,
+    "school": "Escuela Guadalupe Victoria",
+    "sessionType": "control"
+  },
+  {
+    "participantId": "P009",
+    "enumeratorId": 3,
+    "preEarnings1": 5,
+    "preEarnings2": 2,
+    "school": "Escuela Vicente Guerrero",
+    "sessionType": "treatment"
+  },
+  {
+    "participantId": "P010",
+    "enumeratorId": 3,
+    "preEarnings1": 2,
+    "preEarnings2": 5,
+    "school": "Escuela Primaria Cuauhtémoc",
+    "sessionType": "control"
+  },
+  {
+    "participantId": "P011",
+    "enumeratorId": 3,
+    "preEarnings1": 6,
+    "preEarnings2": 1,
+    "school": "Escuela Ignacio Zaragoza",
+    "sessionType": "treatment"
+  },
+  {
+    "participantId": "P012",
+    "enumeratorId": 3,
+    "preEarnings1": 1,
+    "preEarnings2": 6,
+    "school": "Escuela Primaria Josefa Ortiz de Domínguez",
+    "sessionType": "control"
+  }
+]
