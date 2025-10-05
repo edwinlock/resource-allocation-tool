@@ -29,6 +29,15 @@
             "required": true
         },
         {
+            "question_id": "test_image_question",
+            "type": "singleselect",
+            "query": "Which option do you prefer?",
+            "image": "test_image.png",
+            "values": ["Option A", "Option B", "Option C", "Option D"],
+            "datatype": "text",
+            "required": true
+        },
+        {
             "question_id": "child_favorite_subject",
             "type": "open",
             "query": "What is your favorite subject at school?",

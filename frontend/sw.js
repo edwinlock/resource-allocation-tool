@@ -26,9 +26,10 @@ const urlsToCache = [
   './js/modules/survey-system.js',
   './js/modules/api-service.js',
   './js/modules/utilities.js',
-  './surveyChild.json',
-  './surveyTreatment.json',
-  './surveyControl.json',
+  './surveys/surveyChild.json',
+  './surveys/surveyTreatment.json',
+  './surveys/surveyControl.json',
+  './surveys/surveyExit.json',
   // External CDN resources for offline fallback
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',

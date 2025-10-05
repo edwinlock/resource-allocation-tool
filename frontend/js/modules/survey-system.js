@@ -52,7 +52,7 @@ export class OpenQuestion extends SurveyQuestion {
         return `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="form-label">${query}</legend>
+                    <legend class="question-query">${query}</legend>
                     <input type="${inputType}" class="form-control" id="q_${this.questionId}"
                            data-question-id="${this.questionId}" ${requiredAttr}>
                 </fieldset>
@@ -87,7 +87,7 @@ export class MultiOpenQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="form-label">${query}</legend>
+                    <legend class="question-query">${query}</legend>
         `;
 
         this.prefixes.forEach((prefix, index) => {
@@ -162,14 +162,17 @@ export class SingleSelectQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="form-label">${query}</legend>
+                    <legend class="question-query">${query}</legend>
         `;
 
         // Display image if provided
         if (this.image) {
+            const imagePath = this.image.startsWith('http://') || this.image.startsWith('https://') || this.image.startsWith('/')
+                ? this.image
+                : `surveys/${this.image}`;
             html += `
                 <div class="text-center mb-3">
-                    <img src="${this.image}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
+                    <img src="${imagePath}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
                 </div>
             `;
         }
@@ -182,10 +185,10 @@ export class SingleSelectQuestion extends SurveyQuestion {
                 html += `
                     <div class="col-auto mb-2">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="q_${this.questionId}"
+                            <input class="form-check-input survey-option-input" type="radio" name="q_${this.questionId}"
                                    id="q_${this.questionId}_${index}" value="${value}"
                                    data-question-id="${this.questionId}" ${requiredAttr}>
-                            <label class="form-check-label" for="q_${this.questionId}_${index}">
+                            <label class="form-check-label survey-option-label" for="q_${this.questionId}_${index}">
                                 ${displayValue}
                             </label>
                         </div>
@@ -244,14 +247,17 @@ export class MultiSelectQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="form-label">${query}</legend>
+                    <legend class="question-query">${query}</legend>
         `;
 
         // Display image if provided
         if (this.image) {
+            const imagePath = this.image.startsWith('http://') || this.image.startsWith('https://') || this.image.startsWith('/')
+                ? this.image
+                : `surveys/${this.image}`;
             html += `
                 <div class="text-center mb-3">
-                    <img src="${this.image}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
+                    <img src="${imagePath}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
                 </div>
             `;
         }
@@ -264,10 +270,10 @@ export class MultiSelectQuestion extends SurveyQuestion {
                 html += `
                     <div class="col-auto mb-2">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox"
+                            <input class="form-check-input survey-option-input" type="checkbox"
                                    id="q_${this.questionId}_${index}" value="${value}"
                                    data-question-id="${this.questionId}" data-index="${index}">
-                            <label class="form-check-label" for="q_${this.questionId}_${index}">
+                            <label class="form-check-label survey-option-label" for="q_${this.questionId}_${index}">
                                 ${displayValue}
                             </label>
                         </div>
@@ -335,7 +341,7 @@ export class GridQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="form-label">${query}</legend>
+                    <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tbody>
@@ -351,13 +357,13 @@ export class GridQuestion extends SurveyQuestion {
                     html += `
                         <td class="text-center">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio"
+                                <input class="form-check-input survey-option-input" type="radio"
                                        name="q_${this.questionId}_row_${rowIndex}"
                                        id="q_${this.questionId}_${rowIndex}_${colIndex}"
                                        value="${option}"
                                        data-question-id="${this.questionId}"
                                        data-row="${rowIndex}" data-col="${colIndex}" ${requiredAttr}>
-                                <label class="form-check-label" for="q_${this.questionId}_${rowIndex}_${colIndex}">
+                                <label class="form-check-label survey-option-label" for="q_${this.questionId}_${rowIndex}_${colIndex}">
                                     ${displayOption}
                                 </label>
                             </div>
@@ -408,7 +414,7 @@ export class MPLQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="form-label">${query}</legend>
+                    <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tbody>
@@ -424,13 +430,13 @@ export class MPLQuestion extends SurveyQuestion {
                     html += `
                         <td class="text-center">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio"
+                                <input class="form-check-input survey-option-input" type="radio"
                                        name="q_${this.questionId}_row_${rowIndex}"
                                        id="q_${this.questionId}_${rowIndex}_${colIndex}"
                                        value="${option}"
                                        data-question-id="${this.questionId}"
                                        data-row="${rowIndex}" data-col="${colIndex}" ${requiredAttr}>
-                                <label class="form-check-label" for="q_${this.questionId}_${rowIndex}_${colIndex}">
+                                <label class="form-check-label survey-option-label" for="q_${this.questionId}_${rowIndex}_${colIndex}">
                                     ${displayOption}
                                 </label>
                             </div>
@@ -514,7 +520,7 @@ export class PlainTextQuestion extends SurveyQuestion {
         const text = this.substituteVariables(this.text, variables);
         return `
             <div class="mb-4">
-                <div class="alert alert-info">
+                <div class="plaintext-display">
                     ${text}
                 </div>
             </div>
@@ -555,7 +561,7 @@ export class ConsentQuestion extends SurveyQuestion {
                             ${text}
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox"
+                            <input class="form-check-input survey-option-input" type="checkbox"
                                    id="q_${this.questionId}"
                                    data-question-id="${this.questionId}"
                                    required>
@@ -602,8 +608,8 @@ export class LikertQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="h5">${query}</legend>
-                    ${prefix ? `<div class="mb-5 text-muted">${prefix}</div>` : ''}
+                    <legend class="question-query">${query}</legend>
+                    ${prefix ? `<div class="mb-3 text-muted">${prefix}</div>` : ''}
                     <div class="likert-scale">
                         <div class="d-flex justify-content-center">
                             <div class="d-flex gap-3">
@@ -658,7 +664,7 @@ export class MultiLikertQuestion extends SurveyQuestion {
         let html = `
             <div class="mb-4">
                 <fieldset>
-                    <legend class="h5">${query}</legend>
+                    <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
                         <table class="table table-borderless">
                             <thead>
@@ -692,7 +698,7 @@ export class MultiLikertQuestion extends SurveyQuestion {
                 html += `
                     <td class="text-center">
                         <div class="form-check d-inline-block">
-                            <input class="form-check-input" type="radio"
+                            <input class="form-check-input survey-option-input" type="radio"
                                    name="q_${this.questionId}_row_${rowIndex}"
                                    id="q_${this.questionId}_${rowIndex}_${i}"
                                    value="${i}"
@@ -862,7 +868,7 @@ export class SurveyManager {
             // Map Child1 and Child2 to use the same Child survey file
             const fileId = (surveyId === 'Child1' || surveyId === 'Child2') ? 'Child' : surveyId;
 
-            const response = await fetch(`survey${fileId}.json`);
+            const response = await fetch(`surveys/survey${fileId}.json`);
             if (!response.ok) {
                 throw new Error(`Failed to load survey: ${response.status}`);
             }

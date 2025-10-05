@@ -17,19 +17,36 @@ format: html
 
 ## Variable Substitution
 
-Use `{variableName}` in any text field to inject session data:
+Use `{variableName}` in any text field to inject session data. **Available variables depend on the session type.**
+
+### Variables Available for ALL Session Types
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `{child1name}` | Child 1's name | "Sarah" |
-| `{child2name}` | Child 2's name | "John" |
-| `{child1ability}` | Child 1's ability score | 75 |
-| `{child2ability}` | Child 2's ability score | 45 |
-| `{child1school}` | Child 1's school | "Lincoln Elementary" |
-| `{child2school}` | Child 2's school | "Washington Middle" |
-| `{participant}` | Participant ID | "P001" |
-| `{enumerator}` | Enumerator ID | "E001" |
-| `{sessionType}` | Session type | "treatment" or "control" |
+| `{sessionType}` | Session type | "child" or "parent" |
+| `{enumerator}` | Enumerator ID | 101 |
+| `{familyId}` | Family ID | "FAM001" |
+| `{school}` | School name | "Escuela Primaria Benito Juárez" |
+
+### Variables ONLY for Child Sessions (sessionType = "child")
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{childName}` | Child's name | "María" |
+| `{childId}` | Child's ID within family | "C1" or "C2" |
+
+**⚠️ Important:** In child surveys, you **cannot** use `{child1name}` or `{child2name}` since the session is for one child only.
+
+### Variables ONLY for Parent Sessions (sessionType = "parent")
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{child1name}` | First child's name | "María" |
+| `{child2name}` | Second child's name | "Carlos" |
+| `{preEarnings1}` | First child's pre-earnings | 1, 2, 5, or 6 |
+| `{preEarnings2}` | Second child's pre-earnings | 1, 2, 5, or 6 |
+
+**Note:** preEarnings values are always one of four pairs: [1,6], [2,5], [5,2], or [6,1]
 
 ## Question Types
 
@@ -76,6 +93,22 @@ Use `{variableName}` in any text field to inject session data:
 }
 ```
 
+**With image (displays options horizontally):**
+
+```json
+{
+    "question_id": "diagram_question",
+    "type": "singleselect",
+    "query": "Based on the diagram above, which option is correct?",
+    "image": "images/diagram.jpg",
+    "values": ["Option A", "Option B", "Option C"],
+    "datatype": "text",
+    "required": true
+}
+```
+
+**Note:** When `image` field is provided, a single image displays above the question, and answer options are arranged horizontally. Otherwise, options display vertically without an image.
+
 ### 4. multiselect - Checkboxes (multiple choices)
 
 ```json
@@ -88,6 +121,22 @@ Use `{variableName}` in any text field to inject session data:
     "required": true  // Note: multiselect always validates as true
 }
 ```
+
+**With image (displays options horizontally):**
+
+```json
+{
+    "question_id": "identify_items",
+    "type": "multiselect",
+    "query": "Based on the image above, which items do you see? (select all that apply)",
+    "image": "images/scene.jpg",
+    "values": ["Tree", "House", "Car", "Person"],
+    "datatype": "text",
+    "required": true
+}
+```
+
+**Note:** When `image` field is provided, a single image displays above the question, and answer options are arranged horizontally. Otherwise, options display vertically without an image.
 
 ### 5. grid - Table with radio buttons per row
 
@@ -195,6 +244,10 @@ Same structure as `grid`, but selecting option in row k automatically:
 - `datatype`: "text" or "number" (for input questions)
 - `required`: true/false (defaults to false)
 - `values`: Array of choices (for select questions)
+- `image`: Single image URL (for singleselect/multiselect; displays image above question with horizontal options)
+  - Relative paths (e.g., `"image.png"`) are loaded from the `frontend/surveys/` directory
+  - Absolute URLs (e.g., `"https://example.com/image.png"`) are loaded from the specified URL
+  - Absolute paths (e.g., `"/images/image.png"`) are loaded from the root of the web server
 - `prefixes`: Array of row labels (for multiopen/grid/mpl/multilikert)
 - `options`: 2D array of choices per row (for grid/mpl)
 - `text`: Display content (for plaintext/consent)
