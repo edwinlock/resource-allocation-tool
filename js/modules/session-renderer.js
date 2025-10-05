@@ -10,9 +10,6 @@ export class SessionRenderer {
             // Always show Details button first
             buttons.push(`<button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>`);
 
-            // Add Download JSON icon
-            buttons.push(`<a href="#" class="session-action text-primary" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON" style="font-size: 1.2rem; text-decoration: none;">⬇️</a>`);
-
             // Always show Start button - gray out if completed
             if (session.sessionType === 'child') {
                 // Child session - one survey button, always visible
@@ -37,6 +34,12 @@ export class SessionRenderer {
 
             // Always show Delete button
             buttons.push(`<button class="btn btn-sm btn-outline-danger session-action" data-action="deleteSession" data-session-id="${session.id}">Delete</button>`);
+
+            // Add Download JSON icon as rightmost element, only if session is complete
+            const isComplete = this.isSessionComplete(session);
+            if (isComplete) {
+                buttons.push(`<a href="#" class="session-action text-primary d-inline-flex align-items-center ms-3" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON" style="text-decoration: none;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg></a>`);
+            }
 
             return `<div class="action-buttons">${buttons.join('')}</div>`;
         };
@@ -183,7 +186,7 @@ export class SessionRenderer {
                 <td>
                     <div class="action-buttons">
                         <button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>
-                        <a href="#" class="session-action text-primary" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON" style="font-size: 1.2rem; text-decoration: none;">⬇️</a>
+                        <a href="#" class="session-action text-primary d-inline-flex align-items-center ms-3" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON" style="text-decoration: none;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg></a>
                     </div>
                 </td>
             </tr>

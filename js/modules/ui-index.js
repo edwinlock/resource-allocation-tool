@@ -286,13 +286,19 @@ class IndexUIManager {
 
         // Event delegation for session action buttons
         document.addEventListener('click', (event) => {
-            if (event.target.classList.contains('session-action')) {
-                if (event.target.disabled || event.target.hasAttribute('disabled')) {
+            // Check if clicked element or its parent has session-action class
+            let target = event.target;
+            if (!target.classList.contains('session-action') && target.closest('.session-action')) {
+                target = target.closest('.session-action');
+            }
+
+            if (target.classList.contains('session-action')) {
+                if (target.disabled || target.hasAttribute('disabled')) {
                     return;
                 }
 
-                const action = event.target.dataset.action;
-                const sessionId = event.target.dataset.sessionId;
+                const action = target.dataset.action;
+                const sessionId = target.dataset.sessionId;
 
                 if (action && sessionId) {
                     event.preventDefault();
