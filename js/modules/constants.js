@@ -88,7 +88,7 @@ export const SCENARIOS = [
 
 // API Configuration
 export const API_CONFIG = {
-    BACKEND_URL: 'http://localhost:5001', // Backend Flask app
+    BACKEND_URL: 'https://learn.edwinlock.com', // Backend Flask app
     UPLOAD_TIMEOUT: 30000, // 30 seconds
     ENDPOINTS: {
         UPLOAD_SESSION: '/upload-session',
