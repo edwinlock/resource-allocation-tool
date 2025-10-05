@@ -141,70 +141,98 @@ Click the green "Reload" button in the Web tab.
 
 Your backend API should now be accessible at: `https://YOUR-USERNAME.pythonanywhere.com`
 
-## Database Backup (Daily Cron Job)
+## Database Backup (Automated with Cron)
 
-PythonAnywhere provides scheduled tasks for automatic backups.
+The repository includes a comprehensive backup script with compression and automatic cleanup.
 
-### 1. Create Backup Script
+### 1. Copy Backup Script to Home Directory
 
-Create a backup script at `~/backup_learn_db.sh`:
-
-```bash
-nano ~/backup_learn_db.sh
-```
-
-Add the following content:
+The backup script is included in the repository at `backend/backup_database.sh`. Copy it to your home directory:
 
 ```bash
-#!/bin/bash
-
-# Configuration
-DB_PATH="$HOME/resource-allocation-tool/backend/instance/learn.db"
-BACKUP_DIR="$HOME/backups/learn_db"
-DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/learn_db_$DATE.db"
-
-# Create backup directory if it doesn't exist
-mkdir -p "$BACKUP_DIR"
-
-# Create backup
-if [ -f "$DB_PATH" ]; then
-    cp "$DB_PATH" "$BACKUP_FILE"
-    echo "$(date): Backup created: $BACKUP_FILE" >> "$BACKUP_DIR/backup.log"
-
-    # Keep only last 30 days of backups
-    find "$BACKUP_DIR" -name "learn_db_*.db" -type f -mtime +30 -delete
-    echo "$(date): Old backups cleaned up" >> "$BACKUP_DIR/backup.log"
-else
-    echo "$(date): ERROR - Database file not found at $DB_PATH" >> "$BACKUP_DIR/backup.log"
-fi
+cp ~/resource-allocation-tool/backend/backup_database.sh ~/backup_database.sh
+chmod +x ~/backup_database.sh
 ```
 
-Make the script executable:
+**Features:**
+- ✅ Automatic gzip compression (saves ~90% disk space)
+- ✅ Configurable retention (default: 30 days, max 720 backups)
+- ✅ Detailed logging with timestamps and sizes
+- ✅ Safe for hourly or daily execution
+- ✅ Automatic cleanup of old backups
+- ✅ Error handling and reporting
+
+### 2. Configure Backup Settings (Optional)
+
+The script uses environment variables for configuration. You can customize by setting these before running:
 
 ```bash
-chmod +x ~/backup_learn_db.sh
+# Example: Custom backup location and retention
+export BACKUP_DIR="$HOME/database_backups"
+export RETENTION_DAYS=60        # Keep backups for 60 days
+export MAX_BACKUPS=1440         # Max 1440 backups (60 days hourly)
+
+~/backup_database.sh
 ```
 
-### 2. Test the Backup Script
+**Default settings:**
+- Database: `~/resource-allocation-tool/backend/instance/learn.db`
+- Backup directory: `~/resource-allocation-tool/backend/backups/`
+- Retention: 30 days
+- Max backups: 720 (suitable for hourly backups over 30 days)
+
+### 3. Test the Backup Script
 
 ```bash
 # Run the backup script manually to test
-~/backup_learn_db.sh
+~/backup_database.sh
 
-# Check if backup was created
-ls -lh ~/backups/learn_db/
+# Check if compressed backup was created
+ls -lh ~/resource-allocation-tool/backend/backups/
 
-# Check the log
-cat ~/backups/learn_db/backup.log
+# View the log
+cat ~/resource-allocation-tool/backend/backups/backup.log
 ```
 
-### 3. Schedule Daily Backup
+Expected output:
+```
+2025-10-05 11:30:00: Starting database backup...
+2025-10-05 11:30:00: Database size: 2.5M
+2025-10-05 11:30:00: Backup created: .../learn_db_20251005_113000.db
+2025-10-05 11:30:01: Backup compressed: .../learn_db_20251005_113000.db.gz
+2025-10-05 11:30:01: Compressed size: 256K
+2025-10-05 11:30:01: Backup complete. Total backups: 1, Total size: 256K
+```
 
-Go to the **Tasks** tab in PythonAnywhere and create a new scheduled task:
+### 4. Schedule Automated Backups
 
-- **Time**: Choose a time (e.g., 03:00 UTC for daily 3 AM backup)
-- **Command**: `/home/YOUR-USERNAME/backup_learn_db.sh`
+**For Hourly Backups (Recommended):**
+
+Go to the **Tasks** tab in PythonAnywhere and create a scheduled task:
+
+- **Time**: `Hourly` (or specific hour, e.g., `03:00`)
+- **Command**: `/home/YOUR-USERNAME/backup_database.sh`
+- **Description**: Hourly database backup (compressed)
+
+**For Daily Backups:**
+
+Adjust retention settings for daily backups:
+
+```bash
+# Create a wrapper script for daily backups
+cat > ~/backup_database_daily.sh << 'EOF'
+#!/bin/bash
+export RETENTION_DAYS=90
+export MAX_BACKUPS=90
+/home/YOUR-USERNAME/backup_database.sh
+EOF
+
+chmod +x ~/backup_database_daily.sh
+```
+
+Then schedule:
+- **Time**: `03:00` UTC (daily at 3 AM)
+- **Command**: `/home/YOUR-USERNAME/backup_database_daily.sh`
 - **Description**: Daily database backup
 
 **Note**: Free PythonAnywhere accounts get 1 scheduled task. Paid accounts get more.
