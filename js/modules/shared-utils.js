@@ -4,7 +4,14 @@ import { CONFIG } from './constants.js';
 export class SessionUIUtils {
     static formatDate(dateStr) {
         if (!dateStr) return '-';
-        return new Date(dateStr).toLocaleString();
+        const date = new Date(dateStr);
+        return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 
     static getStatusDisplay(status, showCompletionTime = false, completedAt = null) {

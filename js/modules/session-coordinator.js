@@ -373,10 +373,20 @@ export class SessionCoordinator {
                     aggregatedData.sliderResponses = sliderResponses.map(response => ({
                         scenarioNumber: response.scenarioNumber,
                         displayOrder: response.displayOrder,
-                        child1Investment: response.child1investment,
-                        child2Investment: response.child1investment ? (9 - response.child1investment) : null,
-                        completedAt: response.completedAt
+                        child1investment: response.child1investment,
+                        child2investment: response.child1investment ? (9 - response.child1investment) : null,
+                        completedAt: response.completedAt,
+                        scenarioGamma: response.scenarioGamma,
+                        scenarioSigma: response.scenarioSigma,
+                        scenarioTheta: response.scenarioTheta,
+                        preEarnings1: response.preEarnings1,
+                        preEarnings2: response.preEarnings2,
+                        scenarioAlpha: response.scenarioAlpha,
+                        child1FinalEarnings: response.child1FinalEarnings,
+                        child2FinalEarnings: response.child2FinalEarnings,
+                        aggregateFinalEarnings: response.aggregateFinalEarnings
                     }));
+                    aggregatedData.completionTimestamps.sliderStarted = session.sliderStartedAt;
                     aggregatedData.completionTimestamps.sliderCompleted = session.sliderCompletedAt;
                     aggregatedData.completionTimestamps.exitSurveyCompleted = session.exitSurveyCompletedAt;
                 }

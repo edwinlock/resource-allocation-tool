@@ -56,6 +56,10 @@ class IndexUIManager {
             const currentSessions = allSessions.filter(session => session.uploadStatus !== 'uploaded');
             const uploadedSessions = allSessions.filter(session => session.uploadStatus === 'uploaded');
 
+            // Sort both by createdAt in reverse chronological order (newest first)
+            currentSessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            uploadedSessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
             // Render both tables
             await SessionRenderer.renderCurrentSessions(currentSessions);
             await SessionRenderer.renderUploadedSessions(uploadedSessions);

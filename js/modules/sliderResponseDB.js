@@ -17,8 +17,8 @@ export class SliderResponseDB {
 
         try {
             this.db = new Dexie('SliderResponsesDB');
-            this.db.version(1).stores({
-                pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt'
+            this.db.version(2).stores({
+                pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt, scenarioGamma, scenarioSigma, scenarioTheta, preEarnings1, preEarnings2, scenarioAlpha, child1FinalEarnings, child2FinalEarnings, aggregateFinalEarnings'
             });
         } catch (error) {
             console.error('Failed to initialize SliderResponsesDB:', error);
@@ -53,7 +53,16 @@ export class SliderResponseDB {
             scenarioNumber: response.scenarioNumber,
             displayOrder: response.displayOrder,
             child1investment: response.child1investment,
-            completedAt: response.completedAt
+            completedAt: response.completedAt,
+            scenarioGamma: response.scenarioGamma,
+            scenarioSigma: response.scenarioSigma,
+            scenarioTheta: response.scenarioTheta,
+            preEarnings1: response.preEarnings1,
+            preEarnings2: response.preEarnings2,
+            scenarioAlpha: response.scenarioAlpha,
+            child1FinalEarnings: response.child1FinalEarnings,
+            child2FinalEarnings: response.child2FinalEarnings,
+            aggregateFinalEarnings: response.aggregateFinalEarnings
         }));
 
         // Bulk insert all responses
@@ -92,16 +101,25 @@ export class SliderResponseDB {
 
     async addSingleResponse(sessionId, response) {
         if (!this.db) return;
-        
+
         await this.ensureOpen();
-        
+
         const responseRecord = {
             id: generateUUID(),
             sessionId,
             scenarioNumber: response.scenarioNumber,
             displayOrder: response.displayOrder,
             child1investment: response.child1investment,
-            completedAt: response.completedAt || getUTCDate()
+            completedAt: response.completedAt || getUTCDate(),
+            scenarioGamma: response.scenarioGamma,
+            scenarioSigma: response.scenarioSigma,
+            scenarioTheta: response.scenarioTheta,
+            preEarnings1: response.preEarnings1,
+            preEarnings2: response.preEarnings2,
+            scenarioAlpha: response.scenarioAlpha,
+            child1FinalEarnings: response.child1FinalEarnings,
+            child2FinalEarnings: response.child2FinalEarnings,
+            aggregateFinalEarnings: response.aggregateFinalEarnings
         };
 
         await this.db.pageResponses.add(responseRecord);

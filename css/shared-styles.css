@@ -7,7 +7,7 @@ body {
 
 /* Larger buttons for easier interaction */
 .btn {
-    font-size: 1.1rem;
+    font-size: 1rem;
     padding: 0.6rem 1rem;
     min-height: 48px;
     min-width: 100px;

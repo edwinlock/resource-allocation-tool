@@ -107,13 +107,37 @@ class AppState {
     }
 
     addResponse(child1investment) {
+        // Get current scenario to extract parameters
+        const currentScenario = SCENARIOS[this.sliderState.currentScenarioNumber];
+
+        // Get computed economic values from scenarioData
+        // All arrays are indexed by child1investment (child2 gets ALLOCATABLE_BUDGET - child1investment)
+        const child1_final_earnings = this.scenarioData.postEarnings1Rounded[child1investment];
+        const child2_final_earnings = this.scenarioData.postEarnings2Rounded[child1investment];
+        const aggregate_final_earnings = this.scenarioData.aggrEarningsRounded[child1investment];
+
         const response = {
             scenarioNumber: this.sliderState.currentScenarioNumber,
             displayOrder: this.getCurrentDisplayOrder(),
             child1investment,
-            completedAt: getUTCDate()
+            completedAt: getUTCDate(),
+
+            // Scenario parameters
+            scenarioGamma: currentScenario.gamma,
+            scenarioSigma: currentScenario.sigma,
+            scenarioTheta: currentScenario.theta,
+
+            // Session-specific inputs
+            preEarnings1: this.session.preEarnings1,
+            preEarnings2: this.session.preEarnings2,
+
+            // Computed economic values
+            scenarioAlpha: this.scenarioData.alpha,
+            child1FinalEarnings: child1_final_earnings,
+            child2FinalEarnings: child2_final_earnings,
+            aggregateFinalEarnings: aggregate_final_earnings
         };
-        
+
         // Store response at current index
         this.sliderState.responses[this.sliderState.currentIndex] = response;
     }
