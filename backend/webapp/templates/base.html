@@ -35,6 +35,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('enumerators_page') }}">Enumerators</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('data_export_page') }}">Data Export</a>
+                            </li>
                         {% elif current_user.has_role('enumerator') %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('session_page', enumerator_id=current_user.id) }}">My Sessions</a>

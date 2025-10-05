@@ -234,6 +234,21 @@ class SliderResponse(db.Model):
     child1_investment = db.Column(db.Integer, nullable=False)
     completed_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    # Scenario parameters (constant per scenario)
+    scenario_gamma = db.Column(db.Float, nullable=False)
+    scenario_sigma = db.Column(db.Float, nullable=False)
+    scenario_theta = db.Column(db.Float, nullable=False)
+
+    # Session-specific inputs (vary by family)
+    pre_earnings1 = db.Column(db.Float, nullable=False)
+    pre_earnings2 = db.Column(db.Float, nullable=False)
+
+    # Computed economic values
+    scenario_alpha = db.Column(db.Float, nullable=False)
+    child1_final_earnings = db.Column(db.Float, nullable=False)
+    child2_final_earnings = db.Column(db.Float, nullable=False)
+    aggregate_final_earnings = db.Column(db.Float, nullable=False)
+
     # Constraints
     __table_args__ = (
         db.Index('idx_parent_session_display_order', 'parent_session_id', 'display_order'),
@@ -254,7 +269,16 @@ class SliderResponse(db.Model):
             'display_order': self.display_order,
             'child1_investment': self.child1_investment,
             'child2_investment': self.child2_investment,
-            'completed_at': self.completed_at.isoformat() if self.completed_at else None
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None,
+            'scenario_gamma': self.scenario_gamma,
+            'scenario_sigma': self.scenario_sigma,
+            'scenario_theta': self.scenario_theta,
+            'pre_earnings1': self.pre_earnings1,
+            'pre_earnings2': self.pre_earnings2,
+            'scenario_alpha': self.scenario_alpha,
+            'child1_final_earnings': self.child1_final_earnings,
+            'child2_final_earnings': self.child2_final_earnings,
+            'aggregate_final_earnings': self.aggregate_final_earnings
         }
 
 

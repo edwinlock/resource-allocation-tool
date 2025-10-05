@@ -34,11 +34,19 @@ The Learning Experiment Administration Resource Network (LEARN) backend is a Fla
    pip install -r requirements.txt
    ```
 
-4. **Set up environment variables (optional)**:
+4. **Set up environment variables (REQUIRED)**:
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration if needed
+   # Edit .env with your configuration
    ```
+
+   Generate secure keys:
+   ```bash
+   python3 -c "import secrets; print('SECRET_KEY=' + secrets.token_hex(32))"
+   python3 -c "import secrets; print('SECURITY_PASSWORD_SALT=' + secrets.token_hex(32))"
+   ```
+
+   Update `.env` with the generated keys and your email configuration.
 
 5. **Run the development server**:
    ```bash
@@ -47,21 +55,14 @@ The Learning Experiment Administration Resource Network (LEARN) backend is a Fla
 
 The application will be available at `http://localhost:5000`.
 
-### Demo Accounts
+### Default Admin Account
 
-The application comes with pre-configured demo accounts:
+On first run, the application automatically creates one admin/enumerator account:
 
-- **Administrator**:
-  - Email: `administrator@example.com`
-  - Password: `learn_administrator`
+- **Email**: Set via `EDWIN_EMAIL` in `.env` (defaults to `edwinlock@gmail.com`)
+- **Password**: `learn_edwinlock`
 
-- **Enumerator**:
-  - Email: `enumerator@example.com`
-  - Password: `learn_enumerator`
-
-- **Dual Role**:
-  - Email: `edwinlock@gmail.com`
-  - Password: `learn_edwinlock`
+This account has both administrator and enumerator roles. You can create additional users through the registration page or admin interface.
 
 ## API Endpoints
 
@@ -74,6 +75,15 @@ The application comes with pre-configured demo accounts:
 - `POST /upload-session` - Upload session data (requires enumerator role)
 - `GET /sessions` - View sessions (administrators see all, enumerators see their own)
 - `GET /session/<id>` - View detailed session information
+
+### Data Export
+- `GET /data` - Data export page (administrators only)
+- `GET /data/child_sessions` - Download child sessions CSV
+- `GET /data/parent_sessions` - Download parent sessions CSV
+- `GET /data/survey_responses` - Download survey responses CSV
+- `GET /data/slider_responses` - Download slider responses CSV with economic parameters
+- `GET /data/enumerators` - Download enumerators CSV
+- `GET /data/download_all` - Download all data as ZIP
 
 ### Administrative
 - `GET /enumerators` - List all enumerators (administrators only)
@@ -97,6 +107,9 @@ The application handles complex experiment data including:
 - Investment allocation scenarios
 - Display order tracking
 - Automatic calculation of complementary investments
+- Economic parameters: gamma, sigma, theta
+- Pre-earnings for both children
+- Computed values: alpha, final earnings (individual and aggregate)
 
 ## Configuration
 
@@ -105,54 +118,67 @@ The application handles complex experiment data including:
 Create a `.env` file based on `.env.example`:
 
 ```bash
-# Required
+# Required - Security
 SECRET_KEY=your_secret_key_here
 SECURITY_PASSWORD_SALT=your_password_salt_here
 
 # Optional - Database (defaults to SQLite)
-DATABACKEND_URL=sqlite:///learn.db
+DATABASE_URL=sqlite:///learn.db
 
-# Optional - Email (for password reset)
-SMTP2GO_USERNAME=your_smtp2go_username
-SMTP2GO_PASSWORD=your_smtp2go_password
-MAIL_DEFAULT_SENDER=your_verified_sender_email@domain.com
+# Required - Email (for password reset)
+MAIL_SERVER=mail.smtp2go.com
+MAIL_PORT=2525
+MAIL_USE_TLS=true
+MAIL_USERNAME=your_smtp_username
+MAIL_PASSWORD=your_smtp_password
+MAIL_DEFAULT_SENDER=noreply@yourdomain.com
+
+# Optional - Admin account
+EDWIN_EMAIL=your-email@example.com
 ```
 
-### Email Configuration (Optional)
+**Important**: The application will **not start** without `SECRET_KEY`, `SECURITY_PASSWORD_SALT`, and `MAIL_DEFAULT_SENDER` set.
 
-To enable password reset emails:
+### Email Configuration
 
-1. Create a free account at [SMTP2GO](https://www.smtp2go.com)
+Email is required for password reset functionality:
+
+1. Create a free account at [SMTP2GO](https://www.smtp2go.com) or use another SMTP provider
 2. Verify your sender email address
 3. Get your SMTP credentials from Settings > SMTP Users
 4. Add the credentials to your `.env` file
 
+**Note**: Email settings are required to start the application. If you don't need password reset functionality during development, you can set dummy values, but the variables must be present.
+
 ## Production Deployment
 
-### Using Gunicorn
+See [DEPLOY.md](DEPLOY.md) for detailed instructions on deploying to PythonAnywhere.
 
-1. **Install Gunicorn**:
+### Quick Overview
+
+1. **PythonAnywhere** (Recommended):
+   - Follow the step-by-step guide in `DEPLOY.md`
+   - Includes WSGI configuration, virtual environment setup, and daily database backups
+   - Free tier available
+
+2. **Using Gunicorn** (Self-hosted):
    ```bash
    pip install gunicorn
-   ```
-
-2. **Run with Gunicorn**:
-   ```bash
    gunicorn -w 4 -b 0.0.0.0:8000 "webapp:app"
    ```
 
-### Environment Configuration
+### Production Checklist
 
-For production, ensure:
-- Set secure `SECRET_KEY` and `SECURITY_PASSWORD_SALT` values
-- Use a production database (PostgreSQL recommended)
-- Configure proper SMTP settings for email functionality
-- Set up SSL/TLS termination
-- Configure proper logging
+- ✅ Generate secure `SECRET_KEY` and `SECURITY_PASSWORD_SALT` values
+- ✅ Configure SMTP settings for email functionality
+- ✅ Set up SSL/TLS termination
+- ✅ Configure daily database backups
+- ✅ Set `EDWIN_EMAIL` to your admin email
+- ✅ Consider using PostgreSQL instead of SQLite for larger deployments
 
 ### Database Setup
 
-The application automatically creates the SQLite database and demo accounts on first run. No manual database setup is required for development.
+The application automatically creates the SQLite database and admin account on first run. No manual database setup is required.
 
 ## Development
 

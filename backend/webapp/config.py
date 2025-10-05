@@ -1,23 +1,28 @@
 import os
-import secrets
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class Config:
-    # Flask Core
-    SECRET_KEY = os.getenv('SECRET_KEY') or 'x0NRB_1d1SnOrQPap_NdurTSDv9z2v9D5kKE7rH8ieg'
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABACKEND_URL') or 'sqlite:///learn.db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Flask Core - REQUIRED
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        raise ValueError("SECRET_KEY environment variable must be set")
 
-    # Flask-Security-Too
-    SECURITY_PASSWORD_SALT = os.getenv('SECURITY_PASSWORD_SALT') or 'bgsgS0T3qLaQDQ6RRSkE5acVMCAPgTcV2VF_E-eQdZE'
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///learn.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
+
+    # Flask-Security-Too - REQUIRED
+    SECURITY_PASSWORD_SALT = os.getenv('SECURITY_PASSWORD_SALT')
+    if not SECURITY_PASSWORD_SALT:
+        raise ValueError("SECURITY_PASSWORD_SALT environment variable must be set")
+
     SECURITY_DEFAULT_ROLE = 'enumerator'
-    # Use default header name: Authentication-Token
-    SECURITY_TOKEN_MAX_AGE = 86400  # 24 hours
+    SECURITY_TOKEN_MAX_AGE = int(os.getenv('SECURITY_TOKEN_MAX_AGE', '86400'))  # 24 hours default
     SECURITY_USE_VERIFY_PASSWORD_CACHE = True
     SECURITY_LOGIN_WITHOUT_CONFIRMATION = True
-    SECURITY_REGISTERABLE = True
+    SECURITY_REGISTERABLE = os.getenv('SECURITY_REGISTERABLE', 'true').lower() == 'true'
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_TRACKABLE = True
@@ -27,11 +32,13 @@ class Config:
     SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = True
     WTF_CSRF_CHECK_DEFAULT = False
 
-    # Flask-Mail (SMTP2GO)
-    MAIL_SERVER = 'mail.smtp2go.com'
-    MAIL_PORT = 2525
-    MAIL_USE_TLS = True
-    MAIL_USERNAME = os.getenv('SMTP2GO_USERNAME')
-    MAIL_PASSWORD = os.getenv('SMTP2GO_PASSWORD')
+    # Flask-Mail Configuration - REQUIRED for password reset/recovery
+    MAIL_SERVER = os.getenv('MAIL_SERVER')
+    MAIL_PORT = int(os.getenv('MAIL_PORT', '587'))
+    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
-    SECURITY_EMAIL_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
+    if not MAIL_DEFAULT_SENDER:
+        raise ValueError("MAIL_DEFAULT_SENDER environment variable must be set")
+    SECURITY_EMAIL_SENDER = MAIL_DEFAULT_SENDER

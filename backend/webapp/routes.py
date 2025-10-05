@@ -1,8 +1,11 @@
 from datetime import datetime
 import json
-from flask import render_template, request, jsonify, current_app
+import io
+import zipfile
+from flask import render_template, request, jsonify, current_app, send_file
 from flask_security import login_required, roles_required, current_user
 from babel.dates import format_datetime
+import pandas as pd
 # render_table is available in Jinja2 templates via flask_bootstrap
 from webapp.models import db, Session, ChildSession, ParentSession, SurveyResponse, SliderResponse, User, Role
 
@@ -153,6 +156,10 @@ def create_session_object(session_metadata, completion_timestamps):
             )
 
         if session_metadata['groupType'] == 'treatment':
+            if 'sliderStarted' in completion_timestamps:
+                new_session.slider_started_at = datetime.fromisoformat(
+                    completion_timestamps['sliderStarted'].replace('Z', '+00:00')
+                )
             if 'sliderCompleted' in completion_timestamps:
                 new_session.slider_status = 'completed'
                 new_session.slider_completed_at = datetime.fromisoformat(
@@ -193,8 +200,18 @@ def create_slider_response_objects(session_id, slider_responses):
             parent_session_id=session_id,  # Now links to parent_session
             scenario_number=response['scenarioNumber'],
             display_order=response['displayOrder'],
-            child1_investment=response['child1Investment'],
-            completed_at=datetime.fromisoformat(response['completedAt'].replace('Z', '+00:00'))
+            child1_investment=response['child1investment'],  # Frontend uses lowercase 'investment'
+            completed_at=datetime.fromisoformat(response['completedAt'].replace('Z', '+00:00')),
+            # Economic parameters
+            scenario_gamma=response['scenarioGamma'],
+            scenario_sigma=response['scenarioSigma'],
+            scenario_theta=response['scenarioTheta'],
+            pre_earnings1=response['preEarnings1'],
+            pre_earnings2=response['preEarnings2'],
+            scenario_alpha=response['scenarioAlpha'],
+            child1_final_earnings=response['child1FinalEarnings'],
+            child2_final_earnings=response['child2FinalEarnings'],
+            aggregate_final_earnings=response['aggregateFinalEarnings']
         )
         slider_objects.append(new_slider_response)
 
@@ -395,3 +412,336 @@ def session_details_page(id):
                           session=session,
                           survey_responses=survey_responses,
                           slider_responses=slider_responses)
+
+
+# === Data Export Helper Functions ===
+
+def generate_child_sessions_df():
+    """Generate DataFrame containing child session metadata only."""
+    child_sessions = ChildSession.query.all()
+
+    rows = []
+    for session in child_sessions:
+        rows.append({
+            'session_id': session.id,
+            'enumerator_id': session.enumerator_id,
+            'family_id': session.family_id,
+            'child_id': session.child_id,
+            'child_name': session.name,
+            'school': session.school,
+            'survey_status': session.survey_status,
+            'survey_completed_at': session.survey_completed_at.isoformat() if session.survey_completed_at else None,
+            'created_at': session.created_at.isoformat() if session.created_at else None,
+            'uploaded_at': session.uploaded_at.isoformat() if session.uploaded_at else None,
+            'upload_status': session.upload_status,
+        })
+
+    return pd.DataFrame(rows)
+
+
+def generate_parent_sessions_df():
+    """Generate DataFrame containing parent session metadata only."""
+    parent_sessions = ParentSession.query.all()
+
+    rows = []
+    for session in parent_sessions:
+        rows.append({
+            'session_id': session.id,
+            'enumerator_id': session.enumerator_id,
+            'family_id': session.family_id,
+            'child1_name': session.child1_name,
+            'child2_name': session.child2_name,
+            'school': session.school,
+            'group_type': session.group_type,
+            'preEarnings1': session.preEarnings1,
+            'preEarnings2': session.preEarnings2,
+            'survey_status': session.survey_status,
+            'survey_completed_at': session.survey_completed_at.isoformat() if session.survey_completed_at else None,
+            'exit_survey_status': session.exit_survey_status,
+            'exit_survey_completed_at': session.exit_survey_completed_at.isoformat() if session.exit_survey_completed_at else None,
+            'slider_status': session.slider_status,
+            'slider_started_at': session.slider_started_at.isoformat() if session.slider_started_at else None,
+            'slider_completed_at': session.slider_completed_at.isoformat() if session.slider_completed_at else None,
+            'created_at': session.created_at.isoformat() if session.created_at else None,
+            'uploaded_at': session.uploaded_at.isoformat() if session.uploaded_at else None,
+            'upload_status': session.upload_status,
+        })
+
+    return pd.DataFrame(rows)
+
+
+def generate_survey_responses_df():
+    """Generate DataFrame containing all survey responses in long format."""
+    survey_responses = SurveyResponse.query.all()
+
+    rows = []
+    for response in survey_responses:
+        # Get the session to access family_id
+        session = response.session
+
+        # Try to parse JSON answers, fall back to string
+        try:
+            answer = json.loads(response.answer) if isinstance(response.answer, str) else response.answer
+            # Convert lists/dicts to string representation
+            if isinstance(answer, (list, dict)):
+                answer = json.dumps(answer)
+        except (json.JSONDecodeError, TypeError):
+            answer = response.answer
+
+        rows.append({
+            'response_id': response.id,
+            'session_id': response.session_id,
+            'family_id': session.family_id if session else None,
+            'survey_id': response.survey_id,
+            'question_id': response.question_id,
+            'answer': answer,
+            'completed_at': response.completed_at.isoformat() if response.completed_at else None
+        })
+
+    return pd.DataFrame(rows)
+
+
+def generate_slider_responses_df():
+    """Generate DataFrame containing all slider responses in long format."""
+    slider_responses = SliderResponse.query.all()
+
+    rows = []
+    for response in slider_responses:
+        # Get the parent session to access family_id
+        parent_session = response.parent_session
+
+        rows.append({
+            'response_id': response.id,
+            'parent_session_id': response.parent_session_id,
+            'family_id': parent_session.family_id if parent_session else None,
+            'scenario_number': response.scenario_number,
+            'display_order': response.display_order,
+            'child1_investment': response.child1_investment,
+            'child2_investment': response.child2_investment,
+            'completed_at': response.completed_at.isoformat() if response.completed_at else None,
+            # Economic parameters
+            'scenario_gamma': response.scenario_gamma,
+            'scenario_sigma': response.scenario_sigma,
+            'scenario_theta': response.scenario_theta,
+            'pre_earnings1': response.pre_earnings1,
+            'pre_earnings2': response.pre_earnings2,
+            'scenario_alpha': response.scenario_alpha,
+            'child1_final_earnings': response.child1_final_earnings,
+            'child2_final_earnings': response.child2_final_earnings,
+            'aggregate_final_earnings': response.aggregate_final_earnings
+        })
+
+    return pd.DataFrame(rows)
+
+
+def generate_enumerators_df():
+    """Generate DataFrame containing all enumerator information."""
+    enumerators = User.query.all()
+
+    rows = []
+    for user in enumerators:
+        rows.append({
+            'enumerator_id': user.id,
+            'email': user.email,
+            'active': user.active,
+            'roles': ', '.join([role.name for role in user.roles]) if user.roles else '',
+            # Login tracking fields (SECURITY_TRACKABLE is enabled)
+            'last_login_at': user.last_login_at.isoformat() if hasattr(user, 'last_login_at') and user.last_login_at else None,
+            'current_login_at': user.current_login_at.isoformat() if hasattr(user, 'current_login_at') and user.current_login_at else None,
+            'last_login_ip': user.last_login_ip if hasattr(user, 'last_login_ip') else None,
+            'current_login_ip': user.current_login_ip if hasattr(user, 'current_login_ip') else None,
+            'login_count': user.login_count if hasattr(user, 'login_count') else None,
+        })
+
+    return pd.DataFrame(rows)
+
+
+# === Data Export Routes ===
+
+@app.route('/data')
+@roles_required('administrator')
+def data_export_page():
+    """Render the data export page with summary statistics."""
+    # Get counts
+    total_sessions = Session.query.count()
+    child_sessions = ChildSession.query.count()
+    parent_sessions = ParentSession.query.count()
+    total_survey_responses = SurveyResponse.query.count()
+    total_slider_responses = SliderResponse.query.count()
+    total_enumerators = User.query.count()
+
+    return render_template('data.html',
+                          total_sessions=total_sessions,
+                          child_sessions=child_sessions,
+                          parent_sessions=parent_sessions,
+                          total_survey_responses=total_survey_responses,
+                          total_slider_responses=total_slider_responses,
+                          total_enumerators=total_enumerators)
+
+
+@app.route('/data/child_sessions')
+@roles_required('administrator')
+def download_child_sessions_csv():
+    """Download child_sessions.csv file."""
+    try:
+        df = generate_child_sessions_df()
+
+        # Convert to CSV
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='child_sessions.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating child sessions CSV: {str(e)}')
+        return jsonify({'error': 'Failed to generate child sessions CSV'}), 500
+
+
+@app.route('/data/parent_sessions')
+@roles_required('administrator')
+def download_parent_sessions_csv():
+    """Download parent_sessions.csv file."""
+    try:
+        df = generate_parent_sessions_df()
+
+        # Convert to CSV
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='parent_sessions.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating parent sessions CSV: {str(e)}')
+        return jsonify({'error': 'Failed to generate parent sessions CSV'}), 500
+
+
+@app.route('/data/survey_responses')
+@roles_required('administrator')
+def download_survey_responses_csv():
+    """Download survey_responses.csv file."""
+    try:
+        df = generate_survey_responses_df()
+
+        # Convert to CSV
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='survey_responses.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating survey responses CSV: {str(e)}')
+        return jsonify({'error': 'Failed to generate survey responses CSV'}), 500
+
+
+@app.route('/data/slider_responses')
+@roles_required('administrator')
+def download_slider_responses_csv():
+    """Download slider_responses.csv file."""
+    try:
+        df = generate_slider_responses_df()
+
+        # Convert to CSV
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='slider_responses.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating slider responses CSV: {str(e)}')
+        return jsonify({'error': 'Failed to generate slider responses CSV'}), 500
+
+
+@app.route('/data/enumerators')
+@roles_required('administrator')
+def download_enumerators_csv():
+    """Download enumerators.csv file."""
+    try:
+        df = generate_enumerators_df()
+
+        # Convert to CSV
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='enumerators.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating enumerators CSV: {str(e)}')
+        return jsonify({'error': 'Failed to generate enumerators CSV'}), 500
+
+
+@app.route('/data/download_all')
+@roles_required('administrator')
+def download_all_data():
+    """Download all data as a ZIP file containing all CSV files."""
+    try:
+        # Generate all DataFrames
+        child_sessions_df = generate_child_sessions_df()
+        parent_sessions_df = generate_parent_sessions_df()
+        survey_responses_df = generate_survey_responses_df()
+        slider_responses_df = generate_slider_responses_df()
+        enumerators_df = generate_enumerators_df()
+
+        # Create ZIP file in memory
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # Add child_sessions.csv
+            csv_str = io.StringIO()
+            child_sessions_df.to_csv(csv_str, index=False)
+            zip_file.writestr('child_sessions.csv', csv_str.getvalue())
+
+            # Add parent_sessions.csv
+            csv_str = io.StringIO()
+            parent_sessions_df.to_csv(csv_str, index=False)
+            zip_file.writestr('parent_sessions.csv', csv_str.getvalue())
+
+            # Add survey_responses.csv
+            csv_str = io.StringIO()
+            survey_responses_df.to_csv(csv_str, index=False)
+            zip_file.writestr('survey_responses.csv', csv_str.getvalue())
+
+            # Add slider_responses.csv
+            csv_str = io.StringIO()
+            slider_responses_df.to_csv(csv_str, index=False)
+            zip_file.writestr('slider_responses.csv', csv_str.getvalue())
+
+            # Add enumerators.csv
+            csv_str = io.StringIO()
+            enumerators_df.to_csv(csv_str, index=False)
+            zip_file.writestr('enumerators.csv', csv_str.getvalue())
+
+        zip_buffer.seek(0)
+
+        return send_file(
+            zip_buffer,
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name='data_export.zip'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating data export ZIP: {str(e)}')
+        return jsonify({'error': 'Failed to generate data export ZIP'}), 500

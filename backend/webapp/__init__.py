@@ -70,28 +70,6 @@ def create_users():
 
     db.session.commit()
 
-    # Create demo users if they don't exist
-
-    # Create administrator
-    admin_email = 'administrator@example.com'
-    if not user_datastore.find_user(email=admin_email):
-        admin_user = user_datastore.create_user(
-            email=admin_email,
-            password=hash_password("learn_administrator"),
-            active=True
-        )
-        user_datastore.add_role_to_user(admin_user, admin_role)
-
-    # Create enumerator
-    enum_email = 'enumerator@example.com'
-    if not user_datastore.find_user(email=enum_email):
-        enum_user = user_datastore.create_user(
-            email=enum_email,
-            password=hash_password("learn_enumerator"),
-            active=True
-        )
-        user_datastore.add_role_to_user(enum_user, enum_role)
-
     # Create Edwin
     edwin_email = os.environ.get('EDWIN_EMAIL', 'edwinlock@gmail.com')
     if not user_datastore.find_user(email=edwin_email):

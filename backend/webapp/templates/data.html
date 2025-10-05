@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Data Export - LEARN{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Data Export</h1>
+
+            <!-- Download All Button -->
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-3">Download All Data</h4>
+                    <p class="card-text">Download all datasets as a single ZIP file containing all CSV files.</p>
+                    <a href="{{ url_for('download_all_data') }}" class="btn btn-light btn-lg">
+                        <i class="bi bi-download"></i> Download ZIP
+                    </a>
+                </div>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Data Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cols-2 row-cols-md-4 g-3 text-center">
+                        <div class="col">
+                            <div>
+                                <h4 class="text-primary mb-1">{{ total_sessions }}</h4>
+                                <small class="text-muted d-block">Sessions</small>
+                                <small class="text-muted">({{ child_sessions }} / {{ parent_sessions }})</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                <h4 class="text-success mb-1">{{ total_survey_responses }}</h4>
+                                <small class="text-muted">Survey Responses</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                <h4 class="text-info mb-1">{{ total_slider_responses }}</h4>
+                                <small class="text-muted">Slider Responses</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                <h4 class="text-warning mb-1">{{ total_enumerators }}</h4>
+                                <small class="text-muted">Enumerators</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Dataset Cards -->
+            <h3 class="mb-3">Individual Datasets</h3>
+            <div class="row">
+                <!-- Child Sessions Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Child Sessions</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> Child session metadata including enumerator IDs, family IDs,
+                                child IDs, child names, school assignments, survey status, and completion timestamps.
+                            </p>
+                            <p class="card-text">
+                                <strong>Format:</strong> One row per child session with only child-specific columns.
+                            </p>
+                            <p class="text-muted">
+                                <strong>{{ child_sessions }} child sessions</strong>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('download_child_sessions_csv') }}" class="btn btn-primary w-100">
+                                <i class="bi bi-download"></i> Download child_sessions.csv
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parent Sessions Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Parent Sessions</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> Parent session metadata including enumerator IDs, family IDs,
+                                child names, school assignments, treatment group, pre-earnings, survey/slider/exit status, and timestamps.
+                            </p>
+                            <p class="card-text">
+                                <strong>Format:</strong> One row per parent session with only parent-specific columns including group_type (treatment/control).
+                            </p>
+                            <p class="text-muted">
+                                <strong>{{ parent_sessions }} parent sessions</strong>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('download_parent_sessions_csv') }}" class="btn btn-secondary w-100">
+                                <i class="bi bi-download"></i> Download parent_sessions.csv
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Survey Responses Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Survey Responses</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> All survey responses in long format, including child surveys,
+                                parent surveys (treatment/control), and exit surveys.
+                            </p>
+                            <p class="card-text">
+                                <strong>Format:</strong> One row per question response with columns for session_id, family_id,
+                                survey_id, question_id, answer (JSON arrays/objects are stringified), and completion timestamp.
+                            </p>
+                            <p class="text-muted">
+                                <strong>{{ total_survey_responses }} responses</strong>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('download_survey_responses_csv') }}" class="btn btn-success w-100">
+                                <i class="bi bi-download"></i> Download survey_responses.csv
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slider Responses Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Slider Responses</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> All resource allocation decisions from the slider exercise
+                                (treatment group parent sessions only), including economic parameters and computed outcomes.
+                            </p>
+                            <p class="card-text">
+                                <strong>Format:</strong> One row per scenario response with columns for parent_session_id, family_id,
+                                scenario number, display order, child 1/2 investments, completion timestamp, scenario parameters
+                                (gamma, sigma, theta), pre-earnings for both children, computed alpha, and final earnings
+                                (individual and aggregate).
+                            </p>
+                            <p class="text-muted">
+                                <strong>{{ total_slider_responses }} responses</strong>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('download_slider_responses_csv') }}" class="btn btn-info w-100">
+                                <i class="bi bi-download"></i> Download slider_responses.csv
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enumerators Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">Enumerators</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> All enumerator (user) information including login tracking data
+                                for monitoring data collection activity.
+                            </p>
+                            <p class="card-text">
+                                <strong>Format:</strong> One row per enumerator with columns for enumerator_id, email,
+                                active status, roles, last_login_at, current_login_at, last_login_ip,
+                                current_login_ip, and login_count.
+                            </p>
+                            <p class="text-muted">
+                                <strong>{{ total_enumerators }} enumerators</strong>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('download_enumerators_csv') }}" class="btn btn-warning w-100">
+                                <i class="bi bi-download"></i> Download enumerators.csv
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="alert alert-info mt-4">
+                <h5 class="alert-heading">📋 Usage Notes</h5>
+                <ul class="mb-0">
+                    <li>All CSV files use UTF-8 encoding and include header rows</li>
+                    <li>Timestamps are in ISO 8601 format (YYYY-MM-DDTHH:MM:SS)</li>
+                    <li>NULL values appear as empty cells in the CSV</li>
+                    <li>JSON arrays and objects in survey responses are stringified</li>
+                    <li>child_sessions.csv and parent_sessions.csv link to survey_responses.csv via session_id</li>
+                    <li>parent_sessions.csv links to slider_responses.csv via session_id</li>
+                    <li>The enumerators.csv file links to both session files via enumerator_id</li>
+                </ul>
+            </div>
+
+            <!-- Back Link -->
+            <div class="mb-4">
+                <a href="{{ url_for('index_page') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
