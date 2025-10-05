@@ -1,18 +1,14 @@
 # TODO
 
-## Frontend
-* Add CSV download feature in backend 
-
-## Backend
-* 
-
 ## For Michelle
 * Update survey JSON files
+* Edit schools.json
+* Test the frontend app on the enumerator tablets
 
 
 ## Hosting
+Link up the final domain name:
 * Backend on Pythonanywhere
-    * Set up regular backups of the database
-    * Accessible at https://learn.example.com
+    * Accessible at https://learn.the-long-domain.com
 * Frontend on GitHub pages
-    * Accessible at https://example.com
+    * Accessible at https://the-long-domain.com
