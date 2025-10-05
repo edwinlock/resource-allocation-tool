@@ -115,6 +115,10 @@ export class SessionRenderer {
             ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)
             : 'Unknown';
 
+        const groupTypeDisplay = session.groupType
+            ? session.groupType.charAt(0).toUpperCase() + session.groupType.slice(1)
+            : '-';
+
         const rowClass = session.sessionType === 'child' ? 'session-row-child' :
                         session.sessionType === 'parent' ? 'session-row-parent' : '';
 
@@ -124,6 +128,7 @@ export class SessionRenderer {
                 <td>${session.familyId || '-'}</td>
                 <td>${session.enumeratorId || '-'}</td>
                 <td>${sessionTypeDisplay}</td>
+                <td>${groupTypeDisplay}</td>
                 <td>${getUploadStatusBadge(session)}</td>
                 <td>${getActionButtons(session)}</td>
             </tr>
@@ -173,6 +178,10 @@ export class SessionRenderer {
             ? session.sessionType.charAt(0).toUpperCase() + session.sessionType.slice(1)
             : 'Unknown';
 
+        const groupTypeDisplay = session.groupType
+            ? session.groupType.charAt(0).toUpperCase() + session.groupType.slice(1)
+            : '-';
+
         const rowClass = session.sessionType === 'child' ? 'session-row-child' :
                         session.sessionType === 'parent' ? 'session-row-parent' : '';
 
@@ -182,6 +191,7 @@ export class SessionRenderer {
                 <td>${session.familyId || '-'}</td>
                 <td>${session.enumeratorId || '-'}</td>
                 <td>${sessionTypeDisplay}</td>
+                <td>${groupTypeDisplay}</td>
                 <td>${SessionUIUtils.formatDate(session.uploadedAt)}</td>
                 <td>
                     <div class="action-buttons">
