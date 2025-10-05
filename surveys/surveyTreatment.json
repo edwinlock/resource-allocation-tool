@@ -1,140 +1,364 @@
 {
     "survey_id": "surveyTreatment",
-    "name": "Parent Survey (Treatment Group)",
+    "name": "Encuesta para Padres de Familia",
     "questions": [
         {
             "question_id": "consent_treatment_survey",
             "type": "consent",
-            "query": "I consent to participate in this parent survey",
-            "text": "<h5>Research Study Consent - Parent Survey (Treatment Group)</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study - Treatment Group</p><p><strong>Purpose:</strong> You have been randomly assigned to the treatment group. This survey examines your attitudes and beliefs about educational investment decisions for your children.</p><p><strong>What you will do:</strong> Answer questions about your parenting approach and investment philosophy. After this survey, you will complete an interactive resource allocation exercise. This should take approximately 10-15 minutes total.</p><p><strong>Confidentiality:</strong> Your responses will be kept strictly confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Participation is voluntary. You may withdraw at any time.</p>"
+            "query": "Otorgo mi consentimiento voluntario para participar en el estudio.",
+            "text": "<h5>Consentimiento Informado</h5><p><p>Otorgo mi consentimiento voluntario para participar en el estudio y para que mis hijos/as mencionados participen en las actividades descritas. Entiendo que la participación es voluntaria y que podemos retirarnos en cualquier momento sin consecuencias. Autorizo el tratamiento confidencial de los datos conforme a lo señalado.</p>"
         },
         {
-            "question_id": "parent_intro",
+            "question_id": "prompt1",
             "type": "plaintext",
-            "text": "Thank you for participating in this study. This survey asks about your approach to investing in {child1name} and {child2name}'s education and development."
+            "text": "¡Hola! Estamos aquí para entrevistarle sobre sus opiniones acerca de {ChildA} y {ChildB}, quienes ambos asisten a {school_id}."
         },
         {
-            "question_id": "parent_age",
-            "type": "open",
-            "query": "What is your age?",
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "parent_education",
+            "question_id": "verify_child",
             "type": "singleselect",
-            "query": "What is your highest level of education?",
-            "values": ["Primary school", "Secondary school", "High school", "University degree", "Graduate degree"],
+            "query": "¿Puede confirmar que {ChildA} y {ChildB} son ambos sus hijos?",
+            "values": ["Sí", "No"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "parent_occupation",
-            "type": "open",
-            "query": "What is your current occupation?",
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "children_ages",
-            "type": "multiopen",
-            "query": "Please provide the ages of your children (in years):",
-            "prefixes": [
-                "{child1name}'s age",
-                "{child2name}'s age"
-            ],
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "education_satisfaction",
-            "type": "multilikert",
-            "query": "How satisfied are you with each child's current educational progress? (1 = Very dissatisfied, 5 = Very satisfied):",
-            "prefixes": [
-                "{child1name}'s educational progress",
-                "{child2name}'s educational progress"
-            ],
-            "min": 1,
-            "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "child_motivation",
-            "type": "multilikert",
-            "query": "Rate each child's motivation to learn (1 = Very low, 5 = Very high):",
-            "prefixes": [
-                "{child1name}'s motivation to learn",
-                "{child2name}'s motivation to learn"
-            ],
-            "min": 1,
-            "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "child_effort",
-            "type": "multilikert",
-            "query": "Rate each child's effort level in school (1 = Very low, 5 = Very high):",
-            "prefixes": [
-                "{child1name}'s effort in school",
-                "{child2name}'s effort in school"
-            ],
-            "min": 1,
-            "max": 5,
-            "required": true
-        },
-        {
-            "question_id": "time_investment",
-            "type": "multiopen",
-            "query": "Approximately how many hours per week do you spend on the following activities?",
-            "prefixes": [
-                "Helping {child1name} with homework",
-                "Helping {child2name} with homework",
-                "Individual time with {child1name}",
-                "Individual time with {child2name}"
-            ],
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "investment_priorities",
-            "type": "multiselect",
-            "query": "Which factors are most important to you when deciding how to invest in your children's education? (Select all that apply)",
-            "values": [
-                "Current academic performance",
-                "Motivation and effort",
-                "Natural abilities and talents",
-                "Future career prospects",
-                "Each child's specific interests",
-                "Treating both children equally"
-            ],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "equal_investment_belief",
+            "question_id": "id_surveyed",
             "type": "singleselect",
-            "query": "Do you believe parents should invest equally in all children regardless of their abilities?",
-            "values": [
-                "Strongly agree - Always invest equally",
-                "Somewhat agree - Usually invest equally",
-                "Neutral",
-                "Somewhat disagree - Investment should vary based on needs",
-                "Strongly disagree - Investment should be based on potential"
-            ],
+            "query": "¿Quién está respondiendo la encuesta?",
+            "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "resource_allocation_philosophy",
-            "type": "open",
-            "query": "In your own words, describe your philosophy about how to allocate educational resources (like tutoring, extra lessons, or learning materials) between {child1name} and {child2name}.",
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "next_steps",
+            "question_id": "prompt3",
             "type": "plaintext",
-            "text": "Thank you for answering these questions. Next, you will complete an interactive resource allocation exercise where you will make decisions about how to invest in {child1name} and {child2name}'s education."
+            "text": "Ahora vamos a hacer algunas preguntas sobre el entorno familiar"
+        },
+        {
+            "question_id": "age_mom",
+            "type": "open",
+            "query": "¿Cuál es la edad de la madre?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "age_dad",
+            "type": "open",
+            "query": "¿Cuál es la edad del padre?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "parent_marit",
+            "type": "singleselect",
+            "query": "¿Cuál es el estado civil actual entre la madre y el padre?",
+            "values": ["Pareja/casados", "Divorciados/separados", "Viudo/a", "Padre/Madre soltero/a"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "residence_childA",
+            "type": "singleselect",
+            "query": "¿Dónde vive usualmente {child1name}?",
+            "values": ["Con madre y padre", "Solo con la madre", "Solo con el padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con algún amigo/a de la familia", "Solo"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "residence_childB",
+            "type": "singleselect",
+            "query": "¿Dónde vive usualmente {child2name}?",
+            "values": ["Con madre y padre", "Solo con la madre", "Solo con el padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con algún amigo/a de la familia", "Solo"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "soc_econ_sons",
+            "type": "open",
+            "query": "¿Cuántos hijos varones tiene la familia?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "soc_econ_girls",
+            "type": "open",
+            "query": "¿Cuántas hijas (mujeres) tiene la familia?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "household_size",
+            "type": "open",
+            "query": "¿Cuántas personas viven actualmente en su hogar?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "birth_orderA",
+            "type": "open",
+            "query": "¿Cuál es el orden de nacimiento de {child1name}?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "birth_orderB",
+            "type": "open",
+            "query": "¿Cuál es el orden de nacimiento de {child2name}?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "id_spendtime",
+            "type": "singleselect",
+            "query": "¿Quién pasa más tiempo ayudando a los hijos/as con sus tareas?",
+            "values": ["Madre", "Padre", "Ambos"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "id_finance",
+            "type": "singleselect",
+            "query": "¿Quién toma la mayoría de las decisiones financieras para los gastos de los hijos e hijas de la escuela?",
+            "values": ["Madre", "Padre", "Ambos"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "enoe_cat",
+            "type": "singleselect",
+            "query": "Actualmente, el salario mínimo en San Luis Potosí es de $8,364 pesos MXN por mes y por persona. En relación con esa cifra, su ingreso mensual por su trabajo es...",
+            "values": ["Menor a esta cantidad", "Similar a esta cantidad", "Más de 1 salario mínimo y hasta 2", "Más de 2 salarios mínimos y hasta 3", "Más de 3 salarios mínimos y hasta 5", "Más de 5 salarios mínimos y hasta 10", "Más de 10 salarios mínimos", "Prefiero no responder"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "enoe_inc",
+            "type": "open",
+            "query": "¿En cuánto estima su ingreso mensual total del hogar?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "edu_mom",
+            "type": "singleselect",
+            "query": "¿Cuál es el nivel más alto de educación que usted/la madre de {child1name} y {child2name} ha completado?",
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "edu_dad",
+            "type": "singleselect",
+            "query": "¿Cuál es el nivel más alto de educación que usted/el padre del {child1name} y {child2name} ha completado?",
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "job_mom1",
+            "type": "open",
+            "query": "¿Cuál es la ocupación actual de la madre de familia?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "job_mom2",
+            "type": "singleselect",
+            "query": "¿Cómo clasificaría la ocupación actual de la madre de familia?",
+            "values": ["Ama de casa - Sin remuneración monetaria", "Empleada doméstica", "Ocupaciones de Primera Línea (jornalera/o, servicios de limpieza, intendencia, etc.)", "Trabajadores de Servicios y Ventas", "Operadores de Plantas y Máquinas, y Ensambladores", "Trabajadores de Apoyo Administrativo", "Trabajadores de Oficios y Relacionados (Carpintería, herrería, cerrajería, plomería, etc.)", "Fuerzas Armadas", "Técnica Profesional (Auxiliar de enfermería, ayudante de dentista, sector automotriz, etc.)", "Profesional (profesional de la salud, contadora, abogada, etc.)", "Gerente", "Autoempleada", "No sé/No especificado"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "job_dad1",
+            "type": "open",
+            "query": "¿Cuál es la ocupación del padre de familia?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "job_dad2",
+            "type": "singleselect",
+            "query": "¿Cómo clasificaría la ocupación actual del padre de familia?",
+            "values": ["Hogar", "Ocupaciones de Primera Línea (jornalera/o, servicios de limpieza, intendencia, etc.)", "Trabajadores de Servicios y Ventas", "Operadores de Plantas y Máquinas, y Ensambladores", "Trabajadores de Apoyo Administrativo", "Trabajadores de Oficios y Relacionados (Carpintería, herrería, cerrajería, plomería, etc.)", "Fuerzas Armadas", "Técnico Profesional (Auxiliar de enfermería, ayudante de dentista, sector automotriz, etc.)", "Profesional (profesional de la salud, contador, abogado, etc.)", "Gerente", "Autoempleado", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "prompt_beliefs",
+            "type": "plaintext",
+            "text": "Ahora le preguntaremos sobre sus opiniones con respecto a sus hijos que participan en este estudio. Por favor tome en cuenta que todo lo que diga aquí es altamente confidencial y no será compartido con nadie fuera del equipo de investigación. Ni tampoco con sus hijos, o la escuela de sus hijos."
+        },
+        {
+            "question_id": "smart_A",
+            "type": "singleselect",
+            "query": "En relación con otros estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child1name}?",
+            "values": ["Muy por debajo del promedio", "Algo por debajo del promedio", "Promedio", "Algo por encima del promedio", "Muy por encima del promedio"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "smart_B",
+            "type": "singleselect",
+            "query": "En relación con otras estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/ {child2name}?",
+            "values": ["Muy por debajo del promedio", "Algo por debajo del promedio", "Promedio", "Algo por encima del promedio", "Muy por encima del promedio"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "subj_grade_A_math",
+            "type": "open",
+            "query": "¿Qué promedio de calificaciones espera que {child1name} logre este año en el área de las matemáticas?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "conf_assess_A",
+            "type": "singleselect",
+            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child1name})?",
+            "values": ["No seguro", "Algo seguro", "Muy seguro"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "subj_grade_B_math",
+            "type": "open",
+            "query": "¿Qué promedio de calificaciones espera que {child2name}logre este año en el área de las matemáticas?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "conf_assess_B",
+            "type": "singleselect",
+            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child2name})?",
+            "values": ["No seguro", "Algo seguro", "Muy seguro"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "time_alloc",
+            "type": "open",
+            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "sigma_promt",
+            "type": "plaintext",
+            "text": "Imagine que una familia similar a la suya tiene dos hijas, Ana y Marcela. Ambas asisten a preparatoria. Ana es mejor en la escuela que Marcela. Si sus padres invirtieran en la compra de cursos extracurriculares, podrían influir en el rendimiento académico de sus hijas.\n\nAdemás, si sus padres dividen sus recursos económicos por igual (y cada hija recibe una clase extracurricular por semana), la calificación final de Ana sería 8.5, y la calificación final de Marcela sería 6."
+        },
+        {
+            "question_id": "sigma_reinf",
+            "type": "multiopen",
+            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 80% del dinero a Ana, y 20% a Marcela?, lo que significaría pagar más cursos para Ana que para Marcela.",
+            "prefixes": [
+                "Calificación Ana",
+                "Calificación Marcela"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "sigma_comp",
+            "type": "multiopen",
+            "query": "Ahora, ¿Cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 20% del dinero a Ana, y 80% a Marcela?",
+            "prefixes": [
+                "Calificación Ana",
+                "Calificación Marcela"
+            ],
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "subj_returnsA",
+            "type": "singleselect",
+            "query": "Si usted invirtiera $1000 pesos MXN más en la educación de {child1name} este año, por ejemplo en asesorías o clases extracurriculares, ¿cuánto cree que mejorarían sus calificaciones?",
+            "values": ["Nada en absoluto", "Un poco", "Algo", "Mucho"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "subj_returnsB",
+            "type": "singleselect",
+            "query": "Si invirtiera $1000 pesos MXN más en la educación de {child2name} este año, por ejemplo en tutoría o clases extracurriculares, ¿cuánto cree que mejorarían sus calificaciones?",
+            "values": ["Nada en absoluto", "Un poco", "Algo", "Mucho"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "future_success",
+            "type": "singleselect",
+            "query": "¿Cuál de las siguientes opciones cree que es más importante para el éxito de sus hijos/as?",
+            "values": ["Ayudar con la tarea", "Leer juntos", "Actividades educativas además de la escuela (tutorías u otras clases)", "Deportes o Música", "Actividades de ocio", "Asistir a la escuela correcta", "Viajes"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "prefer_child2",
+            "type": "singleselect",
+            "query": "¿Por qué eligió esa respuesta en la pregunta anterior?",
+            "values": ["Es más inteligente (lo aprovecharía más)", "Necesita más ayuda en la escuela", "Su edad", "No sé", "Otro (explique):_________"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "aspirationsA",
+            "type": "singleselect",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child1name} alcance?",
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "subjectA",
+            "type": "open",
+            "query": "¿Qué carrera le gustaría que {child1name} estudie?",
+            "datatype": "text",
+            "required": false,
+            "conditional": {
+                "question_id": "aspirationsA",
+                "values": ["Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)"]
+            }
+        },
+        {
+            "question_id": "expectationsA",
+            "type": "singleselect",
+            "query": "¿Cuál es el nivel más alto de educación que cree que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "aspirationsB",
+            "type": "singleselect",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child2name} alcance?",
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "subjectB",
+            "type": "open",
+            "query": "¿Qué carrera le gustaría que {child2name} estudie?",
+            "datatype": "text",
+            "required": false,
+            "conditional": {
+                "question_id": "aspirationsB",
+                "values": ["Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)"]
+            }
+        },
+        {
+            "question_id": "expectationsB",
+            "type": "singleselect",
+            "query": "¿Cuál es el nivel más alto de educación que cree {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "end",
+            "type": "plaintext",
+            "text": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación."
         }
     ]
 }

@@ -1,98 +1,496 @@
 {
     "survey_id": "surveyChild",
-    "name": "Child Survey",
+    "name": "Encuesta Estudiantes",
     "questions": [
         {
             "question_id": "consent_child_survey",
             "type": "consent",
-            "query": "I consent to participate in this child survey",
-            "text": "<h5>Research Study Consent - Child Survey</h5><p><strong>Study Title:</strong> Resource Allocation and Child Development Study</p><p><strong>Purpose:</strong> We are conducting research to understand how children perceive their educational experiences. This survey will collect information about your school experiences and preferences.</p><p><strong>What you will do:</strong> Answer questions about your school life and activities. This should take approximately 5-10 minutes.</p><p><strong>Confidentiality:</strong> Your responses will be kept confidential and used only for research purposes.</p><p><strong>Voluntary Participation:</strong> Your participation is completely voluntary. You may stop at any time without penalty.</p>"
+            "query": "Doy mi consentimiento voluntario para participar en la encuesta.",
+            "text": "<h5>Consentimiento Informado - Estudiante</h5><p><strong>Proyecto de Investigación:</strong>Preferencias parentales, tecnología, y equidad en educación.</p><p><strong>Información:</strong>Como parte de un proyecto de investigación multianual internacional entre la Universidad de Wageningen (Holanda) y en colaboración con Instituto Potosino de Investigación Científica y Tecnológica (IPICYT), queremos invitarte a participar a participar respondiendo a una encuesta. Nos interesa aprender sobre tus circunstancias, aspiraciones, lo que piensas de la tecnología (con énfasis en la Inteligencia Artificial) y, por último, tener una idea sobre tus habilidades en materia de resolución de problemas.</p><p><strong>¿Qué harás?</strong> Responder a una breve encuesta sobre los temas previamente mencionados. La encuesta dura aproximadamente 35 minutos.</p><p><strong>Condifencialidad:</strong> Toda la  información recopilada será anonimizada y  tratada de manera confidencial, es decir que cada participante será identificado con un código único (no con su nombre) en las bases de datos del estudio para que sea anonimizada la información.. Los datos anonimizados serán almacenados de manera segura y solo accesibles al equipo de investigación. No compartiremos información desagregada del proyecto con terceros o personas ajenas al equipo de investigación.</p><p><strong>Voluntary Participación:</strong> Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela.</p>"
         },
         {
-            "question_id": "child_intro",
+            "question_id": "child_prompt1",
             "type": "plaintext",
-            "text": "Hello {childName}! We would like to learn about your experiences at {school}. Please answer the following questions honestly. There are no right or wrong answers."
+            "text": "¡Hola! Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 30 minutos. Por favor responde honestamente. No hay respuestas correctas o incorrectas. Toda la información que proporciones será confidencial. Es decir que no las compartiremos con tus padres, tus maestros, o cualquier otra persona. Como agradecimiento por tu participación, te daremos un pequeño obsequio. Si tienes alguna duda en cualquier momento, siéntete en confianza para preguntar."
         },
         {
-            "question_id": "child_age",
+            "question_id": "child_prompt2",
+            "type": "plaintext",
+            "text": "Ahora procederemos a hacerte unas preguntas sobre ti y cómo te ves en el futuro."
+        },
+        
+        {
+            "question_id": "age",
             "type": "open",
-            "query": "How old are you?",
+            "query": "¿Cuál es tu edad?",
             "datatype": "number",
             "required": true
         },
         {
-            "question_id": "child_grade",
+            "question_id": "gender",
             "type": "singleselect",
-            "query": "What grade are you in?",
-            "values": ["1st grade", "2nd grade", "3rd grade", "4th grade", "5th grade", "6th grade"],
+            "query": "¿Cuál es tu género?",
+            "values": ["Masculino", "Femenino", "Otro"],
+            "datatype": "text",
+            "required": true
+        },
+        {"question_id": "school_year",
+            "type": "singleselect",
+            "query": "¿Qué año de preparatoria cursas actualmente?",
+            "values": ["1º", "2º", "3º"],
+            "datatype": "text",
+            "required": true
+        },
+        {"question_id": "track",
+            "type": "singleselect",
+            "query": "¿Cuál es tu área de estudio en la prepa?",
+            "values": ["Ciencias Físico Matemáticas e Ingenierías", "Ciencias Biológicas y de la Salud", "Ciencias Sociales y Negocios", "Humanidades y Artes", "Bachillerato Tecnológico: Computación, Electrónica, Informática Administrativa", "Bachillerato Tecnológico: Procesos de Manufacturas Metálicas o Dietética", "Idiomas"],
+            "datatype": "text",
+            "required": true
+        },
+        {"question_id": "aspiration",
+            "type": "singleselect",
+            "query": "Imagina que no tienes ningun obstáculo o limitante. ¿Cuál es nivel más alto de educación formal que te gustaría alcanzar?",
+            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación vocacional (por ejemplo, mecánico/a, técnico/a en uñas, etc.)", "Universidad, Licenciatura/Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "test_image_question",
-            "type": "singleselect",
-            "query": "Which option do you prefer?",
-            "image": "test_image.png",
-            "values": ["Option A", "Option B", "Option C", "Option D"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "child_favorite_subject",
+            "question_id": "asp_educ_prob",
             "type": "open",
-            "query": "What is your favorite subject at school?",
+            "query": "Dada tu situación y la de tu familia, ¿qué tan probable consideras poder lograr este nivel de educación? Responde del 1 al 10, donde 1 es 'no muy probable', y 10 es 'muy probable'.",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "educ_specializ",
+            "type": "open",
+            "query": "¿Qué especialización te gustaría estudiar?",
+            "datatype": "text",
+            "required": true,
+            "conditional": {
+                "question_id": "aspiration",
+                "values": ["Universidad, Licenciatura/Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"]
+            }
+        },
+        {
+            "question_id": "expectation1",
+            "type": "singleselect",
+            "query": "Dada tu situación y la de tu familia, ¿cuál es el nivel más alto de educación formal que esperas alcanzar?",
+            "values": ["Secundaria", "Preparatoria (o dejar de estudiar al terminar este ciclo escolar)", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "child_school_enjoyment",
+            "question_id": "obstacle_educ",
+            "type": "singleselect",
+            "query": "¿Cuál consideras que podría ser el mayor obstáculo para lograr tu título educativo deseado?",
+            "values": ["Problemas con la gestión del tiempo", "Problemas de salud", "Limitaciones económicas", "Falta de apoyo familiar", "Falta de contactos", "Hábitos de estudio no adecuados", "Mis calificaciones no son lo suficientemente buenas", "No creo ser lo suficientemente inteligente"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "job_asp",
+            "type": "open",
+            "query": "Cuando tengas aproximadamente 25 años, ¿qué trabajo te gustaría estar haciendo?",
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "job_prob",
             "type": "likert",
-            "query": "How much do you enjoy going to school?",
-            "prefix": "Rate your enjoyment (1 = Not at all, 5 = Very much)",
+            "query": "Dada tu situación actual, ¿qué tan probable consideras que podrías conseguir ese tipo de trabajo? Responde del 1 al 10, donde 1 es no muy probable y 10 es muy probable.",
             "min": 1,
-            "max": 5,
+            "max": 10,
             "required": true
         },
         {
-            "question_id": "child_activities",
-            "type": "multiselect",
-            "query": "Which activities do you enjoy doing? (Select all that apply)",
-            "values": ["Reading books", "Playing sports", "Drawing or painting", "Playing music", "Math problems", "Playing with friends"],
+            "question_id": "ai_q0",
+            "type": "plaintext",
+            "text": "Estamos interesados en tus opiniones sobre la Inteligencia Artificial. Por favor califica la relevancia de la IA para diferentes aspectos de la vida. Para todas las declaraciones indica si crees que es \"Nada relevante\", \"Algo irrelevante\", \"Algo relevante\", \"Muy relevante\"."
+        },
+        {
+            "question_id": "ai_q1",
+            "type": "singleselect",
+            "query": "Para apoyar estudios en general; es decir, tareas y preparación de exámenes",
+            "values": ["Nada relevante", "Algo irrelevante", "Algo relevante", "Muy relevante"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "child_homework_time",
+            "question_id": "ai_q2",
+            "type": "singleselect",
+            "query": "Para simplificar la vida profesional; es decir, simplificación de tareas, automatización, comunicación.",
+            "values": ["Nada relevante", "Algo irrelevante", "Algo relevante", "Muy relevante"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ai_q3",
+            "type": "singleselect",
+            "query": "En crear nuevas oportunidades de trabajo; es decir, poder acceder a una amplia gamma de actividades profesionales o técnicas remuneradas.",
+            "values": ["Nada relevante", "Algo irrelevante", "Algo relevante", "Muy relevante"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ai_interest0",
+            "type": "plaintext",
+            "text": "Por favor califica cómo te sientes acerca de lo siguiente. Puedes elegir entre \"Nada interesado\", \"Algo desinteresado\", \"Neutral\", \"Algo interesado\", \"Muy interesado\"."
+        },
+        {
+            "question_id": "ai_interest1",
+            "type": "singleselect",
+            "query": "Aprender a usar Inteligencia Artificial (IA) para tareas y aprendizaje.",
+            "values": ["Nada interesado", "Algo desinteresado", "Neutral", "Algo interesado", "Muy interesado"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ai_interest2",
+            "type": "singleselect",
+            "query": "Usar la IA para diversión y consejos.",
+            "values": ["Nada interesado", "Algo desinteresado", "Neutral", "Algo interesado", "Muy interesado"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ai_interest3",
+            "type": "singleselect",
+            "query": "Aprender cómo usar mejor las herramientas de IA.",
+            "values": ["Nada interesado", "Algo desinteresado", "Neutral", "Algo interesado", "Muy interesado"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ai_interest4",
+            "type": "singleselect",
+            "query": "Aprender cómo diseñar herramientas de IA.",
+            "values": ["Nada interesado", "Algo desinteresado", "Neutral", "Algo interesado", "Muy interesado"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ai_interest5",
+            "type": "singleselect",
+            "query": "Aprender a usar la IA para tareas de programación y computación.",
+            "values": ["Nada interesado", "Algo desinteresado", "Neutral", "Algo interesado", "Muy interesado"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "time_study",
             "type": "open",
-            "query": "About how many hours do you spend on homework each week?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela).",
             "datatype": "number",
             "required": true
         },
         {
-            "question_id": "child_effort_ratings",
-            "type": "multilikert",
-            "query": "Rate how hard you try at the following (1 = Not hard at all, 5 = Very hard):",
-            "prefixes": [
-                "Doing my homework",
-                "Participating in class",
-                "Studying for tests",
-                "Helping at home"
-            ],
-            "min": 1,
-            "max": 5,
+            "question_id": "time_leisure1",
+            "type": "open",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a hacer deportes?",
+            "datatype": "number",
             "required": true
         },
         {
-            "question_id": "child_future_goals",
+            "question_id": "time_leisure2",
             "type": "open",
-            "query": "What do you want to be when you grow up?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a las artes (música, dibujo, escritura...)?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "time_leisure3",
+            "type": "open",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a trabajo remunerado?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "time_leisure4",
+            "type": "open",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a trabajo no remunerado (quehaceres domésticos, ayudar en negocio familiar)?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "time_leisure5",
+            "type": "open",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día al ocio (tiempo con amigos, relajarse...)?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "ces10_prompt",
+            "type": "plaintext",
+            "text": "A continuación te mostraremos una lista de sentimientos o acciones. Por favor marca si te has sentido de esta manera durante la semana pasada."
+        },
+        {
+            "question_id": "ces10_1",
+            "type": "singleselect",
+            "query": "Me molestaron cosas que usualmente no me molestan.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "child_outro",
+            "question_id": "ces10_2",
+            "type": "singleselect",
+            "query": "Tuve problemas para mantener mi mente en lo que estaba haciendo.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_3",
+            "type": "singleselect",
+            "query": "Me sentí deprimido/a.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_4",
+            "type": "singleselect",
+            "query": "Sentí que todo lo que hice fue un gran esfuerzo.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_5",
+            "type": "singleselect",
+            "query": "Me sentí esperanzado/a sobre el futuro.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_6",
+            "type": "singleselect",
+            "query": "Me sentí temeroso/a.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_7",
+            "type": "singleselect",
+            "query": "Mi sueño fue inquieto.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_8",
+            "type": "singleselect",
+            "query": "Estuve feliz.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_9",
+            "type": "singleselect",
+            "query": "Me sentí solo.",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ces10_10",
+            "type": "singleselect",
+            "query": "No pude empezar mi día (desánimo).",
+            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_prompt",
             "type": "plaintext",
-            "text": "Thank you {childName} for sharing your thoughts with us! Your answers will help us better understand how to support students at {school}."
+            "text": "Ahora nos gustaría hacerte algunas preguntas sobre la situación de tu familia"
+        },
+        {
+            "question_id": "family_tablet",
+            "type": "singleselect",
+            "query": "¿Tienes una tablet o laptop?",
+            "values": ["No", "Sí"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_internet",
+            "type": "singleselect",
+            "query": "¿Tu familia tiene internet en casa?",
+            "values": ["No", "Sí"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_ownroom",
+            "type": "singleselect",
+            "query": "¿Tienes tu propio cuarto en tu casa?",
+            "values": ["No", "Sí"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_house",
+            "type": "multilikert",
+            "query": "Por favor, indica si tu hogar cuenta con lo siguiente. Marca Sí o No para cada caso.",
+            "prefixes": [
+                "Regadera con agua caliente para bañarse",
+                "Cocina separada del área de dormitorios",
+                "Paredes de tabique, block, ladrillo, piedra o concreto (no de materiales de desecho)",
+                "Techo de losa de concreto o material resistente (no de lámina de cartón o desecho)",
+                "Tinaco, cisterna o depósito de agua",
+                "Calentador de agua (solar o de gas)"
+            ],
+            "min": 0,
+            "max": 1,
+            "required": true
+        },
+        {
+            "question_id": "family_wealth",
+            "type": "singleselect",
+            "query": "¿Qué tanta solvencia económica dirías que tiene tu familia, en comparación con las familias de otros estudiantes en tu escuela?",
+            "values": ["Mucho menos dinero", "Algo menos de dinero", "Promedio", "Algo más de dinero", "Mucho más dinero"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_bills",
+            "type": "singleselect",
+            "query": "¿Tus padres a veces tienen dificultades para pagar sus cuentas o gastos del hogar?",
+            "values": ["No", "Sí", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_bootcamp",
+            "type": "singleselect",
+            "query": "¿Podrían tus padres pagar por un bootcamp de programación para ti?",
+            "values": ["No", "Sí", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "ravens_prompt",
+            "type": "plaintext",
+            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento (relativo) en este examen para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado, así que no tiene sentido comparar el tamaño de tu regalo con el de tu hermano/a u otros estudiantes en tu escuela. Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente en tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado:"
+        },
+        {
+            "question_id": "raven_matrix1",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat1.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix2",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat2.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix3",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat3.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix4",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat4.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix5",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat5.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix6",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat6.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix7",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat7.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix8",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat8.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix9",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat9.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix10",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat10.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix11",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat11.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "raven_matrix12",
+            "type": "singleselect",
+            "query": "Selecciona la opción que mejor completa el patrón:",
+            "image": "raven/mat12.png",
+            "values": ["Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6", "Opción 7", "Opción 8"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "end",
+            "type": "plaintext",
+            "text": "Gracias por tu tiempo. Tus respuestas son muy valiosas para nuestro estudio y apreciamos el tiempo y esfuerzo que hiciste para responder todo. Te haremos saber pronto sobre tu pequeño obsequio."
         }
     ]
 }
