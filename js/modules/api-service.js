@@ -191,7 +191,27 @@ class APIService {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Upload failed - HTTP ${response.status}`);
+
+                // Build detailed error message
+                let errorMessage = errorData.message || `Upload failed - HTTP ${response.status}`;
+
+                // Add error details if available
+                if (errorData.details) {
+                    if (typeof errorData.details === 'string') {
+                        errorMessage += `\nDetails: ${errorData.details}`;
+                    } else if (errorData.details.error) {
+                        errorMessage += `\nDetails: ${errorData.details.error}`;
+                    } else if (errorData.details.session_id) {
+                        errorMessage += `\nSession ID: ${errorData.details.session_id}`;
+                    }
+                }
+
+                // Add error type if available
+                if (errorData.error) {
+                    errorMessage += `\nError type: ${errorData.error}`;
+                }
+
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();

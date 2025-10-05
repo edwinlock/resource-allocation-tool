@@ -76,7 +76,6 @@ class ChildSession(Session):
     # Constraints
     __table_args__ = (
         db.Index('idx_child_family', 'family_id'),
-        db.UniqueConstraint('family_id', 'child_id', name='unique_family_child'),
     )
 
     def is_complete(self):

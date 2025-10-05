@@ -6,6 +6,7 @@ from flask import render_template, request, jsonify, current_app, send_file
 from flask_security import login_required, roles_required, current_user
 from babel.dates import format_datetime
 import pandas as pd
+from sqlalchemy.exc import IntegrityError
 # render_table is available in Jinja2 templates via flask_bootstrap
 from webapp.models import db, Session, ChildSession, ParentSession, SurveyResponse, SliderResponse, User, Role
 
@@ -230,6 +231,38 @@ def save_session_data(session_obj, survey_objects, slider_objects):
         # Commit the transaction
         db.session.commit()
         return True, None
+
+    except IntegrityError as e:
+        db.session.rollback()
+        error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
+        current_app.logger.error(f"Database integrity error: {error_msg}")
+
+        # Check for specific constraint violations
+        if 'UNIQUE constraint failed' in error_msg or 'unique constraint' in error_msg.lower():
+            if 'session.id' in error_msg:
+                return False, {
+                    "error": "duplicate_session",
+                    "message": "A session with this ID already exists",
+                    "details": {"session_id": session_obj.id}
+                }
+            elif 'unique_session_survey_question' in error_msg:
+                return False, {
+                    "error": "duplicate_survey_response",
+                    "message": "Duplicate survey response detected",
+                    "details": {"error": error_msg}
+                }
+            else:
+                return False, {
+                    "error": "duplicate_entry",
+                    "message": "A duplicate entry was detected",
+                    "details": {"error": error_msg}
+                }
+        else:
+            return False, {
+                "error": "integrity_error",
+                "message": "Database constraint violation",
+                "details": {"error": error_msg}
+            }
 
     except Exception as e:
         db.session.rollback()
