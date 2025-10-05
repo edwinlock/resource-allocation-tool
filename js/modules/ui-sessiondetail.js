@@ -121,7 +121,7 @@ class SessionDetailUIManager {
                         ✓ Session Uploaded
                     </button>
                     <button class="btn btn-info ms-2" onclick="sessionDetailUI.previewData('${session.id}')">
-                        View JSON
+                        Download JSON
                     </button>
                 `;
             } else if (uploadStatus === 'uploading') {
@@ -136,7 +136,7 @@ class SessionDetailUIManager {
                         Upload Session
                     </button>
                     <button class="btn btn-info ms-2" onclick="sessionDetailUI.previewData('${session.id}')">
-                        View JSON
+                        Download JSON
                     </button>
                 `;
             }
@@ -170,12 +170,24 @@ class SessionDetailUIManager {
 
     async previewData(sessionId) {
         try {
-            // Simply open the session JSON page with the session ID as a parameter
-            window.open(`session-json.html?sessionId=${sessionId}`, '_blank');
+            // Aggregate session data and download immediately
+            const data = await sessionManager.aggregateSessionData(sessionId);
+            const jsonString = JSON.stringify(data, null, 2);
+
+            // Create blob and download
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `session_${sessionId.substring(0, 8)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
 
         } catch (error) {
-            console.error('Error previewing data:', error);
-            SessionUIUtils.showError(`Failed to preview data: ${error.message}`);
+            console.error('Error downloading data:', error);
+            SessionUIUtils.showError(`Failed to download data: ${error.message}`);
         }
     }
 }

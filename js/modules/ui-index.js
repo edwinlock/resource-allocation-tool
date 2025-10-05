@@ -299,6 +299,9 @@ class IndexUIManager {
                         case 'viewSessionDetails':
                             this.viewSessionDetails(sessionId);
                             break;
+                        case 'downloadSessionJson':
+                            this.downloadSessionJson(sessionId);
+                            break;
                         case 'startChildSurvey':
                             this.startChildSurvey(sessionId);
                             break;
@@ -658,6 +661,28 @@ class IndexUIManager {
 
     viewSessionDetails(sessionId) {
         window.location.href = `sessiondetail.html?sessionId=${sessionId}`;
+    }
+
+    async downloadSessionJson(sessionId) {
+        try {
+            // Aggregate session data
+            const data = await sessionManager.aggregateSessionData(sessionId);
+            const jsonString = JSON.stringify(data, null, 2);
+
+            // Create blob and download
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `session_${sessionId.substring(0, 8)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading session JSON:', error);
+            SessionUIUtils.showError(`Failed to download JSON: ${error.message}`);
+        }
     }
 
     async deleteSession(sessionId) {

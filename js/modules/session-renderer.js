@@ -10,6 +10,9 @@ export class SessionRenderer {
             // Always show Details button first
             buttons.push(`<button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>`);
 
+            // Add Download JSON button
+            buttons.push(`<button class="btn btn-sm btn-outline-primary session-action" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON">⬇️</button>`);
+
             // Always show Start button - gray out if completed
             if (session.sessionType === 'child') {
                 // Child session - one survey button, always visible
@@ -180,6 +183,7 @@ export class SessionRenderer {
                 <td>
                     <div class="action-buttons">
                         <button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>
+                        <button class="btn btn-sm btn-outline-primary session-action" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON">⬇️</button>
                     </div>
                 </td>
             </tr>
