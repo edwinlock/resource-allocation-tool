@@ -10,8 +10,8 @@ export class SessionRenderer {
             // Always show Details button first
             buttons.push(`<button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>`);
 
-            // Add Download JSON button
-            buttons.push(`<button class="btn btn-sm btn-outline-primary session-action" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON">⬇️</button>`);
+            // Add Download JSON icon
+            buttons.push(`<a href="#" class="session-action text-primary" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON" style="font-size: 1.2rem; text-decoration: none;">⬇️</a>`);
 
             // Always show Start button - gray out if completed
             if (session.sessionType === 'child') {
@@ -183,7 +183,7 @@ export class SessionRenderer {
                 <td>
                     <div class="action-buttons">
                         <button class="btn btn-sm btn-info session-action" data-action="viewSessionDetails" data-session-id="${session.id}">Details</button>
-                        <button class="btn btn-sm btn-outline-primary session-action" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON">⬇️</button>
+                        <a href="#" class="session-action text-primary" data-action="downloadSessionJson" data-session-id="${session.id}" title="Download JSON" style="font-size: 1.2rem; text-decoration: none;">⬇️</a>
                     </div>
                 </td>
             </tr>

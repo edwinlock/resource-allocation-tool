@@ -295,6 +295,7 @@ class IndexUIManager {
                 const sessionId = event.target.dataset.sessionId;
 
                 if (action && sessionId) {
+                    event.preventDefault();
                     switch (action) {
                         case 'viewSessionDetails':
                             this.viewSessionDetails(sessionId);
