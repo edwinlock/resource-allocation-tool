@@ -1,5 +1,6 @@
 // Main application entry point - modularized slider application
-import { CONFIG, SCENARIOS } from './modules/constants.js';
+import { CONFIG } from './modules/constants.js';
+import { SCENARIOS, loadScenarios } from './modules/scenario-loader.js';
 import { appState } from './modules/app-state.js';
 import { ChartManager } from './modules/chart-factory.js';
 import { uiManager } from './modules/ui-slider.js';
@@ -38,18 +39,18 @@ class SliderApp {
     updateSessionInfo(session) {
         document.getElementById('family-id').textContent = session.familyId || '-';
         document.getElementById('enumerator-id').textContent = session.enumeratorId || '-';
-
-        // Update child names in slider section
-        if (session.child1Name) {
-            document.getElementById('child1-name').textContent = session.child1Name;
-        }
-        if (session.child2Name) {
-            document.getElementById('child2-name').textContent = session.child2Name;
-        }
     }
 
     async initialize() {
         try {
+            // Load scenarios from JSON file first
+            await loadScenarios();
+
+            // Update the total scenarios display in the UI
+            const totalScenariosSpan = document.getElementById('total-scenarios');
+            if (totalScenariosSpan) {
+                totalScenariosSpan.textContent = SCENARIOS.length;
+            }
 
             // Get session ID and dummy mode from URL
             const sessionId = this.getSessionIdFromURL();
@@ -78,10 +79,10 @@ class SliderApp {
                 }
             }
 
-            // Initialize ChartManager with child names from session
+            // Initialize ChartManager with generic child labels
             this.chartManager = new ChartManager(
-                session.child1Name || 'Child 1',
-                session.child2Name || 'Child 2'
+                'Child 1',
+                'Child 2'
             );
 
             // Update app state with real session data and dummy mode flag

@@ -398,8 +398,15 @@ def session_page():
         session.created_at_formatted = format_datetime(session.created_at, 'short', locale='en_GB') if session.created_at else 'N/A'
         if session.session_type == 'child':
             session.session_type_badge = '<span class="badge bg-info" style="vertical-align: middle;">Child</span>'
+            session.group_display = '-'
         else:
             session.session_type_badge = '<span class="badge bg-primary" style="vertical-align: middle;">Parent</span>'
+            # Get group_type for parent sessions
+            parent_session = db.session.get(ParentSession, session.id)
+            if parent_session and parent_session.group_type:
+                session.group_display = parent_session.group_type.capitalize()
+            else:
+                session.group_display = '-'
 
     return render_template('sessions.html', sessions=sessions)
 
@@ -509,8 +516,17 @@ def generate_survey_responses_df():
 
     rows = []
     for response in survey_responses:
-        # Get the session to access family_id
+        # Get the session to access family_id and child_id
         session = response.session
+
+        # Get child_id if this is a child session, otherwise None
+        child_id = None
+        if session and session.session_type == 'child':
+            # Import here to avoid circular imports
+            from webapp.models import ChildSession
+            child_session = ChildSession.query.get(session.id)
+            if child_session:
+                child_id = child_session.child_id
 
         # Try to parse JSON answers, fall back to string
         try:
@@ -525,6 +541,7 @@ def generate_survey_responses_df():
             'response_id': response.id,
             'session_id': response.session_id,
             'family_id': session.family_id if session else None,
+            'child_id': child_id,
             'survey_id': response.survey_id,
             'question_id': response.question_id,
             'answer': answer,

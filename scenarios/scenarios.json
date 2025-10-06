@@ -1,0 +1,58 @@
+[
+    {
+        "name": "A",
+        "description": "σ=1, θ=1",
+        "gamma": 0.5,
+        "sigma": 1,
+        "theta": 1
+    },
+    {
+        "name": "B",
+        "description": "σ=1, θ=2",
+        "gamma": 0.5,
+        "sigma": 1,
+        "theta": 2
+    },
+    {
+        "name": "C",
+        "description": "σ=0.5, θ=1",
+        "gamma": 0.5,
+        "sigma": 0.5,
+        "theta": 1
+    },
+    {
+        "name": "D",
+        "description": "σ=0.5, θ=2",
+        "gamma": 0.5,
+        "sigma": 0.5,
+        "theta": 2
+    },
+    {
+        "name": "E",
+        "description": "σ=0, θ=1",
+        "gamma": 0.5,
+        "sigma": 0,
+        "theta": 1
+    },
+    {
+        "name": "F",
+        "description": "σ=0, θ=2",
+        "gamma": 0.5,
+        "sigma": 0,
+        "theta": 2
+    },
+    {
+        "name": "G",
+        "description": "σ=-2, θ=1",
+        "gamma": 0.5,
+        "sigma": -2,
+        "theta": 1
+    },
+    {
+        "name": "H",
+        "description": "σ=-2, θ=2",
+        "gamma": 0.5,
+        "sigma": -2,
+        "theta": 2
+    }
+]

@@ -1,4 +1,5 @@
-import { CONFIG, SCENARIOS } from './constants.js';
+import { CONFIG } from './constants.js';
+import { SCENARIOS } from './scenario-loader.js';
 import { appState } from './app-state.js';
 
 const { ALLOCATABLE_BUDGET } = CONFIG;

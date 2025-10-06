@@ -1,4 +1,4 @@
-import { SCENARIOS } from './constants.js';
+import { SCENARIOS } from './scenario-loader.js';
 import { appState } from './app-state.js';
 import { sessionDB } from './sessionDB.js';
 import { sliderResponseDB } from './sliderResponseDB.js';

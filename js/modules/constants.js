@@ -22,69 +22,8 @@ export const COLORS = {
     LABEL_BORDER_COLOR: '#ccc'      // Light gray for label borders
 };
 
-// Scenario Configurations
-// We have a total of 8 scenarios:
-// gamma = 0.5 always
-// sigma is 1 (additive), 0.5 (CES), 0 (Cobb-Douglas) or -2 (CES)
-// theta is 1 or 2
-export const SCENARIOS = [
-    {
-        name: "A",
-        description: "σ=1, θ=1",
-        gamma: 0.5,
-        sigma: 1,
-        theta: 1,
-    },
-    {
-        name: "B", 
-        description: "σ=1, θ=2",
-        gamma: 0.5,
-        sigma: 1,
-        theta: 2,
-    },
-    {
-        name: "C",
-        description: "σ=0.5, θ=1", 
-        gamma: 0.5,
-        sigma: 0.5,
-        theta: 1,
-    },
-    {
-        name: "D",
-        description: "σ=0.5, θ=2",
-        gamma: 0.5,
-        sigma: 0.5,
-        theta: 2,
-    },
-    {
-        name: "E",
-        description: "σ=0, θ=1",
-        gamma: 0.5,
-        sigma: 0,
-        theta: 1,
-    },
-    {
-        name: "F",
-        description: "σ=0, θ=2", 
-        gamma: 0.5,
-        sigma: 0,
-        theta: 2,
-    },
-    {
-        name: "G",
-        description: "σ=-2, θ=1",
-        gamma: 0.5,
-        sigma: -2,
-        theta: 1,
-    },
-    {
-        name: "H",
-        description: "σ=-2, θ=2",
-        gamma: 0.5,
-        sigma: -2,
-        theta: 2,
-    },
-];
+// Note: Scenarios are now loaded from scenarios/scenarios.json
+// See scenario-loader.js module
 
 // API Configuration
 export const API_CONFIG = {
