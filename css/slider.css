@@ -184,7 +184,11 @@ h1 {
    ======================================== */
 
 .chart-section {
-    margin-top: 40px;
+    margin-top: 20px;
+}
+
+.investment-section {
+    margin-top: 20px;
 }
 
 .chart-canvas {

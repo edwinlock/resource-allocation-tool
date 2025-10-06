@@ -96,10 +96,8 @@
         },
         {
             "question_id": "prompt_end",
-            "type": "open",
-            "query": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación. Durante el ejercicio de asignación de unidades, el color naranja fue asignado a {child1name}, y el color verde fue asignado a {child2name}. Esto quiere decir que {child1name} ha obtenido {allocation_num_final_1} y {child2name} recibe {allocation_num_final_2} sesiones del curso de Inteligencia Artificial. Nosotros inscribiremos de manera automática a sus hijos/as al curso, y además le entregaremos en este momento los vales in físico. Si tiene cualquier otra duda, no dude en hacérnosla saber.",
-            "datatype": "text",
-            "required": false
+            "type": "plaintext",
+            "text": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación. Durante el ejercicio de asignación de unidades, el color naranja fue asignado a {child1name}, y el color verde fue asignado a {child2name}. Esto quiere decir que {child1name} ha obtenido {allocation_num_final_1} y {child2name} recibe {allocation_num_final_2} sesiones del curso de Inteligencia Artificial. Nosotros inscribiremos de manera automática a sus hijos/as al curso, y además le entregaremos en este momento los vales in físico. Si tiene cualquier otra duda, no dude en hacérnosla saber."
         }
     ]
 }

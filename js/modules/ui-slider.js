@@ -114,13 +114,7 @@ export class UIManager {
     }
 
     updateCurrentScenarioDisplay() {
-        const currentScenarioElement = document.getElementById('current-scenario-display');
-        if (currentScenarioElement && appState.sliderState.currentScenarioNumber !== null) {
-            const scenario = SCENARIOS[appState.sliderState.currentScenarioNumber];
-            if (scenario) {
-                currentScenarioElement.textContent = `${scenario.name} (σ=${scenario.sigma}, θ=${scenario.theta})`;
-            }
-        }
+        // Current scenario display removed from HTML
     }
 
     updateNextButtonText() {

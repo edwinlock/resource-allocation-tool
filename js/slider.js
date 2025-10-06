@@ -35,12 +35,6 @@ class SliderApp {
         return session;
     }
 
-    // Update session info display at top of page
-    updateSessionInfo(session) {
-        document.getElementById('family-id').textContent = session.familyId || '-';
-        document.getElementById('enumerator-id').textContent = session.enumeratorId || '-';
-    }
-
     async initialize() {
         try {
             // Get session ID and dummy mode from URL first
@@ -68,9 +62,6 @@ class SliderApp {
             if (session.sliderStatus === 'completed') {
                 throw new Error('This slider session has already been completed. Please return to the session manager to view results.');
             }
-
-            // Update session info display
-            this.updateSessionInfo(session);
 
             // Show practice round message if in dummy mode
             if (isDummyMode) {
