@@ -73,6 +73,7 @@ export class SessionRenderer {
                 if (session.groupType === 'treatment') {
                     return surveyDone &&
                            session.sliderStatus === 'completed' &&
+                           session.sandwichSurveyStatus === 'completed' &&
                            session.exitSurveyStatus === 'completed';
                 } else {
                     return surveyDone;
@@ -97,6 +98,9 @@ export class SessionRenderer {
                 if (session.groupType === 'treatment') {
                     if (session.sliderStatus !== 'completed') {
                         missing.push('Slider Exercise');
+                    }
+                    if (session.sandwichSurveyStatus !== 'completed') {
+                        missing.push('Sandwich Survey');
                     }
                     if (session.exitSurveyStatus !== 'completed') {
                         missing.push('Exit Survey');

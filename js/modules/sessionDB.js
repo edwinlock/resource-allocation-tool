@@ -29,6 +29,22 @@ export class SessionDB {
                 // Parent session details (separate table)
                 parentSessionDetails: 'id, familyId, school, groupType, preEarnings1, preEarnings2, surveyStatus, sliderStatus',
             });
+
+            // Version 5: Add sandwich survey fields for treatment workflow
+            this.db.version(5).stores({
+                // Keep existing schema, just adding new fields to parentSessionDetails
+                sessions: 'id, sessionType, enumeratorId, createdAt, uploadStatus, uploadedAt',
+                childSessionDetails: 'id, familyId, childId, name, school, surveyStatus',
+                parentSessionDetails: 'id, familyId, school, groupType, preEarnings1, preEarnings2, surveyStatus, sliderStatus, sandwichSurveyStatus',
+            }).upgrade(async tx => {
+                // Migration: Add sandwich survey fields to existing parent sessions
+                await tx.table('parentSessionDetails').toCollection().modify(session => {
+                    if (!session.sandwichSurveyStatus) {
+                        session.sandwichSurveyStatus = 'not_started';
+                        session.sandwichSurveyCompletedAt = null;
+                    }
+                });
+            });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
             this.db = null;
@@ -132,7 +148,9 @@ export class SessionDB {
                     exitSurveyCompletedAt: null,
                     sliderStatus: 'not_started',
                     sliderStartedAt: null,
-                    sliderCompletedAt: null
+                    sliderCompletedAt: null,
+                    sandwichSurveyStatus: 'not_started',
+                    sandwichSurveyCompletedAt: null
                 });
             });
         } catch (error) {
@@ -287,6 +305,16 @@ export class SessionDB {
         await this.db.parentSessionDetails.update(sessionId, {
             sliderStatus: 'completed',
             sliderCompletedAt: getUTCDate()
+        });
+    }
+
+    async markSandwichSurveyCompleted(sessionId) {
+        if (!this.db) throw new Error('Database not available');
+        await this.ensureOpen();
+
+        await this.db.parentSessionDetails.update(sessionId, {
+            sandwichSurveyStatus: 'completed',
+            sandwichSurveyCompletedAt: getUTCDate()
         });
     }
 

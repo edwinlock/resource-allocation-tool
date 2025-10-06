@@ -1,72 +1,56 @@
 {
-    "survey_id": "surveyExit",
+    "survey_id": "surveySandwich",
     "name": "Final Questions after Allocation Task",
     "questions": [
         {
-            "question_id": "wtp_sandwich_intro",
-            "type": "plaintext",
-            "text": "En el ejercicio anterior en el que usted realizó la distribución de 9 sesiones entre sus dos hijos/as, de un total de 15 sesiones de Inteligencia Artificial. Antes de elegir un escenario al azar y revelar la asignación final de vales entre sus hijos/as, nos gustaría que imaginara que uno de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para ellos. Le presentaremos algunas opciones sobre el costo de una lección extra. Si usted estuviera dispuesto/a a pagar por esa lección extra conteste señalando SÍ o NO para cada una de las siguientes opciones."
+            "question_id": "wtp_intro",
+            "type": "open",
+            "query": "En el ejercicio anterior en el que usted realizó la distribución de 9 sesiones entre sus dos hijos/as, de un total de 15 sesiones de Inteligencia Artificial. Antes de elegir un escenario al azar y revelar la asignación final de vales entre sus hijos/as, nos gustaría que imaginara que uno de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para ellos. Le presentaremos algunas opciones sobre el costo de una lección extra. Si usted estuviera dispuesto/a a pagar por esa lección extra conteste señalando SÍ o NO para cada una de las siguientes opciones.",
+            "datatype": "text",
+            "required": true
         },
         {
             "question_id": "wtp_list1",
-            "type": "mpl",
+            "type": "matrix",
             "query": "Si uno de sus hijos/as terminó con solo 2 vales equivalentes a dos sesiones…¿Cuánto estaría dispuesto a pagar por una lección más? Por favor conteste señalando SÍ o NO para cada una de las siguientes opciones.",
-            "prefixes": [
-                "Pagar 100 pesos",
-                "Pagar 150 pesos",
-                "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
+            "rows": [
+                {"row_id": "100", "text": "Pagar 100 pesos"},
+                {"row_id": "150", "text": "Pagar 150 pesos"},
+                {"row_id": "200", "text": "Pagar 200 pesos"},
+                {"row_id": "300", "text": "Pagar 300 pesos"},
+                {"row_id": "450", "text": "Pagar 450 pesos"}
             ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
+            "columns": ["Sí", "No"],
             "datatype": "single_per_row",
             "required": true
         },
         {
             "question_id": "wtp_list2",
-            "type": "mpl",
+            "type": "matrix",
             "query": "Si uno de sus hijos/as terminó con 6 vales después del ejercicio de asignación...¿Cuánto pagaría por una lección más?",
-            "prefixes": [
-                "Pagar 100 pesos",
-                "Pagar 150 pesos",
-                "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
+            "rows": [
+                {"row_id": "100", "text": "Pagar 100 pesos"},
+                {"row_id": "150", "text": "Pagar 150 pesos"},
+                {"row_id": "200", "text": "Pagar 200 pesos"},
+                {"row_id": "300", "text": "Pagar 300 pesos"},
+                {"row_id": "450", "text": "Pagar 450 pesos"}
             ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
+            "columns": ["Sí", "No"],
             "datatype": "single_per_row",
             "required": true
         },
         {
             "question_id": "wtp_list3",
-            "type": "mpl",
+            "type": "matrix",
             "query": "Si uno de sus hijos/as terminó con 10 vales después del ejercicio de asignación...¿Pagaría por una lección más? ¿Cuánto?",
-            "prefixes": [
-                "Pagar 100 pesos",
-                "Pagar 150 pesos",
-                "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
+            "rows": [
+                {"row_id": "100", "text": "Pagar 100 pesos"},
+                {"row_id": "150", "text": "Pagar 150 pesos"},
+                {"row_id": "200", "text": "Pagar 200 pesos"},
+                {"row_id": "300", "text": "Pagar 300 pesos"},
+                {"row_id": "450", "text": "Pagar 450 pesos"}
             ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
+            "columns": ["Sí", "No"],
             "datatype": "single_per_row",
             "required": true
         },

@@ -182,7 +182,29 @@ Same structure as `grid`, but selecting option in row k automatically:
 }
 ```
 
-### 7. plaintext - Display text only (no input)
+### 7. matrix - Table with radio buttons (rows with row_id)
+
+Similar to `grid`, but uses `rows` with `row_id` and `text` fields, and `columns` instead of `options`. Returns object with row_id keys.
+
+```json
+{
+    "question_id": "wtp_matrix",
+    "type": "matrix",
+    "query": "Would you pay each amount for an extra session?",
+    "rows": [
+        {"row_id": "100", "text": "Pay 100 pesos"},
+        {"row_id": "150", "text": "Pay 150 pesos"},
+        {"row_id": "200", "text": "Pay 200 pesos"}
+    ],
+    "columns": ["Yes", "No"],
+    "datatype": "single_per_row",
+    "required": true
+}
+```
+
+**Note:** The matrix type includes column headers in the table. Use this when you need structured output with specific row identifiers.
+
+### 8. plaintext - Display text only (no input)
 
 ```json
 {
@@ -192,7 +214,7 @@ Same structure as `grid`, but selecting option in row k automatically:
 }
 ```
 
-### 8. likert - Single Likert scale
+### 9. likert - Single Likert scale
 
 ```json
 {
@@ -206,7 +228,7 @@ Same structure as `grid`, but selecting option in row k automatically:
 }
 ```
 
-### 9. multilikert - Multiple Likert scales with same range
+### 10. multilikert - Multiple Likert scales with same range
 
 ```json
 {
@@ -225,7 +247,7 @@ Same structure as `grid`, but selecting option in row k automatically:
 }
 ```
 
-### 10. consent - Consent checkbox with text
+### 11. consent - Consent checkbox with text
 
 ```json
 {
@@ -250,6 +272,8 @@ Same structure as `grid`, but selecting option in row k automatically:
   - Absolute paths (e.g., `"/images/image.png"`) are loaded from the root of the web server
 - `prefixes`: Array of row labels (for multiopen/grid/mpl/multilikert)
 - `options`: 2D array of choices per row (for grid/mpl)
+- `rows`: Array of objects with `row_id` and `text` fields (for matrix)
+- `columns`: Array of column header strings (for matrix)
 - `text`: Display content (for plaintext/consent)
 - `min`: Minimum value for scale (for likert/multilikert, defaults to 0)
 - `max`: Maximum value for scale (for likert/multilikert, defaults to 5)
@@ -383,7 +407,7 @@ Same structure as `grid`, but selecting option in row k automatically:
 
 ## Summary of All Question Types
 
-The survey system supports **10 different question types**:
+The survey system supports **11 different question types**:
 
 1. **consent** - Consent form with detailed text
 2. **plaintext** - Display-only text (instructions, section headers)
@@ -393,5 +417,6 @@ The survey system supports **10 different question types**:
 6. **multiopen** - Multiple labeled inputs
 7. **grid** - Table with radio buttons per row
 8. **mpl** - Multiple Price List with automatic selection logic
-9. **likert** - Single Likert scale (1-5, 1-7, 0-10, etc.)
-10. **multilikert** - Multiple items with same Likert scale
+9. **matrix** - Table with radio buttons using row_id structure
+10. **likert** - Single Likert scale (1-5, 1-7, 0-10, etc.)
+11. **multilikert** - Multiple items with same Likert scale

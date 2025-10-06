@@ -18,6 +18,12 @@ class SliderApp {
         return urlParams.get('sessionId');
     }
 
+    // Parse URL parameters to check for dummy mode
+    getDummyModeFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('dummy') === 'true';
+    }
+
     // Load session data from database
     async loadSessionFromDatabase(sessionId) {
         const session = await sessionManager.getSession(sessionId);
@@ -45,8 +51,10 @@ class SliderApp {
     async initialize() {
         try {
 
-            // Get session ID from URL
+            // Get session ID and dummy mode from URL
             const sessionId = this.getSessionIdFromURL();
+            const isDummyMode = this.getDummyModeFromURL();
+
             if (!sessionId) {
                 throw new Error('No session ID provided in URL. Please access this page from the session manager.');
             }
@@ -62,13 +70,21 @@ class SliderApp {
             // Update session info display
             this.updateSessionInfo(session);
 
+            // Show practice round message if in dummy mode
+            if (isDummyMode) {
+                const practiceMessage = document.getElementById('practice-round-message');
+                if (practiceMessage) {
+                    practiceMessage.style.display = 'block';
+                }
+            }
+
             // Initialize ChartManager with child names from session
             this.chartManager = new ChartManager(
                 session.child1Name || 'Child 1',
                 session.child2Name || 'Child 2'
             );
 
-            // Update app state with real session data
+            // Update app state with real session data and dummy mode flag
             appState.updateSession({
                 id: session.id,
                 participant_id: session.familyId,
@@ -76,7 +92,8 @@ class SliderApp {
                 date_created: session.createdAt || getUTCDate(),
                 date_modified: session.sliderStartedAt || getUTCDate(),
                 preEarnings1: session.preEarnings1 || 5, // Default values if not set
-                preEarnings2: session.preEarnings2 || 2
+                preEarnings2: session.preEarnings2 || 2,
+                isDummyMode: isDummyMode
             });
 
             // Initialize UI manager

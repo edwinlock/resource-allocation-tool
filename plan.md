@@ -12,6 +12,6 @@
 Link up the final domain name:
 
 * Backend on Pythonanywhere
-  * Accessible at https://learn.education-technology-equity.com✅
+  * Accessible at https://learn.education-technology-equity.com ✅
 * Frontend on GitHub pages
-  * Accessible at https://education-technology-equity.com✅
+  * Accessible at https://education-technology-equity.com ✅

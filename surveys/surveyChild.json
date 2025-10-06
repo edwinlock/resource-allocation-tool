@@ -336,7 +336,7 @@
         },
         {
             "question_id": "family_house",
-            "type": "multilikert",
+            "type": "grid",
             "query": "Por favor, indica si tu hogar cuenta con lo siguiente. Marca Sí o No para cada caso.",
             "prefixes": [
                 "Regadera con agua caliente para bañarse",
@@ -346,8 +346,14 @@
                 "Tinaco, cisterna o depósito de agua",
                 "Calentador de agua (solar o de gas)"
             ],
-            "min": 0,
-            "max": 1,
+            "options": [
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"]
+            ],
             "required": true
         },
         {

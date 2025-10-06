@@ -187,9 +187,17 @@ export class UIManager {
             const result = await sessionManager.processNextScenario();
 
             if (result.completed) {
-                // Session completed - redirect to exit survey
+                // Session completed - redirect based on dummy mode
                 const sessionId = appState.sliderState.sessionId;
-                window.location.href = `survey.html?survey_id=Exit&session_id=${sessionId}`;
+                const isDummyMode = result.isDummyMode || false;
+
+                if (isDummyMode) {
+                    // Dummy slider complete - go to sandwich survey
+                    window.location.href = `survey.html?survey_id=Sandwich&session_id=${sessionId}`;
+                } else {
+                    // Real slider complete - go to exit survey
+                    window.location.href = `survey.html?survey_id=Exit&session_id=${sessionId}`;
+                }
             }
 
             return result;

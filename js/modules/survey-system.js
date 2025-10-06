@@ -343,7 +343,7 @@ export class GridQuestion extends SurveyQuestion {
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table">
                             <tbody>
         `;
 
@@ -399,6 +399,89 @@ export class GridQuestion extends SurveyQuestion {
     }
 }
 
+// Matrix question - table with rows and column headers (radio buttons for each row)
+export class MatrixQuestion extends SurveyQuestion {
+    constructor(questionData) {
+        super(questionData);
+        this.rows = questionData.rows || [];
+        this.columns = questionData.columns || [];
+    }
+
+    render(variables = {}) {
+        const query = this.substituteVariables(this.query, variables);
+        const requiredAttr = this.required ? 'required' : '';
+
+        let html = `
+            <div class="mb-4">
+                <fieldset>
+                    <legend class="question-query">${query}</legend>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+        `;
+
+        // Render column headers
+        this.columns.forEach(col => {
+            html += `<th class="text-center">${col}</th>`;
+        });
+
+        html += `
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+
+        // Render rows
+        this.rows.forEach((row, rowIndex) => {
+            html += `<tr><td class="fw-bold">${row.text}</td>`;
+
+            this.columns.forEach((col, colIndex) => {
+                html += `
+                    <td class="text-center">
+                        <div class="form-check d-inline-block">
+                            <input class="form-check-input survey-option-input" type="radio"
+                                   name="q_${this.questionId}_row_${rowIndex}"
+                                   id="q_${this.questionId}_${rowIndex}_${colIndex}"
+                                   value="${col}"
+                                   data-question-id="${this.questionId}"
+                                   data-row-id="${row.row_id}"
+                                   data-row="${rowIndex}" data-col="${colIndex}" ${requiredAttr}>
+                            <label class="form-check-label visually-hidden" for="q_${this.questionId}_${rowIndex}_${colIndex}">
+                                ${col}
+                            </label>
+                        </div>
+                    </td>
+                `;
+            });
+
+            html += `</tr>`;
+        });
+
+        html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+        `;
+
+        return html;
+    }
+
+    getValue() {
+        const values = {};
+        this.rows.forEach((row, rowIndex) => {
+            const selectedElement = document.querySelector(`input[name="q_${this.questionId}_row_${rowIndex}"]:checked`);
+            if (selectedElement) {
+                values[row.row_id] = selectedElement.value;
+            }
+        });
+        return Object.keys(values).length > 0 ? values : null;
+    }
+}
+
 // MPL (Multiple Price List) question - grid of radio buttons
 export class MPLQuestion extends SurveyQuestion {
     constructor(questionData) {
@@ -416,7 +499,7 @@ export class MPLQuestion extends SurveyQuestion {
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table">
                             <tbody>
         `;
 
@@ -756,6 +839,8 @@ export function createQuestion(questionData) {
             return new MultiSelectQuestion(questionData);
         case 'grid':
             return new GridQuestion(questionData);
+        case 'matrix':
+            return new MatrixQuestion(questionData);
         case 'mpl':
             return new MPLQuestion(questionData);
         case 'plaintext':

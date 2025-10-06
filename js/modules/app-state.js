@@ -15,6 +15,7 @@ class AppState {
             date_modified: getUTCDate(),
             preEarnings1: 5, // Default pre-earnings
             preEarnings2: 2,
+            isDummyMode: false, // Whether this is a practice round (don't save responses)
         };
 
         // Economic calculation results

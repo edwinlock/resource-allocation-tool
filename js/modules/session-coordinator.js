@@ -83,11 +83,17 @@ export class SessionCoordinator {
         }
     }
 
-    async completeSliderSession(sessionId, responses) {
+    async completeSliderSession(sessionId, responses, isDummyMode = false) {
+        // In dummy mode, skip saving responses - this is a practice round
+        if (isDummyMode) {
+            console.log('Dummy mode: skipping slider response save');
+            return;
+        }
+
         // Ensure both databases are open
         await this.sessionDB.ensureOpen();
         await this.responseDB.ensureOpen();
-        
+
         // Complete across both databases - not atomic but acceptable for research use
         try {
             // Save all responses first
@@ -119,13 +125,14 @@ export class SessionCoordinator {
         try {
             // Delegate state logic to AppState
             const result = await appState.processNextScenario();
-            
+
             // Handle database operations if session is completed
             if (result.completed) {
-                await this.completeSliderSession(appState.sliderState.sessionId, result.responses);
-                return { completed: true };
+                const isDummyMode = appState.session.isDummyMode || false;
+                await this.completeSliderSession(appState.sliderState.sessionId, result.responses, isDummyMode);
+                return { completed: true, isDummyMode };
             }
-            
+
             return result;
         } catch (error) {
             console.error('Error processing response:', error);
@@ -200,6 +207,10 @@ export class SessionCoordinator {
         return await this.sessionDB.markExitSurveyCompleted(sessionId);
     }
 
+    async markSandwichSurveyCompleted(sessionId) {
+        return await this.sessionDB.markSandwichSurveyCompleted(sessionId);
+    }
+
     // Response operations
     async saveAllResponses(sessionId, responses) {
         return await this.responseDB.saveAllResponses(sessionId, responses);
@@ -237,9 +248,11 @@ export class SessionCoordinator {
             if (session.sessionType === 'child') {
                 await this.markChildSurveyCompleted(sessionId);
             } else if (session.sessionType === 'parent') {
-                // For parent sessions, check if it's the main survey (Treatment/Control) or Exit
+                // For parent sessions, check if it's the main survey (Treatment/Control), Sandwich, or Exit
                 if (surveyId === 'Treatment' || surveyId === 'Control') {
                     await this.markParentSurveyCompleted(sessionId);
+                } else if (surveyId === 'Sandwich') {
+                    await this.markSandwichSurveyCompleted(sessionId);
                 } else if (surveyId === 'Exit') {
                     await this.markExitSurveyCompleted(sessionId);
                 }

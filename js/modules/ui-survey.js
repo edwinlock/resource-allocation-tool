@@ -117,10 +117,13 @@ class SurveyUIManager {
             } else if (this.sessionData.sessionType === 'parent') {
                 // Parent session: check if treatment or control
                 if (this.sessionData.groupType === 'treatment') {
-                    // Check if this is the treatment survey or exit survey
+                    // Treatment workflow: Treatment → Dummy Slider → Sandwich → Real Slider → Exit
                     if (this.surveyManager.surveyId === 'Treatment') {
-                        // After treatment survey, go to slider
+                        // After treatment survey, go to dummy slider (practice round)
                         await sessionManager.markSliderStarted(sessionId);
+                        window.location.href = `slider.html?sessionId=${sessionId}&dummy=true`;
+                    } else if (this.surveyManager.surveyId === 'Sandwich') {
+                        // After sandwich survey, go to real slider
                         window.location.href = `slider.html?sessionId=${sessionId}`;
                     } else if (this.surveyManager.surveyId === 'Exit') {
                         // After exit survey, go to thanks page
