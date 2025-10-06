@@ -48,6 +48,13 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#installing-the-app-on-your-tablet" id="toc-installing-the-app-on-your-tablet" class="nav-link" data-scroll-target="#installing-the-app-on-your-tablet">0. Installing the App on Your Tablet</a>
+  <ul class="collapse">
+  <li><a href="#for-ipadios-devices" id="toc-for-ipadios-devices" class="nav-link" data-scroll-target="#for-ipadios-devices">For iPad/iOS Devices</a></li>
+  <li><a href="#for-android-tablets" id="toc-for-android-tablets" class="nav-link" data-scroll-target="#for-android-tablets">For Android Tablets</a></li>
+  <li><a href="#why-install-as-pwa" id="toc-why-install-as-pwa" class="nav-link" data-scroll-target="#why-install-as-pwa">Why Install as PWA?</a></li>
+  <li><a href="#important-first-time-setup" id="toc-important-first-time-setup" class="nav-link" data-scroll-target="#important-first-time-setup">⚠️ Important: First-Time Setup</a></li>
+  </ul></li>
   <li><a href="#logging-in" id="toc-logging-in" class="nav-link" data-scroll-target="#logging-in">1. Logging In</a>
   <ul class="collapse">
   <li><a href="#when-to-log-in" id="toc-when-to-log-in" class="nav-link" data-scroll-target="#when-to-log-in">When to Log In</a></li>
@@ -127,6 +134,56 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <p>This app helps you manage and conduct experimental sessions with children and parents. The app works offline, so you can collect data even without internet access.</p>
 </section>
+<section id="installing-the-app-on-your-tablet" class="level2">
+<h2 class="anchored" data-anchor-id="installing-the-app-on-your-tablet">0. Installing the App on Your Tablet</h2>
+<p>The app can be installed on your tablet as a Progressive Web App (PWA), which makes it work like a native app and enables full offline functionality.</p>
+<section id="for-ipadios-devices" class="level3">
+<h3 class="anchored" data-anchor-id="for-ipadios-devices">For iPad/iOS Devices</h3>
+<ol type="1">
+<li><strong>Open Safari</strong> and navigate to the app URL</li>
+<li>Tap the <strong>Share</strong> button (square with arrow pointing up) at the bottom of the screen</li>
+<li>Scroll down and tap <strong>“Add to Home Screen”</strong></li>
+<li>Edit the name if desired (default: “Resource Tool”)</li>
+<li>Tap <strong>“Add”</strong> in the top right corner</li>
+<li>The app icon will appear on your home screen</li>
+<li><strong>Launch the app</strong> from your home screen (not Safari)</li>
+</ol>
+</section>
+<section id="for-android-tablets" class="level3">
+<h3 class="anchored" data-anchor-id="for-android-tablets">For Android Tablets</h3>
+<ol type="1">
+<li><strong>Open Chrome</strong> and navigate to the app URL</li>
+<li>Tap the <strong>three-dot menu</strong> (⋮) in the top right corner</li>
+<li>Tap <strong>“Add to Home screen”</strong> or <strong>“Install app”</strong></li>
+<li>Edit the name if desired</li>
+<li>Tap <strong>“Add”</strong> or <strong>“Install”</strong></li>
+<li>The app icon will appear on your home screen</li>
+<li><strong>Launch the app</strong> from your home screen (not Chrome)</li>
+</ol>
+</section>
+<section id="why-install-as-pwa" class="level3">
+<h3 class="anchored" data-anchor-id="why-install-as-pwa">Why Install as PWA?</h3>
+<ul>
+<li>✅ Works completely offline after first load</li>
+<li>✅ Faster loading times</li>
+<li>✅ Full-screen experience (no browser bars)</li>
+<li>✅ App-like behavior and navigation</li>
+<li>✅ Automatic updates when online</li>
+</ul>
+</section>
+<section id="important-first-time-setup" class="level3">
+<h3 class="anchored" data-anchor-id="important-first-time-setup">⚠️ Important: First-Time Setup</h3>
+<p><strong>After installing the app, you MUST:</strong></p>
+<ol type="1">
+<li>Connect to the internet</li>
+<li>Open the app for the first time</li>
+<li>Let it fully load (this caches all files)</li>
+<li>Log in to your account</li>
+<li><strong>Only then</strong> will the app work offline</li>
+</ol>
+<p>The first load requires internet to download all necessary files. After that, the app will work offline.</p>
+</section>
+</section>
 <section id="logging-in" class="level2">
 <h2 class="anchored" data-anchor-id="logging-in">1. Logging In</h2>
 <section id="when-to-log-in" class="level3">
@@ -198,6 +255,7 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>FamID</strong>: Family identifier</li>
 <li><strong>EnumID</strong>: Your enumerator ID</li>
 <li><strong>Session</strong>: Type (Child or Parent)</li>
+<li><strong>Group</strong>: Assignment group (Treatment, Control, or - for child sessions)</li>
 <li><strong>Status</strong>: Shows completion status
 <ul>
 <li><strong>Incomplete</strong>: Not all components are finished</li>
@@ -223,17 +281,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="for-parent-sessions" class="level4">
 <h4 class="anchored" data-anchor-id="for-parent-sessions">For Parent Sessions:</h4>
-<ol type="1">
-<li>Find the session in the Current Sessions table</li>
-<li>Click the <strong>Start</strong> button</li>
-<li>Complete the required components:
-<ul>
-<li><strong>Parent questionnaire</strong> (all groups)</li>
-<li><strong>Slider exercise</strong> (treatment group only)</li>
-<li><strong>Exit survey</strong> (treatment group only)</li>
-</ul></li>
-<li>The session will automatically save your progress</li>
-</ol>
+<p><strong>For Control Group Parents:</strong> 1. Find the session in the Current Sessions table 2. Click the <strong>Start</strong> button 3. Complete the parent questionnaire 4. Session is complete after the questionnaire</p>
+<p><strong>For Treatment Group Parents:</strong> 1. Find the session in the Current Sessions table 2. Click the <strong>Start</strong> button 3. Complete the workflow in this order: - <strong>Parent questionnaire</strong> (treatment version) - <strong>Practice slider</strong> (1 scenario - not saved, just for practice) - <strong>Sandwich survey</strong> (questions between practice and real slider) - <strong>Real slider exercise</strong> (8 scenarios - saved for analysis) - <strong>Exit survey</strong> 4. The app will automatically guide you through each step 5. All progress is saved automatically</p>
 </section>
 </section>
 <section id="understanding-session-status" class="level3">
@@ -268,12 +317,9 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="what-to-check" class="level3">
 <h3 class="anchored" data-anchor-id="what-to-check">What to Check</h3>
-<ul>
-<li>✅ All required components show as “Completed”</li>
-<li>✅ Survey responses are present and correct</li>
-<li>✅ Slider responses are recorded (for treatment parents)</li>
-<li>✅ Dates and times look reasonable</li>
-</ul>
+<p><strong>For Child Sessions:</strong> - ✅ Child survey shows as “Completed” - ✅ Survey responses are present and correct</p>
+<p><strong>For Control Group Parent Sessions:</strong> - ✅ Parent survey shows as “Completed” - ✅ Survey responses are present and correct</p>
+<p><strong>For Treatment Group Parent Sessions:</strong> - ✅ Parent survey shows as “Completed” - ✅ Sandwich survey shows as “Completed” - ✅ Slider exercise shows as “Completed” - ✅ Exit survey shows as “Completed” - ✅ 8 slider responses are recorded (practice slider is NOT saved) - ✅ All survey responses are present - ✅ Dates and times look reasonable</p>
 <hr>
 </section>
 </section>
@@ -365,9 +411,9 @@ ul.task-list li input[type="checkbox"] {
 <li>Click <strong>Details</strong> to see which components are missing</li>
 <li>Complete the missing components:
 <ul>
-<li>Child sessions: Child survey</li>
-<li>Parent sessions (control): Parent survey</li>
-<li>Parent sessions (treatment): Parent survey + Slider exercise + Exit survey</li>
+<li><strong>Child sessions</strong>: Child survey</li>
+<li><strong>Parent sessions (control)</strong>: Parent survey</li>
+<li><strong>Parent sessions (treatment)</strong>: Parent survey + Practice slider + Sandwich survey + Real slider + Exit survey</li>
 </ul></li>
 </ul>
 </section>
