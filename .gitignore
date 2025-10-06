@@ -63,3 +63,6 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+backend/backups/
+backend/instance/learn.db
