@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v31';
+const CACHE_NAME = 'resource-allocation-v32';
 const urlsToCache = [
   './',
   './index.html',
@@ -108,25 +108,32 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     // Cache-first strategy for all resources (offline-first)
-    // For HTML files, ignore query parameters when matching
+    // For all requests, ignore query parameters when matching (important for PWA navigation)
     caches.match(event.request, { ignoreSearch: true }).then(response => {
       if (response) {
         // Return cached version immediately
         return response;
       }
 
-      // Not in cache, fetch from network
-      return fetch(event.request).then(fetchResponse => {
-        // Cache the new response for future use
-        const responseClone = fetchResponse.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseClone);
-        });
-        return fetchResponse;
-      }).catch(() => {
-        return new Response('Resource not available', {
-          status: 503,
-          statusText: 'Service Unavailable'
+      // Not in cache, try exact match (for URLs with query params that were cached with params)
+      return caches.match(event.request).then(exactResponse => {
+        if (exactResponse) {
+          return exactResponse;
+        }
+
+        // Not in cache at all, fetch from network
+        return fetch(event.request).then(fetchResponse => {
+          // Cache the new response for future use
+          const responseClone = fetchResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+          return fetchResponse;
+        }).catch(() => {
+          return new Response('Resource not available', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
         });
       });
     })
