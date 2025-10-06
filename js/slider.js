@@ -43,18 +43,19 @@ class SliderApp {
 
     async initialize() {
         try {
-            // Load scenarios from JSON file first
-            await loadScenarios();
+            // Get session ID and dummy mode from URL first
+            const sessionId = this.getSessionIdFromURL();
+            const isDummyMode = this.getDummyModeFromURL();
+
+            // Load scenarios from JSON file - use dummy scenarios for practice round
+            const scenariosFile = isDummyMode ? 'scenarios-dummy.json' : 'scenarios.json';
+            await loadScenarios(scenariosFile);
 
             // Update the total scenarios display in the UI
             const totalScenariosSpan = document.getElementById('total-scenarios');
             if (totalScenariosSpan) {
                 totalScenariosSpan.textContent = SCENARIOS.length;
             }
-
-            // Get session ID and dummy mode from URL
-            const sessionId = this.getSessionIdFromURL();
-            const isDummyMode = this.getDummyModeFromURL();
 
             if (!sessionId) {
                 throw new Error('No session ID provided in URL. Please access this page from the session manager.');

@@ -5,11 +5,12 @@ let SCENARIOS = [];
 
 /**
  * Load scenarios from JSON file
+ * @param {string} filename - Name of the scenarios file (default: 'scenarios.json')
  * @returns {Promise<Array>} Array of scenario objects
  */
-async function loadScenarios() {
+async function loadScenarios(filename = 'scenarios.json') {
     try {
-        const response = await fetch('scenarios/scenarios.json');
+        const response = await fetch(`scenarios/${filename}`);
         if (!response.ok) {
             throw new Error(`Failed to load scenarios: ${response.status} ${response.statusText}`);
         }

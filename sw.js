@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v22';
+const CACHE_NAME = 'resource-allocation-v23';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,8 +6,10 @@ const urlsToCache = [
   './session-json.html',
   './slider.html',
   './survey.html',
+  './thanks.html',
   './manifest.json',
   './css/slider.css',
+  './css/shared-styles.css',
   './js/slider.js',
   './js/modules/app-state.js',
   './js/modules/chart-factory.js',
@@ -26,10 +28,14 @@ const urlsToCache = [
   './js/modules/survey-system.js',
   './js/modules/api-service.js',
   './js/modules/utilities.js',
+  './js/modules/scenario-loader.js',
   './surveys/surveyChild.json',
   './surveys/surveyTreatment.json',
   './surveys/surveyControl.json',
   './surveys/surveyExit.json',
+  './surveys/surveySandwich.json',
+  './scenarios/scenarios.json',
+  './scenarios/scenarios-dummy.json',
   // External CDN resources for offline fallback
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
