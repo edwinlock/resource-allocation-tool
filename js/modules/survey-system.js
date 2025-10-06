@@ -172,7 +172,7 @@ export class SingleSelectQuestion extends SurveyQuestion {
                 : `surveys/${this.image}`;
             html += `
                 <div class="text-center mb-3">
-                    <img src="${imagePath}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
+                    <img src="${imagePath}" alt="Question image" class="img-fluid" style="max-height: 400px; border-radius: 8px;">
                 </div>
             `;
         }
@@ -257,7 +257,7 @@ export class MultiSelectQuestion extends SurveyQuestion {
                 : `surveys/${this.image}`;
             html += `
                 <div class="text-center mb-3">
-                    <img src="${imagePath}" alt="Question image" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
+                    <img src="${imagePath}" alt="Question image" class="img-fluid" style="max-height: 400px; border-radius: 8px;">
                 </div>
             `;
         }
@@ -551,24 +551,17 @@ export class ConsentQuestion extends SurveyQuestion {
         const query = this.substituteVariables(this.query, variables);
 
         return `
-            <div class="mb-4">
-                <div class="card border-primary">
-                    <div class="card-header bg-light">
-                        <h6 class="mb-0 text-primary">📋 Consent Form</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="consent-text mb-3" style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6; padding: 1rem; background-color: #f8f9fa;">
-                            ${text}
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input survey-option-input" type="checkbox"
-                                   id="q_${this.questionId}"
-                                   data-question-id="${this.questionId}"
-                                   required>
-                            <label class="form-check-label fw-bold" for="q_${this.questionId}">
-                                ${query || 'I have read and agree to the terms above'}
-                            </label>
-                        </div>
+            <div class="mb-4 pb-4" style="border-bottom: 2px solid #dee2e6;">
+                <div class="consent-text" style="border: 1px solid #dee2e6; padding: 1rem; background-color: #f8f9fa;">
+                    ${text}
+                    <div class="form-check mt-3">
+                        <input class="form-check-input survey-option-input" type="checkbox"
+                               id="q_${this.questionId}"
+                               data-question-id="${this.questionId}"
+                               required>
+                        <label class="form-check-label fw-bold" for="q_${this.questionId}">
+                            ${query || 'I have read and agree to the terms above'}
+                        </label>
                     </div>
                 </div>
             </div>
