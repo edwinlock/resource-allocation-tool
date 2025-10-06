@@ -11,12 +11,12 @@
         {
             "question_id": "prompt1",
             "type": "plaintext",
-            "text": "¡Hola! Estamos aquí para entrevistarle sobre sus opiniones acerca de {ChildA} y {ChildB}, quienes ambos asisten a {school_id}."
+            "text": "¡Hola! Estamos aquí para entrevistarle sobre sus opiniones acerca de {child1name} y {child2name}, quienes ambos asisten a {school_id}."
         },
         {
             "question_id": "verify_child",
             "type": "singleselect",
-            "query": "¿Puede confirmar que {ChildA} y {ChildB} son ambos sus hijos?",
+            "query": "¿Puede confirmar que {child1name} y {child2name} son ambos sus hijos?",
             "values": ["Sí", "No"],
             "datatype": "text",
             "required": true
