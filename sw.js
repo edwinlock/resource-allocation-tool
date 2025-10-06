@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v26';
+const CACHE_NAME = 'resource-allocation-v28';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const urlsToCache = [
   './thanks.html',
   './help.html',
   './manifest.json',
+  './schools.json',
   './css/slider.css',
   './css/shared-styles.css',
   './js/slider.js',
@@ -82,7 +83,8 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(
     // Cache-first strategy for all resources (offline-first)
-    caches.match(event.request).then(response => {
+    // For HTML files, ignore query parameters when matching
+    caches.match(event.request, { ignoreSearch: true }).then(response => {
       if (response) {
         // Return cached version immediately
         return response;
@@ -96,12 +98,11 @@ self.addEventListener('fetch', event => {
           cache.put(event.request, responseClone);
         });
         return fetchResponse;
-      });
-    }).catch(() => {
-      // Both cache and network failed
-      return new Response('Resource not available', {
-        status: 503,
-        statusText: 'Service Unavailable'
+      }).catch(() => {
+        return new Response('Resource not available', {
+          status: 503,
+          statusText: 'Service Unavailable'
+        });
       });
     })
   );
