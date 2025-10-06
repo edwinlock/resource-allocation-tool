@@ -63,12 +63,7 @@ class SurveyUIManager {
     }
 
     updateSessionInfo() {
-        document.getElementById('session-id').textContent =
-            this.sessionData.id ? this.sessionData.id.substring(0, 8) + '...' : '-';
-        document.getElementById('participant-id').textContent =
-            this.sessionData.familyId || '-';
-        document.getElementById('enumerator-id').textContent =
-            this.sessionData.enumeratorId || '-';
+        // Session info display removed from HTML
     }
 
     setupFormHandlers() {
