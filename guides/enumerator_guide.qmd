@@ -7,6 +7,50 @@ toc: true
 ## Overview
 This app helps you manage and conduct experimental sessions with children and parents. The app works offline, so you can collect data even without internet access.
 
+## 0. Installing the App on Your Tablet
+
+The app can be installed on your tablet as a Progressive Web App (PWA), which makes it work like a native app and enables full offline functionality.
+
+### For iPad/iOS Devices
+
+1. **Open Safari** and navigate to the app URL
+2. Tap the **Share** button (square with arrow pointing up) at the bottom of the screen
+3. Scroll down and tap **"Add to Home Screen"**
+4. Edit the name if desired (default: "Resource Tool")
+5. Tap **"Add"** in the top right corner
+6. The app icon will appear on your home screen
+7. **Launch the app** from your home screen (not Safari)
+
+### For Android Tablets
+
+1. **Open Chrome** and navigate to the app URL
+2. Tap the **three-dot menu** (⋮) in the top right corner
+3. Tap **"Add to Home screen"** or **"Install app"**
+4. Edit the name if desired
+5. Tap **"Add"** or **"Install"**
+6. The app icon will appear on your home screen
+7. **Launch the app** from your home screen (not Chrome)
+
+### Why Install as PWA?
+
+- ✅ Works completely offline after first load
+- ✅ Faster loading times
+- ✅ Full-screen experience (no browser bars)
+- ✅ App-like behavior and navigation
+- ✅ Automatic updates when online
+
+### ⚠️ Important: First-Time Setup
+
+**After installing the app, you MUST:**
+
+1. Connect to the internet
+2. Open the app for the first time
+3. Let it fully load (this caches all files)
+4. Log in to your account
+5. **Only then** will the app work offline
+
+The first load requires internet to download all necessary files. After that, the app will work offline.
+
 ## 1. Logging In
 
 ### When to Log In
@@ -65,6 +109,7 @@ The **📝 Current Sessions** table shows all sessions that haven't been uploade
 - **FamID**: Family identifier
 - **EnumID**: Your enumerator ID
 - **Session**: Type (Child or Parent)
+- **Group**: Assignment group (Treatment, Control, or - for child sessions)
 - **Status**: Shows completion status
   - **Incomplete**: Not all components are finished
   - **Ready to Upload**: All components completed
@@ -83,13 +128,24 @@ The **📝 Current Sessions** table shows all sessions that haven't been uploade
 4. The session will automatically save your progress
 
 #### For Parent Sessions:
+
+**For Control Group Parents:**
 1. Find the session in the Current Sessions table
 2. Click the **Start** button
-3. Complete the required components:
-   - **Parent questionnaire** (all groups)
-   - **Slider exercise** (treatment group only)
-   - **Exit survey** (treatment group only)
-4. The session will automatically save your progress
+3. Complete the parent questionnaire
+4. Session is complete after the questionnaire
+
+**For Treatment Group Parents:**
+1. Find the session in the Current Sessions table
+2. Click the **Start** button
+3. Complete the workflow in this order:
+   - **Parent questionnaire** (treatment version)
+   - **Practice slider** (1 scenario - not saved, just for practice)
+   - **Sandwich survey** (questions between practice and real slider)
+   - **Real slider exercise** (8 scenarios - saved for analysis)
+   - **Exit survey**
+4. The app will automatically guide you through each step
+5. All progress is saved automatically
 
 ### Understanding Session Status
 - **Start** button is **blue/green**: Session is ready to begin or continue
@@ -113,9 +169,22 @@ Always verify that data has been recorded correctly before uploading.
    - **Slider Responses**: Investment decisions (for treatment group parent sessions)
 
 ### What to Check
-- ✅ All required components show as "Completed"
+
+**For Child Sessions:**
+- ✅ Child survey shows as "Completed"
 - ✅ Survey responses are present and correct
-- ✅ Slider responses are recorded (for treatment parents)
+
+**For Control Group Parent Sessions:**
+- ✅ Parent survey shows as "Completed"
+- ✅ Survey responses are present and correct
+
+**For Treatment Group Parent Sessions:**
+- ✅ Parent survey shows as "Completed"
+- ✅ Sandwich survey shows as "Completed"
+- ✅ Slider exercise shows as "Completed"
+- ✅ Exit survey shows as "Completed"
+- ✅ 8 slider responses are recorded (practice slider is NOT saved)
+- ✅ All survey responses are present
 - ✅ Dates and times look reasonable
 
 ---
@@ -192,9 +261,9 @@ At the top of the page, you'll see:
 ### "My session status shows Incomplete"
 - Click **Details** to see which components are missing
 - Complete the missing components:
-  - Child sessions: Child survey
-  - Parent sessions (control): Parent survey
-  - Parent sessions (treatment): Parent survey + Slider exercise + Exit survey
+  - **Child sessions**: Child survey
+  - **Parent sessions (control)**: Parent survey
+  - **Parent sessions (treatment)**: Parent survey + Practice slider + Sandwich survey + Real slider + Exit survey
 
 ### "I accidentally logged out without internet"
 - You'll need to wait until you have internet access again to log back in

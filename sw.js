@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v25';
+const CACHE_NAME = 'resource-allocation-v26';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const urlsToCache = [
   './slider.html',
   './survey.html',
   './thanks.html',
+  './help.html',
   './manifest.json',
   './css/slider.css',
   './css/shared-styles.css',
@@ -36,6 +37,7 @@ const urlsToCache = [
   './surveys/surveySandwich.json',
   './scenarios/scenarios.json',
   './scenarios/scenarios-dummy.json',
+  './guides/enumerator_guide.html',
   // External CDN resources for offline fallback
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
