@@ -8,7 +8,12 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Enumerators</h1>
-            <span class="badge bg-secondary fs-6">{{ enumerators|length }} enumerator{{ 's' if enumerators|length != 1 else '' }}</span>
+            <div>
+                <a href="{{ url_for('create_enumerator') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> New Enumerator
+                </a>
+                <span class="badge bg-secondary fs-6 ms-2">{{ enumerators|length }} enumerator{{ 's' if enumerators|length != 1 else '' }}</span>
+            </div>
         </div>
 
         <div class="card">
@@ -17,20 +22,93 @@
             </div>
             <div class="card-body">
                 {% if enumerators|length > 0 %}
-                    {{ render_table(enumerators, titles=[
-                        ('id', 'Enumerator ID'),
-                        ('email', 'Email'),
-                        ('active', 'Active'),
-                        ('last_login_formatted', 'Last Login'),
-                        ('current_login_ip', 'Current IP')
-                    ]) }}
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>Active</th>
+                                <th>Last Login</th>
+                                <th>Current IP</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enumerator in enumerators %}
+                            <tr>
+                                <td>{{ enumerator.id }}</td>
+                                <td>{{ enumerator.email }}</td>
+                                <td>
+                                    {% if enumerator.active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ enumerator.last_login_formatted }}</td>
+                                <td>{{ enumerator.current_login_ip or '-' }}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('toggle_enumerator_active', user_id=enumerator.id) }}" style="display: inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        {% if enumerator.active %}
+                                            <button type="submit" class="btn btn-sm btn-warning" data-email="{{ enumerator.email }}" data-action="deactivate">
+                                                Deactivate
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-sm btn-success" data-email="{{ enumerator.email }}" data-action="activate">
+                                                Activate
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 {% else %}
                     <div class="text-center text-muted py-4">
                         <p>No enumerators found.</p>
+                        <a href="{{ url_for('create_enumerator') }}" class="btn btn-primary mt-3">
+                            <i class="bi bi-plus-circle"></i> Create First Enumerator
+                        </a>
                     </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add confirmation to activate/deactivate buttons
+        const buttons = document.querySelectorAll('button[data-action]');
+
+        buttons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const email = this.getAttribute('data-email');
+                const action = this.getAttribute('data-action');
+
+                let message = '';
+                if (action === 'deactivate') {
+                    message = `Are you sure you want to deactivate ${email}?\n\n` +
+                              'Deactivated enumerators will not be able to log in or upload sessions.';
+                } else {
+                    message = `Are you sure you want to activate ${email}?\n\n` +
+                              'Activated enumerators will be able to log in and upload sessions.';
+                }
+
+                const confirmed = confirm(message);
+
+                if (confirmed) {
+                    // Submit the form
+                    this.closest('form').submit();
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

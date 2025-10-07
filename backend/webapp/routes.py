@@ -3,7 +3,7 @@ import json
 import io
 import zipfile
 from flask import render_template, request, jsonify, current_app, send_file
-from flask_security import login_required, roles_required, current_user
+from flask_security import login_required, roles_required, current_user, hash_password
 from babel.dates import format_datetime
 import pandas as pd
 from sqlalchemy.exc import IntegrityError
@@ -379,6 +379,92 @@ def enumerators_page():
             user.current_login_formatted = format_datetime(user.current_login_at, 'short', locale='en_GB') if user.current_login_at else 'Never'
 
     return render_template('enumerators.html', enumerators=enumerators)
+
+
+@app.route("/enumerators/new", methods=['GET', 'POST'])
+@roles_required("administrator")
+def create_enumerator():
+    """Create a new enumerator user."""
+    from webapp import user_datastore
+
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+
+        # Validate inputs
+        if not email or not password:
+            return render_template('create_enumerator.html',
+                                 error='Email and password are required')
+
+        # Check if user already exists
+        existing_user = user_datastore.find_user(email=email)
+        if existing_user:
+            return render_template('create_enumerator.html',
+                                 error=f'User with email {email} already exists')
+
+        try:
+            # Get enumerator role
+            enumerator_role = Role.query.filter_by(name='enumerator').first()
+            if not enumerator_role:
+                enumerator_role = Role(name='enumerator', description='Enumerator role')
+                db.session.add(enumerator_role)
+                db.session.commit()
+
+            # Create user
+            new_user = user_datastore.create_user(
+                email=email,
+                password=hash_password(password),
+                active=True
+            )
+            user_datastore.add_role_to_user(new_user, enumerator_role)
+            db.session.commit()
+
+            current_app.logger.info(f'New enumerator created: {email}')
+
+            return render_template('create_enumerator.html',
+                                 success=True,
+                                 email=email)
+
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f'Error creating enumerator: {str(e)}')
+            return render_template('create_enumerator.html',
+                                 error=f'Failed to create enumerator: {str(e)}')
+
+    # GET request - show form
+    return render_template('create_enumerator.html')
+
+
+@app.route("/enumerators/<int:user_id>/toggle-active", methods=['POST'])
+@roles_required("administrator")
+def toggle_enumerator_active(user_id):
+    """Activate or deactivate an enumerator user."""
+    try:
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Check if user has enumerator role
+        if not user.has_role('enumerator'):
+            return jsonify({'error': 'User is not an enumerator'}), 400
+
+        # Toggle active status
+        user.active = not user.active
+        db.session.commit()
+
+        status = 'activated' if user.active else 'deactivated'
+        current_app.logger.info(f'Enumerator {status}: {user.email}')
+
+        return jsonify({
+            'success': True,
+            'active': user.active,
+            'message': f'Enumerator {user.email} has been {status}'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error toggling enumerator status: {str(e)}')
+        return jsonify({'error': f'Failed to update enumerator status: {str(e)}'}), 500
 
 @app.route("/sessions")
 @login_required
@@ -795,3 +881,65 @@ def download_all_data():
     except Exception as e:
         current_app.logger.error(f'Error generating data export ZIP: {str(e)}')
         return jsonify({'error': 'Failed to generate data export ZIP'}), 500
+
+
+@app.route('/reset_data', methods=['GET', 'POST'])
+@roles_required('administrator')
+def reset_data():
+    """Display reset data page and handle data deletion."""
+    if request.method == 'GET':
+        # Get counts for display
+        total_sessions = Session.query.count()
+        total_survey_responses = SurveyResponse.query.count()
+        total_slider_responses = SliderResponse.query.count()
+
+        return render_template('reset_data.html',
+                             total_sessions=total_sessions,
+                             total_survey_responses=total_survey_responses,
+                             total_slider_responses=total_slider_responses)
+
+    # POST request - handle deletion
+    try:
+        # Check confirmation text
+        confirmation = request.form.get('confirmation', '').strip()
+        if confirmation != 'I am sure':
+            return render_template('reset_data.html',
+                                 error='Confirmation text does not match. Please type "I am sure" exactly.',
+                                 total_sessions=Session.query.count(),
+                                 total_survey_responses=SurveyResponse.query.count(),
+                                 total_slider_responses=SliderResponse.query.count())
+
+        # Delete all slider responses
+        SliderResponse.query.delete()
+
+        # Delete all survey responses
+        SurveyResponse.query.delete()
+
+        # Delete all child sessions
+        ChildSession.query.delete()
+
+        # Delete all parent sessions
+        ParentSession.query.delete()
+
+        # Delete all base sessions (in case any orphaned ones exist)
+        Session.query.delete()
+
+        # Commit the changes
+        db.session.commit()
+
+        current_app.logger.info('Database reset successful - all data except users and roles deleted')
+
+        return render_template('reset_data.html',
+                             success=True,
+                             total_sessions=0,
+                             total_survey_responses=0,
+                             total_slider_responses=0)
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error resetting database: {str(e)}')
+        return render_template('reset_data.html',
+                             error=f'Failed to reset database: {str(e)}',
+                             total_sessions=Session.query.count(),
+                             total_survey_responses=SurveyResponse.query.count(),
+                             total_slider_responses=SliderResponse.query.count())

@@ -38,9 +38,8 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('data_export_page') }}">Data Export</a>
                             </li>
-                        {% elif current_user.has_role('enumerator') %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('session_page', enumerator_id=current_user.id) }}">My Sessions</a>
+                                <a class="nav-link" href="{{ url_for('reset_data') }}">Reset Data</a>
                             </li>
                         {% endif %}
                     {% endif %}
@@ -49,6 +48,9 @@
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
                         {% if current_user.has_role('enumerator') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('session_page', enumerator_id=current_user.id) }}">My Sessions</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for_security('change_password') }}">Change Password</a>
                             </li>

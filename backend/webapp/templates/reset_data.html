@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Reset Data - LEARN{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4 text-center">⚠️ Reset Database Data</h1>
+
+            {% if success %}
+                <!-- Success Message -->
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">✅ Data Reset Successful!</h4>
+                    <p>All database data has been successfully deleted, except for users and roles.</p>
+                    <hr>
+                    <p class="mb-0">
+                        <a href="{{ url_for('data_export_page') }}" class="btn btn-primary">Back to Data Export</a>
+                        <a href="{{ url_for('index_page') }}" class="btn btn-secondary">Go to Dashboard</a>
+                    </p>
+                </div>
+            {% else %}
+                <!-- Warning Card -->
+                <div class="card border-danger mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">⚠️ DANGER ZONE</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-danger">This action cannot be undone!</h5>
+                        <p class="card-text">
+                            This will permanently delete <strong>ALL</strong> of the following data:
+                        </p>
+                        <ul class="text-danger">
+                            <li><strong>{{ total_sessions }} Sessions</strong> (Child and Parent)</li>
+                            <li><strong>{{ total_survey_responses }} Survey Responses</strong></li>
+                            <li><strong>{{ total_slider_responses }} Slider Responses</strong></li>
+                        </ul>
+                        <p class="card-text">
+                            The following data will be <strong class="text-success">PRESERVED</strong>:
+                        </p>
+                        <ul class="text-success">
+                            <li>User accounts</li>
+                            <li>Roles</li>
+                        </ul>
+                        <div class="mt-4">
+                            <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                                🗑️ Delete All Data
+                            </button>
+                            <a href="{{ url_for('data_export_page') }}" class="btn btn-secondary btn-lg">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        <h5 class="alert-heading">Error</h5>
+                        <p>{{ error }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Additional Warning -->
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="alert-heading">⚠️ Before You Proceed</h5>
+                    <ul class="mb-0">
+                        <li>Make sure you have exported and backed up all necessary data</li>
+                        <li>This action is irreversible and will delete all research data</li>
+                        <li>All enumerators will lose access to their session history</li>
+                        <li>Consider exporting data first using the <a href="{{ url_for('data_export_page') }}">Data Export</a> page</li>
+                    </ul>
+                </div>
+            {% endif %}
+
+            <!-- Confirmation Modal -->
+            <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-danger">
+                        <form method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="confirmDeleteModalLabel">
+                                    ⚠️ FINAL WARNING
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger mb-3">
+                                    <strong>This action is PERMANENT and IRREVERSIBLE!</strong>
+                                </div>
+
+                                <p class="mb-3">You are about to delete:</p>
+                                <ul class="text-danger fw-bold mb-3">
+                                    <li>{{ total_sessions }} Sessions</li>
+                                    <li>{{ total_survey_responses }} Survey Responses</li>
+                                    <li>{{ total_slider_responses }} Slider Responses</li>
+                                </ul>
+
+                                <div class="mb-3">
+                                    <label for="confirmationInput" class="form-label">
+                                        Type <span class="badge bg-danger">I am sure</span> to confirm:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control form-control-lg"
+                                        id="confirmationInput"
+                                        name="confirmation"
+                                        required
+                                        placeholder="I am sure"
+                                        autocomplete="off"
+                                        pattern="I am sure">
+                                    <div class="form-text text-muted">
+                                        Must match exactly (case sensitive)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">
+                                    🗑️ Confirm Deletion
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

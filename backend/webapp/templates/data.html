@@ -209,6 +209,23 @@
                 </ul>
             </div>
 
+            <!-- Danger Zone -->
+            <div class="card border-danger mt-4 mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">⚠️ Danger Zone</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">Reset Database Data</h6>
+                    <p class="card-text text-muted">
+                        Permanently delete all sessions, survey responses, and slider responses.
+                        Users and roles will be preserved.
+                    </p>
+                    <a href="{{ url_for('reset_data') }}" class="btn btn-danger">
+                        🗑️ Reset Data
+                    </a>
+                </div>
+            </div>
+
             <!-- Back Link -->
             <div class="mb-4">
                 <a href="{{ url_for('index_page') }}" class="btn btn-secondary">
