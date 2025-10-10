@@ -1,5 +1,5 @@
 import { CONFIG } from './constants.js';
-import { SCENARIOS } from './scenario-loader.js';
+import { SCENARIOS, SCENARIOS_METADATA } from './scenario-loader.js';
 import { getUTCDate, shuffleArray } from './utilities.js';
 import { computeOutcomes } from './economic-engine.js';
 
@@ -119,6 +119,7 @@ class AppState {
         const aggregate_final_earnings = this.scenarioData.aggrEarningsRounded[child1investment];
 
         const response = {
+            scenariosId: SCENARIOS_METADATA.scenarios_id,  // Include scenarios_id from metadata
             scenarioNumber: this.sliderState.currentScenarioNumber,
             displayOrder: this.getCurrentDisplayOrder(),
             child1investment,

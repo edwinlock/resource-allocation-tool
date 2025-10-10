@@ -1,9 +1,15 @@
-[
-    {
-        "name": "A",
-        "description": "σ=1, θ=1",
-        "gamma": 0.5,
-        "sigma": 1,
-        "theta": 1
-    }
-]
+{
+    "scenarios_id": "practice-v1",
+    "infotext": "Imagine que usted cuenta con 9 fichas que puede distribuir de manera flexible entre dos tiendas: Walmart y Soriana.\nAl asignar fichas a una tienda u otra, recibiría una tarjeta de regalo de una o ambas tiendas. Dependiendo de cómo distribuya las fichas, la tarjeta de regalo que recibiría de cada tienda será más chica o más grande, y esto afectará cuántos artículos de despensa puede comprar al final en una o ambas tiendas.\nUtilizando el deslizador, por favor distribuya esas 9 fichas entre las dos tiendas de tal manera que resulte favorable para usted.",
+    "child1_name": "Walmart",
+    "child2_name": "Soriana",
+    "scenarios": [
+        {
+            "name": "A",
+            "description": "σ=1, θ=1",
+            "gamma": 0.5,
+            "sigma": 1,
+            "theta": 1
+        }
+    ]
+}

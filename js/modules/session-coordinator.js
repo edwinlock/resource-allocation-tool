@@ -83,13 +83,8 @@ export class SessionCoordinator {
         }
     }
 
-    async completeSliderSession(sessionId, responses, isDummyMode = false) {
-        // In dummy mode, skip saving responses - this is a practice round
-        if (isDummyMode) {
-            console.log('Dummy mode: skipping slider response save');
-            return;
-        }
-
+    async completeSliderSession(sessionId, responses) {
+        // Always save responses - both practice and main rounds are saved
         // Ensure both databases are open
         await this.sessionDB.ensureOpen();
         await this.responseDB.ensureOpen();
@@ -128,9 +123,8 @@ export class SessionCoordinator {
 
             // Handle database operations if session is completed
             if (result.completed) {
-                const isDummyMode = appState.session.isDummyMode || false;
-                await this.completeSliderSession(appState.sliderState.sessionId, result.responses, isDummyMode);
-                return { completed: true, isDummyMode };
+                await this.completeSliderSession(appState.sliderState.sessionId, result.responses);
+                return { completed: true };
             }
 
             return result;
@@ -384,6 +378,7 @@ export class SessionCoordinator {
                 if (session.groupType === 'treatment') {
                     const sliderResponses = await this.getSessionSliderResponses(sessionId);
                     aggregatedData.sliderResponses = sliderResponses.map(response => ({
+                        scenariosId: response.scenariosId,
                         scenarioNumber: response.scenarioNumber,
                         displayOrder: response.displayOrder,
                         child1investment: response.child1investment,

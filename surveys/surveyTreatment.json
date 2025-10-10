@@ -11,7 +11,7 @@
         {
             "question_id": "prompt1",
             "type": "plaintext",
-            "text": "¡Hola! Estamos aquí para entrevistarle sobre sus opiniones acerca de {child1name} y {child2name}, quienes ambos asisten a {school_id}."
+            "text": "¡Hola! Estamos aquí para entrevistarle sobre sus opiniones acerca de {child1name} y {child2name}."
         },
         {
             "question_id": "verify_child",
@@ -118,7 +118,7 @@
         {
             "question_id": "id_finance",
             "type": "singleselect",
-            "query": "¿Quién toma la mayoría de las decisiones financieras para los gastos de los hijos e hijas de la escuela?",
+            "query": "¿Quién toma la mayoría de las decisiones financieras para gastos de los hijos/as de la escuela?",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -141,7 +141,7 @@
         {
             "question_id": "edu_mom",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que usted/la madre de {child1name} y {child2name} ha completado?",
+            "query": "¿Hasta qué grado aprobó la madre en la escuela?",
             "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
             "datatype": "text",
             "required": true
@@ -149,8 +149,8 @@
         {
             "question_id": "edu_dad",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que usted/el padre del {child1name} y {child2name} ha completado?",
-            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "query": "¿Hasta qué grado aprobó el padre en la escuela?",
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
             "datatype": "text",
             "required": true
         },
@@ -162,25 +162,9 @@
             "required": true
         },
         {
-            "question_id": "job_mom2",
-            "type": "singleselect",
-            "query": "¿Cómo clasificaría la ocupación actual de la madre de familia?",
-            "values": ["Ama de casa - Sin remuneración monetaria", "Empleada doméstica", "Ocupaciones de Primera Línea (jornalera/o, servicios de limpieza, intendencia, etc.)", "Trabajadores de Servicios y Ventas", "Operadores de Plantas y Máquinas, y Ensambladores", "Trabajadores de Apoyo Administrativo", "Trabajadores de Oficios y Relacionados (Carpintería, herrería, cerrajería, plomería, etc.)", "Fuerzas Armadas", "Técnica Profesional (Auxiliar de enfermería, ayudante de dentista, sector automotriz, etc.)", "Profesional (profesional de la salud, contadora, abogada, etc.)", "Gerente", "Autoempleada", "No sé/No especificado"],
-            "datatype": "text",
-            "required": true
-        },
-        {
             "question_id": "job_dad1",
             "type": "open",
             "query": "¿Cuál es la ocupación del padre de familia?",
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "job_dad2",
-            "type": "singleselect",
-            "query": "¿Cómo clasificaría la ocupación actual del padre de familia?",
-            "values": ["Hogar", "Ocupaciones de Primera Línea (jornalera/o, servicios de limpieza, intendencia, etc.)", "Trabajadores de Servicios y Ventas", "Operadores de Plantas y Máquinas, y Ensambladores", "Trabajadores de Apoyo Administrativo", "Trabajadores de Oficios y Relacionados (Carpintería, herrería, cerrajería, plomería, etc.)", "Fuerzas Armadas", "Técnico Profesional (Auxiliar de enfermería, ayudante de dentista, sector automotriz, etc.)", "Profesional (profesional de la salud, contador, abogado, etc.)", "Gerente", "Autoempleado", "No sé"],
             "datatype": "text",
             "required": true
         },
@@ -200,7 +184,7 @@
         {
             "question_id": "smart_B",
             "type": "singleselect",
-            "query": "En relación con otras estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/ {child2name}?",
+            "query": "En relación con otras estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child2name}?",
             "values": ["Muy por debajo del promedio", "Algo por debajo del promedio", "Promedio", "Algo por encima del promedio", "Muy por encima del promedio"],
             "datatype": "text",
             "required": true
@@ -223,7 +207,7 @@
         {
             "question_id": "subj_grade_B_math",
             "type": "open",
-            "query": "¿Qué promedio de calificaciones espera que {child2name}logre este año en el área de las matemáticas?",
+            "query": "¿Qué promedio de calificaciones espera que {child2name} logre este año en el área de las matemáticas?",
             "datatype": "number",
             "required": true
         },
@@ -250,7 +234,7 @@
         {
             "question_id": "sigma_reinf",
             "type": "multiopen",
-            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 80% del dinero a Ana, y 20% a Marcela?, lo que significaría pagar más cursos para Ana que para Marcela.",
+            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del dinero a Ana, y 0% a Marcela?",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
@@ -261,7 +245,7 @@
         {
             "question_id": "sigma_comp",
             "type": "multiopen",
-            "query": "Ahora, ¿Cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 20% del dinero a Ana, y 80% a Marcela?",
+            "query": "Ahora, ¿Cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 0% del dinero a Ana, y 100% a Marcela?",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
@@ -280,7 +264,7 @@
         {
             "question_id": "subj_returnsB",
             "type": "singleselect",
-            "query": "Si invirtiera $1000 pesos MXN más en la educación de {child2name} este año, por ejemplo en tutoría o clases extracurriculares, ¿cuánto cree que mejorarían sus calificaciones?",
+            "query": "Si invirtiera $1000 pesos MXN más en la educación de {child2name} este año, por ejemplo en asesorías o clases extracurriculares, ¿cuánto cree que mejorarían sus calificaciones?",
             "values": ["Nada en absoluto", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
@@ -290,14 +274,6 @@
             "type": "singleselect",
             "query": "¿Cuál de las siguientes opciones cree que es más importante para el éxito de sus hijos/as?",
             "values": ["Ayudar con la tarea", "Leer juntos", "Actividades educativas además de la escuela (tutorías u otras clases)", "Deportes o Música", "Actividades de ocio", "Asistir a la escuela correcta", "Viajes"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "prefer_child2",
-            "type": "singleselect",
-            "query": "¿Por qué eligió esa respuesta en la pregunta anterior?",
-            "values": ["Es más inteligente (lo aprovecharía más)", "Necesita más ayuda en la escuela", "Su edad", "No sé", "Otro (explique):_________"],
             "datatype": "text",
             "required": true
         },
@@ -312,7 +288,7 @@
         {
             "question_id": "subjectA",
             "type": "open",
-            "query": "¿Qué carrera le gustaría que {child1name} estudie?",
+            "query": "¿Qué programa universitario le gustaría que {child1name} estudie?",
             "datatype": "text",
             "required": false,
             "conditional": {
@@ -339,7 +315,7 @@
         {
             "question_id": "subjectB",
             "type": "open",
-            "query": "¿Qué carrera le gustaría que {child2name} estudie?",
+            "query": "¿Qué programa universitario le gustaría que {child2name} estudie?",
             "datatype": "text",
             "required": false,
             "conditional": {
@@ -356,9 +332,9 @@
             "required": true
         },
         {
-            "question_id": "end",
+            "question_id": "trial_prompt",
             "type": "plaintext",
-            "text": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación."
+            "text": "¡Gracias por sus respuestas!<br><br>Ahora le vamos a invitar a realizar un ejercicio de distribución de recursos educativos. Antes de pasar a dicho ejercicio, queremos que se familiarice con el proceso, así que le pediremos que realice un ejercicio similar, utilizando un “deslizador” que verá a continuación (en la siguiente página)."
         }
     ]
 }

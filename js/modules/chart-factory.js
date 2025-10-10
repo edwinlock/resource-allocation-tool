@@ -79,12 +79,12 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'line') {
         return {
             x: {
-                title: { display: true, text: `Investment into ${child1Name}` },
+                title: { display: true, text: `Asignación de Fichas` },
                 grid: { display: true, color: '#f0f0f0' }
             },
             y: {
                 ...baseY,
-                title: { display: true, text: 'Earnings' },
+                title: { display: false, text: 'Earnings' },
                 grid: { display: true, color: '#f0f0f0' }
             }
         };
@@ -93,13 +93,13 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'multiBar') {
         return {
             x: {
-                title: { display: true, text: `Investment into ${child1Name}` },
+                title: { display: true, text: `Asignación de Fichas` },
                 grid: { display: false },
                 stacked: true
             },
             y: {
                 ...baseY,
-                title: { display: true, text: 'Earnings' },
+                title: { display: false, text: 'Earnings' },
                 grid: { display: false },
                 stacked: true
             }
@@ -133,7 +133,7 @@ function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 
                         lineWidth: 0,
                         datasetIndex: 1
                     }, {
-                        text: 'Combined',
+                        text: 'Total',
                         fillStyle: COMBINED_COLOR,
                         strokeStyle: COMBINED_COLOR,
                         lineWidth: 0,

@@ -2,11 +2,17 @@
 // This allows scenarios to be configured without code changes
 
 let SCENARIOS = [];
+let SCENARIOS_METADATA = {
+    scenarios_id: null,
+    infotext: null,
+    child1_name: null,
+    child2_name: null
+};
 
 /**
  * Load scenarios from JSON file
  * @param {string} filename - Name of the scenarios file (default: 'scenarios.json')
- * @returns {Promise<Array>} Array of scenario objects
+ * @returns {Promise<Object>} Object containing scenarios array and metadata
  */
 async function loadScenarios(filename = 'scenarios.json') {
     try {
@@ -14,7 +20,14 @@ async function loadScenarios(filename = 'scenarios.json') {
         if (!response.ok) {
             throw new Error(`Failed to load scenarios: ${response.status} ${response.statusText}`);
         }
-        const scenarios = await response.json();
+        const data = await response.json();
+
+        // Validate top-level structure
+        if (!data.scenarios_id || !data.infotext || !data.scenarios) {
+            throw new Error('Scenarios file must contain scenarios_id, infotext, and scenarios');
+        }
+
+        const scenarios = data.scenarios;
 
         // Validate scenarios
         if (!Array.isArray(scenarios)) {
@@ -33,12 +46,20 @@ async function loadScenarios(filename = 'scenarios.json') {
             }
         });
 
+        // Store scenarios and metadata
         SCENARIOS = scenarios;
-        return scenarios;
+        SCENARIOS_METADATA = {
+            scenarios_id: data.scenarios_id,
+            infotext: data.infotext,
+            child1_name: data.child1_name || 'Child 1',  // Default fallback
+            child2_name: data.child2_name || 'Child 2'   // Default fallback
+        };
+
+        return { scenarios, metadata: SCENARIOS_METADATA };
     } catch (error) {
         console.error('Error loading scenarios:', error);
         throw error;
     }
 }
 
-export { SCENARIOS, loadScenarios };
+export { SCENARIOS, SCENARIOS_METADATA, loadScenarios };

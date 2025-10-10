@@ -17,8 +17,8 @@ export class SliderResponseDB {
 
         try {
             this.db = new Dexie('SliderResponsesDB');
-            this.db.version(2).stores({
-                pageResponses: 'id, sessionId, scenarioNumber, displayOrder, child1investment, completedAt, scenarioGamma, scenarioSigma, scenarioTheta, preEarnings1, preEarnings2, scenarioAlpha, child1FinalEarnings, child2FinalEarnings, aggregateFinalEarnings'
+            this.db.version(4).stores({
+                pageResponses: 'id, sessionId, scenariosId, [sessionId+scenariosId], scenarioNumber, displayOrder, child1investment, completedAt, scenarioGamma, scenarioSigma, scenarioTheta, preEarnings1, preEarnings2, scenarioAlpha, child1FinalEarnings, child2FinalEarnings, aggregateFinalEarnings'
             });
         } catch (error) {
             console.error('Failed to initialize SliderResponsesDB:', error);
@@ -39,17 +39,21 @@ export class SliderResponseDB {
 
         await this.ensureOpen();
 
-        // First, delete any existing responses for this session
-        // This handles the case where a user restarts the slider
-        await this.db.pageResponses
-            .where('sessionId')
-            .equals(sessionId)
-            .delete();
+        // First, delete any existing responses for this session AND scenarios_id
+        // This allows practice and real sliders to be saved separately and re-done independently
+        if (responses.length > 0) {
+            const scenariosId = responses[0].scenariosId;
+            await this.db.pageResponses
+                .where(['sessionId', 'scenariosId'])
+                .equals([sessionId, scenariosId])
+                .delete();
+        }
 
         // Convert responses array to database records
         const responseRecords = responses.map(response => ({
             id: generateUUID(),
             sessionId,
+            scenariosId: response.scenariosId,
             scenarioNumber: response.scenarioNumber,
             displayOrder: response.displayOrder,
             child1investment: response.child1investment,
@@ -107,6 +111,7 @@ export class SliderResponseDB {
         const responseRecord = {
             id: generateUUID(),
             sessionId,
+            scenariosId: response.scenariosId,
             scenarioNumber: response.scenarioNumber,
             displayOrder: response.displayOrder,
             child1investment: response.child1investment,

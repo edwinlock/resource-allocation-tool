@@ -1,105 +1,32 @@
 {
     "survey_id": "surveySandwich",
-    "name": "Question after Slider",
+    "name": "Preguntas Intermedias",
     "questions": [
         {
-            "question_id": "wtp_intro",
+            "question_id": "alloc_task_prompt",
             "type": "plaintext",
-            "text": "En el ejercicio anterior en el que usted realizó la distribución de 9 sesiones entre sus dos hijos/as, de un total de 15 sesiones de Inteligencia Artificial. Antes de elegir un escenario al azar y revelar la asignación final de vales entre sus hijos/as, nos gustaría que imaginara que uno de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para ellos. Le presentaremos algunas opciones sobre el costo de una lección extra. Si usted estuviera dispuesto/a a pagar por esa lección extra conteste señalando SÍ o NO para cada una de las siguientes opciones."
+            "text": "¡Ahora sí pasaremos al ejercicio de distribución de recursos educativos!<br><br>Cuando sus hijos respondieron la encuesta, también tuvieron que realizar unaserie de acertijos. Este “mini-examen” (los acertijos) no afecta sus calificaciones escolares. Sin embargo, les dijimos que recibirían un regalo por realizarla, y que el monto del regalo se vería afectado por su desempeño. Esto esimportante para nuestro proyecto de investigación. <br><br>Además, también les dijimos que habría una lotería involucrada para determinar en qué medida el desempeño afecta el regalo, de modo que nadie (ni sus hermanos/as, ni otros/as estudiantes) podría deducir cómo les fue en el examen. Dado lo anterior, les dijimos también que no tiene sentido comparar el tamaño de su regalo con el de su hermano/a u otros estudiantes. <br><br> El obsequio para sus hijos es la participación en un curso de <strong>Inteligencia Artificial</strong> que consta de 15 sesiones individuales, y que está financiado por el proyecto de investigación. Después le explicaremos más sobre este curso. Lamentablemente, nuestro presupuesto no nos permite asegurar que todos los estudiantes que participan en el estudio puedan tomar las 15 sesiones. Aún así, consideramos que cada sesión representa una gran oportunidad de aprendizaje. <br><br>Como explicamos antes, usamos los resultadosde sus hijos en el mini-examen (los acertijos) y una lotería para premiarles con el número de sesiones en las que pueden participar. Sin embargo, queremos otorgarle a usted la oportunidad de contribuir al éxito de sus hijos. Como en el ejercicio anterior, usted podrá distribuir 9 fichas entre sus dos hijos/as. Estas fichas, junto con lo que sus hijos ya han ganado (producto de sus resultados en los acertijos), afectan el número total de sesiones que sus hijos pueden tomar. A diferencia del ejercicio previo, no le diremos quién es el/la hijo/a “color naranja” y quién es el “color verde” en el deslizador. <br><br>Para la lotería que mencionamos anteriormente, hemos diseñado 6 escenarios distintos, que usan diferentes esquemas para calificar los acertijos de los estudiantes y asignar sesiones con ese resultado. Para cada escenario, le pedimos que distribuya las 9 fichas como mejor le parezca.  <br><br>Al término del periodo de encuestas, el equipo de investigación escogerá, para cada familia, uno de los escenarios al azar y los resultados de esa distribución serán las sesiones a las que sus hijos/as tendrán acceso. De la misma manera, al término del periodo de encuestas, un miembro del grupo de investigación se pondrá en contacto con usted para informarle sobre las sesiones para sus hijos/as, las fechas, y la inscripción oficial (¡gratuita y voluntaria!). <br><br> Esta forma de asignar cursos evitará que entre alumnos y familias deduzcan el desempeño de los alumnos, y que sus hijos/as se enteren de que usted influyó en la distribución de los cursos."
         },
         {
-            "question_id": "wtp_list1",
-            "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con solo 2 vales equivalentes a dos sesiones…¿Cuánto estaría dispuesto a pagar por una lección más? Por favor conteste señalando SÍ o NO para cada una de las siguientes opciones.",
-            "prefixes": [
-                "Pagar 100 pesos",
-                "Pagar 150 pesos",
-                "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
-            ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
-            "datatype": "single_per_row",
-            "required": true
+            "question_id": "prompt_ai",
+            "type": "plaintext",
+            "text": "Para su información: El curso de Inteligencia Artificial empezaría el próximo semestre (2026) y consiste de 15 sesiones que han sido diseñadas de tal suerte que estudiantes de primero hasta tercero de bachillerato puedan participar y beneficiarse del contenido.<br><br> El objetivodel cursoes que sus hijos/as aprendan sobre la Inteligencia Artificial y desarollen nuevas habilidades para usarla de manera efectiva. Sus hijos tendrán la oportunidad de aprender y practicar nuevas habilidades que les podrían beneficiar tanto en sus estudios como en futuros trabajos. Además,tendrán la oportunidad de aprender de expertos locales e internacionales, que han trabajado en el diseño de estas sesiones. <br><br>Al completar las sesiones del curso, se entregará un certificado de participación cuyo contenido dependerá del número de sesiones a las que asistió el estudiante. <br><br>Es importante tomar en cuenta que no sabemos cuándo se podrá volver a impartir este curso, así que esta es una oportunidad única para sus hijos/as. <br><br> ¿Tiene preguntas en este momento?"
         },
         {
-            "question_id": "wtp_list2",
-            "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con 6 vales después del ejercicio de asignación...¿Cuánto pagaría por una lección más?",
-            "prefixes": [
-                "Pagar 100 pesos",
-                "Pagar 150 pesos",
-                "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
-            ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
-            "datatype": "single_per_row",
-            "required": true
-        },
-        {
-            "question_id": "wtp_list3",
-            "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con 10 vales después del ejercicio de asignación...¿Pagaría por una lección más? ¿Cuánto?",
-            "prefixes": [
-                "Pagar 100 pesos",
-                "Pagar 150 pesos",
-                "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
-            ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
-            "datatype": "single_per_row",
-            "required": true
-        },
-        {
-            "question_id": "benefit_most",
+            "question_id": "attention_check1",
             "type": "singleselect",
-            "query": "Antes de revelar quién de sus hijos/as recibió cuántos vales, ¿quién cree que se beneficiaría más del curso?",
-            "values": ["{child1name}", "{child2name}"],
+            "query": "Ante de comenzar queremos asegurarnos de que comprende lo que se ha explicado antes. ¿De qué trata el curso que podrán tomar sus hijos/as?",
+            "values": ["Tecnología", "Habilidades de Resolución de Problemas", "Computadoras", "Teoría Musical", "Inteligencia Artificial", "Tacos"],
             "datatype": "text",
             "required": true
         },
         {
-            "question_id": "child_color",
-            "type": "singleselect",
-            "query": "¿Quién cree que era el hijo/a naranja?",
-            "values": ["{child1name}", "{child2name}"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "transfer_skill",
-            "type": "singleselect",
-            "query": "¿Qué tan difícil cree que sería para sus hijos/as enseñar a sus hermanos sobre el contenido del curso?",
-            "values": ["Nada difícil", "Algo difícil", "Algo fácil", "Muy fácil"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "prompt_end",
+            "question_id": "attention_check2",
             "type": "open",
-            "query": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación. Durante el ejercicio de asignación de unidades, el color naranja fue asignado a {child1name}, y el color verde fue asignado a {child2name}. Esto quiere decir que {child1name} ha obtenido {allocation_num_final_1} y {child2name} recibe {allocation_num_final_2} sesiones del curso de Inteligencia Artificial. Nosotros inscribiremos de manera automática a sus hijos/as al curso, y además le entregaremos en este momento los vales in físico. Si tiene cualquier otra duda, no dude en hacérnosla saber.",
-            "datatype": "text",
-            "required": false
+            "query": "¿Cuál es el número máximo de sesiones que podrán atender sus hijos/as?",
+            "datatype": "number",
+            "required": true
+
         }
     ]
 }

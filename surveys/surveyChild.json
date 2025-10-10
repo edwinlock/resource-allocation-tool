@@ -6,17 +6,30 @@
             "question_id": "consent_child_survey",
             "type": "consent",
             "query": "Doy mi consentimiento voluntario para participar en la encuesta.",
-            "text": "<h5>Consentimiento Informado - Estudiante</h5><p><strong>Proyecto de Investigación:</strong>Preferencias parentales, tecnología, y equidad en educación.</p><p><strong>Información:</strong>Como parte de un proyecto de investigación multianual internacional entre la Universidad de Wageningen (Holanda) y en colaboración con Instituto Potosino de Investigación Científica y Tecnológica (IPICYT), queremos invitarte a participar a participar respondiendo a una encuesta. Nos interesa aprender sobre tus circunstancias, aspiraciones, lo que piensas de la tecnología (con énfasis en la Inteligencia Artificial) y, por último, tener una idea sobre tus habilidades en materia de resolución de problemas.</p><p><strong>¿Qué harás?</strong> Responder a una breve encuesta sobre los temas previamente mencionados. La encuesta dura aproximadamente 35 minutos.</p><p><strong>Condifencialidad:</strong> Toda la  información recopilada será anonimizada y  tratada de manera confidencial, es decir que cada participante será identificado con un código único (no con su nombre) en las bases de datos del estudio para que sea anonimizada la información.. Los datos anonimizados serán almacenados de manera segura y solo accesibles al equipo de investigación. No compartiremos información desagregada del proyecto con terceros o personas ajenas al equipo de investigación.</p><p><strong>Voluntary Participación:</strong> Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela.</p>"
+            "text": "<h5>Consentimiento Informado</h5><p><strong>Proyecto de Investigación:</strong>Preferencias parentales, tecnología, y equidad en educación.</p><p><strong>Información:</strong>Como parte de un proyecto de investigación multianual internacional entre la Universidad de Wageningen (Holanda) y en colaboración con Instituto Potosino de Investigación Científica y Tecnológica (IPICYT), queremos invitarte a participar a participar respondiendo a una encuesta. Nos interesa aprender sobre tus circunstancias, aspiraciones, lo que piensas de la tecnología (con énfasis en la Inteligencia Artificial) y, por último, tener una idea sobre tus habilidades en materia de resolución de problemas.</p><p><strong>¿Qué harás?</strong> Responder a una breve encuesta sobre los temas previamente mencionados. La encuesta dura aproximadamente 35 minutos.</p><p><strong>Condifencialidad:</strong> Toda la  información recopilada será anonimizada y  tratada de manera confidencial, es decir que cada participante será identificado con un código único (no con su nombre) en las bases de datos del estudio para que sea anonimizada la información.. Los datos anonimizados serán almacenados de manera segura y solo accesibles al equipo de investigación. No compartiremos información desagregada del proyecto con terceros o personas ajenas al equipo de investigación.</p><p><strong>Voluntary Participación:</strong> Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela.</p>"
         },
         {
             "question_id": "child_prompt1",
             "type": "plaintext",
-            "text": "¡Hola! Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 30 minutos. Por favor responde honestamente. No hay respuestas correctas o incorrectas. Toda la información que proporciones será confidencial. Es decir que no las compartiremos con tus padres, tus maestros, o cualquier otra persona. Como agradecimiento por tu participación, te daremos un pequeño obsequio. Si tienes alguna duda en cualquier momento, siéntete en confianza para preguntar."
+            "text": "Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación, tu entorno social y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 35 minutos. Por favor responde honestamente - no hay respuestas correctas o incorrectas, y toda la información que proporciones será confidencial. Significa que no las compartiremos con tus padres, tus maestros, o cualquier otra persona. Como agradecimiento por tu participación, te daremos un obsequio que te haremos llegar al término del periodo de encuestas. Si tienes alguna duda en este (o cualquier) momento, siéntete en confianza para preguntar."
         },
         {
-            "question_id": "child_prompt2",
+            "question_id": "promt_consent",
             "type": "plaintext",
-            "text": "Ahora procederemos a hacerte unas preguntas sobre ti y cómo te ves en el futuro."
+            "text": "Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela."
+        },
+        {
+            "question_id": "consent_q",
+            "type": "singleselect",
+            "query": "¿Otorgas tu consentimiento para participar en el estudio?",
+            "values": ["Sí", "No"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "prompt3",
+            "type": "plaintext",
+            "text": "Ahora vamos a hacerte algunas preguntas sobre ti y sobre cómo te ves en el futuro."
         },
         
         {
@@ -30,14 +43,14 @@
             "question_id": "gender",
             "type": "singleselect",
             "query": "¿Cuál es tu género?",
-            "values": ["Masculino", "Femenino", "Otro"],
+            "values": ["Masculino", "Femenino", "Prefiero no responder"],
             "datatype": "text",
             "required": true
         },
-        {"question_id": "school_year",
-            "type": "singleselect",
-            "query": "¿Qué año de preparatoria cursas actualmente?",
-            "values": ["1º", "2º", "3º"],
+        {
+            "question_id": "class",
+            "type": "open",
+            "query": "¿Qué semestre de bachillerato estás cursando en este momento?",
             "datatype": "text",
             "required": true
         },
@@ -48,18 +61,20 @@
             "datatype": "text",
             "required": true
         },
-        {"question_id": "aspiration",
+        {
+            "question_id": "aspiration",
             "type": "singleselect",
-            "query": "Imagina que no tienes ningun obstáculo o limitante. ¿Cuál es nivel más alto de educación formal que te gustaría alcanzar?",
-            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación vocacional (por ejemplo, mecánico/a, técnico/a en uñas, etc.)", "Universidad, Licenciatura/Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"],
+            "query": "¿Cuál es el nivel más alto de educación formal que te gustaría alcanzar?",
+            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "asp_educ_prob",
-            "type": "open",
-            "query": "Dada tu situación y la de tu familia, ¿qué tan probable consideras poder lograr este nivel de educación? Responde del 1 al 10, donde 1 es 'no muy probable', y 10 es 'muy probable'.",
-            "datatype": "number",
+            "type": "likert",
+            "query": "Dada tu situación y la de tu familia, ¿qué tan probable consideras poder lograr ese nivel de educación? Responde del 0 al 10, donde 0 es no muy probable y 10 es muy probable.",
+            "min": 0,
+            "max": 10,
             "required": true
         },
         {
@@ -70,7 +85,7 @@
             "required": true,
             "conditional": {
                 "question_id": "aspiration",
-                "values": ["Universidad, Licenciatura/Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"]
+                "values": ["Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"]
             }
         },
         {
@@ -99,8 +114,8 @@
         {
             "question_id": "job_prob",
             "type": "likert",
-            "query": "Dada tu situación actual, ¿qué tan probable consideras que podrías conseguir ese tipo de trabajo? Responde del 1 al 10, donde 1 es no muy probable y 10 es muy probable.",
-            "min": 1,
+            "query": "Dada tu situación actual, ¿qué tan probable consideras que podrías conseguir ese tipo de trabajo? Responde del 0 al 10, donde 0 es no muy probable y 10 es muy probable.",
+            "min": 0,
             "max": 10,
             "required": true
         },
@@ -188,33 +203,19 @@
         {
             "question_id": "time_leisure1",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a hacer deportes?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a relajarte, deporte, tiempo con amigos/as, arte, etc.?",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "time_leisure2",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a las artes (música, dibujo, escritura...)?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a trabajo remunerado y no remunerado (quehaceres domésticos, ayudar en negocio familiar)?",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "time_leisure3",
-            "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a trabajo remunerado?",
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "time_leisure4",
-            "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a trabajo no remunerado (quehaceres domésticos, ayudar en negocio familiar)?",
-            "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "time_leisure5",
             "type": "open",
             "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día al ocio (tiempo con amigos, relajarse...)?",
             "datatype": "number",
@@ -229,15 +230,15 @@
             "question_id": "ces10_1",
             "type": "singleselect",
             "query": "Me molestaron cosas que usualmente no me molestan.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_2",
             "type": "singleselect",
-            "query": "Tuve problemas para mantener mi mente en lo que estaba haciendo.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "Sentí que no podía poner atención a lo que estaba haciendo.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
@@ -245,145 +246,70 @@
             "question_id": "ces10_3",
             "type": "singleselect",
             "query": "Me sentí deprimido/a.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_4",
             "type": "singleselect",
-            "query": "Sentí que todo lo que hice fue un gran esfuerzo.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "Sentí que las cosas que hice no salieron bien.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_5",
             "type": "singleselect",
-            "query": "Me sentí esperanzado/a sobre el futuro.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "No dormí tan bien como usualmente duermo.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_6",
             "type": "singleselect",
-            "query": "Me sentí temeroso/a.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "Me sentí solo/a, como si no tuviera amigos.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_7",
             "type": "singleselect",
-            "query": "Mi sueño fue inquieto.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "Sentí ganas de llorar.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_8",
             "type": "singleselect",
-            "query": "Estuve feliz.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "Me sentí triste.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_9",
             "type": "singleselect",
-            "query": "Me sentí solo.",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
+            "query": "Sentí que no le caía bien a la gente.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ces10_10",
             "type": "singleselect",
-            "query": "No pude empezar mi día (desánimo).",
-            "values": ["Raramente o ningún momento (menos de 1 día)", "Algo o un poco del tiempo (1-2 días)", "Ocasionalmente o una cantidad moderada del tiempo (3-4 días)", "La mayor parte del tiempo (5-7 días)"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_prompt",
-            "type": "plaintext",
-            "text": "Ahora nos gustaría hacerte algunas preguntas sobre la situación de tu familia"
-        },
-        {
-            "question_id": "family_tablet",
-            "type": "singleselect",
-            "query": "¿Tienes una tablet o laptop?",
-            "values": ["No", "Sí"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_internet",
-            "type": "singleselect",
-            "query": "¿Tu familia tiene internet en casa?",
-            "values": ["No", "Sí"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_ownroom",
-            "type": "singleselect",
-            "query": "¿Tienes tu propio cuarto en tu casa?",
-            "values": ["No", "Sí"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_house",
-            "type": "grid",
-            "query": "Por favor, indica si tu hogar cuenta con lo siguiente. Marca Sí o No para cada caso.",
-            "prefixes": [
-                "Regadera con agua caliente para bañarse",
-                "Cocina separada del área de dormitorios",
-                "Paredes de tabique, block, ladrillo, piedra o concreto (no de materiales de desecho)",
-                "Techo de losa de concreto o material resistente (no de lámina de cartón o desecho)",
-                "Tinaco, cisterna o depósito de agua",
-                "Calentador de agua (solar o de gas)"
-            ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
-            "required": true
-        },
-        {
-            "question_id": "family_wealth",
-            "type": "singleselect",
-            "query": "¿Qué tanta solvencia económica dirías que tiene tu familia, en comparación con las familias de otros estudiantes en tu escuela?",
-            "values": ["Mucho menos dinero", "Algo menos de dinero", "Promedio", "Algo más de dinero", "Mucho más dinero"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_bills",
-            "type": "singleselect",
-            "query": "¿Tus padres a veces tienen dificultades para pagar sus cuentas o gastos del hogar?",
-            "values": ["No", "Sí", "No sé"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_bootcamp",
-            "type": "singleselect",
-            "query": "¿Podrían tus padres pagar por un bootcamp de programación para ti?",
-            "values": ["No", "Sí", "No sé"],
+            "query": "Me fue difícil empezar a hacer cosas.",
+            "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ravens_prompt",
             "type": "plaintext",
-            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento (relativo) en este examen para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado, así que no tiene sentido comparar el tamaño de tu regalo con el de tu hermano/a u otros estudiantes en tu escuela. Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente en tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado:"
+            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar el tamaño de tu regalo con el de tu hermano/a u otros estudiantes en tu escuela. Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado:"
         },
         {
             "question_id": "raven_matrix1",
@@ -494,9 +420,84 @@
             "required": true
         },
         {
+            "question_id": "family_prompt",
+            "type": "plaintext",
+            "text": "Ahora nos gustaría hacerte algunas preguntas sobre la situación de tu familia"
+        },
+        {
+            "question_id": "family_tablet",
+            "type": "singleselect",
+            "query": "¿Tienes una tablet o laptop?",
+            "values": ["No", "Sí"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_internet",
+            "type": "singleselect",
+            "query": "¿Tu familia tiene internet en casa?",
+            "values": ["No", "Sí"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_ownroom",
+            "type": "singleselect",
+            "query": "¿Tienes tu propio cuarto en tu casa?",
+            "values": ["No", "Sí"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_house",
+            "type": "grid",
+            "query": "Por favor, indica si tu hogar cuenta con lo siguiente. Marca Sí o No para cada caso.",
+            "prefixes": [
+                "Regadera con agua caliente para bañarse",
+                "Cocina separada del área de dormitorios",
+                "Paredes de tabique, block, ladrillo, piedra o concreto (no de materiales de desecho)",
+                "Techo de losa de concreto o material resistente (no de lámina de cartón o desecho)",
+                "Tinaco, cisterna o depósito de agua",
+                "Calentador de agua (solar o de gas)"
+            ],
+            "options": [
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"],
+                ["Sí", "No"]
+            ],
+            "required": true
+        },
+        {
+            "question_id": "family_wealth",
+            "type": "singleselect",
+            "query": "¿Qué tanta solvencia económica dirías que tiene tu familia, en comparación con las familias de otros estudiantes en tu escuela?",
+            "values": ["Mucho menos dinero", "Algo menos de dinero", "Promedio", "Algo más de dinero", "Mucho más dinero"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_bills",
+            "type": "singleselect",
+            "query": "¿Tus padres a veces tienen dificultades para pagar sus cuentas o gastos del hogar?",
+            "values": ["No", "Sí", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "family_bootcamp",
+            "type": "singleselect",
+            "query": "¿Podrían tus padres pagar por un bootcamp de programación para ti?",
+            "values": ["No", "Sí", "No sé"],
+            "datatype": "text",
+            "required": true
+        },
+        {
             "question_id": "end",
             "type": "plaintext",
-            "text": "Gracias por tu tiempo. Tus respuestas son muy valiosas para nuestro estudio y apreciamos el tiempo y esfuerzo que hiciste para responder todo. Te haremos saber pronto sobre tu pequeño obsequio."
+            "text": "Gracias por tu tiempo. Tus respuestas son muy valiosas para nuestro estudio y apreciamos el tiempo y esfuerzo que hiciste para responder todo. Te haremos saber pronto sobre tu obsequio."
         }
     ]
 }

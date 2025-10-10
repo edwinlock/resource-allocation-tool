@@ -228,6 +228,7 @@ class SurveyResponse(db.Model):
 class SliderResponse(db.Model):
     id = db.Column(db.String(255), primary_key=True)  # UUID from frontend
     parent_session_id = db.Column(db.String(255), db.ForeignKey('parent_session.id'), nullable=False)
+    scenarios_id = db.Column(db.String(255), nullable=False)  # e.g., "main-v1" or "practice-v1"
     scenario_number = db.Column(db.Integer, nullable=False)
     display_order = db.Column(db.Integer, nullable=False)
     child1_investment = db.Column(db.Integer, nullable=False)
@@ -251,6 +252,7 @@ class SliderResponse(db.Model):
     # Constraints
     __table_args__ = (
         db.Index('idx_parent_session_display_order', 'parent_session_id', 'display_order'),
+        db.Index('idx_scenarios_id', 'scenarios_id'),
         db.CheckConstraint('child1_investment >= 0 AND child1_investment <= 9', name='check_child1_investment'),
     )
 
@@ -264,6 +266,7 @@ class SliderResponse(db.Model):
         return {
             'id': self.id,
             'parent_session_id': self.parent_session_id,
+            'scenarios_id': self.scenarios_id,
             'scenario_number': self.scenario_number,
             'display_order': self.display_order,
             'child1_investment': self.child1_investment,

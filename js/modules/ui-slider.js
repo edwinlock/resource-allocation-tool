@@ -1,5 +1,5 @@
 import { CONFIG } from './constants.js';
-import { SCENARIOS } from './scenario-loader.js';
+import { SCENARIOS, SCENARIOS_METADATA } from './scenario-loader.js';
 import { appState } from './app-state.js';
 
 const { ALLOCATABLE_BUDGET } = CONFIG;
@@ -182,12 +182,12 @@ export class UIManager {
             const result = await sessionManager.processNextScenario();
 
             if (result.completed) {
-                // Session completed - redirect based on dummy mode
+                // Session completed - redirect based on scenarios_id
                 const sessionId = appState.sliderState.sessionId;
-                const isDummyMode = result.isDummyMode || false;
+                const scenariosId = SCENARIOS_METADATA.scenarios_id;
 
-                if (isDummyMode) {
-                    // Dummy slider complete - go to sandwich survey
+                if (scenariosId === 'practice-v1') {
+                    // Practice slider complete - go to sandwich survey
                     window.location.href = `survey.html?survey_id=Sandwich&session_id=${sessionId}`;
                 } else {
                     // Real slider complete - go to exit survey

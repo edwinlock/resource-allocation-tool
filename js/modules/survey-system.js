@@ -881,7 +881,7 @@ export class Survey {
                             ← Back to Session Manager
                         </button>
                         <button type="submit" class="btn btn-primary" id="survey-submit-btn">
-                            Submit Survey
+                            Save
                         </button>
                     </div>
                 </form>

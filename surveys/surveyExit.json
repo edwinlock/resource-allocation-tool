@@ -1,16 +1,16 @@
 {
     "survey_id": "surveyExit",
-    "name": "Final Questions after Allocation Task",
+    "name": "Preguntas finales",
     "questions": [
         {
-            "question_id": "wtp_sandwich_intro",
+            "question_id": "wtp_intro",
             "type": "plaintext",
-            "text": "En el ejercicio anterior en el que usted realizó la distribución de 9 sesiones entre sus dos hijos/as, de un total de 15 sesiones de Inteligencia Artificial. Antes de elegir un escenario al azar y revelar la asignación final de vales entre sus hijos/as, nos gustaría que imaginara que uno de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para ellos. Le presentaremos algunas opciones sobre el costo de una lección extra. Si usted estuviera dispuesto/a a pagar por esa lección extra conteste señalando SÍ o NO para cada una de las siguientes opciones."
+            "text": "¡Aún tenemos unas preguntas más!<br><br>Nos gustaría que <strong>imaginara</strong> que uno de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para ellos.<br><br> Le presentaremos algunas opciones sobre el costo de una sesión extra. Si usted estuviese dispuesto/a a pagar por esa sesión extra conteste señalando SÍ o NO para cada una de las siguientes opciones."
         },
         {
             "question_id": "wtp_list1",
             "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con solo 2 vales equivalentes a dos sesiones…¿Cuánto estaría dispuesto a pagar por una lección más? Por favor conteste señalando SÍ o NO para cada una de las siguientes opciones.",
+            "query": "Si uno de sus hijos/as terminó con solo 2 sesiones del curso de Inteligencia Artificial... ¿Cuánto estaría dispuesto a pagar por una sesión más? Por favor conteste señalando SÍ o NO para cada una de las siguientes opciones.",
             "prefixes": [
                 "Pagar 100 pesos",
                 "Pagar 150 pesos",
@@ -31,7 +31,7 @@
         {
             "question_id": "wtp_list2",
             "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con 6 vales después del ejercicio de asignación...¿Cuánto pagaría por una lección más?",
+            "query": "Si uno de sus hijos/as terminó con 6 sesiones... ¿Cuánto pagaría por una sesión más?",
             "prefixes": [
                 "Pagar 100 pesos",
                 "Pagar 150 pesos",
@@ -52,7 +52,7 @@
         {
             "question_id": "wtp_list3",
             "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con 10 vales después del ejercicio de asignación...¿Pagaría por una lección más? ¿Cuánto?",
+            "query": "Si uno de sus hijos/as terminó con 10 sesiones... ¿Cuánto pagaría por una sesión más?",
             "prefixes": [
                 "Pagar 100 pesos",
                 "Pagar 150 pesos",
@@ -73,7 +73,7 @@
         {
             "question_id": "benefit_most",
             "type": "singleselect",
-            "query": "Antes de revelar quién de sus hijos/as recibió cuántos vales, ¿quién cree que se beneficiaría más del curso?",
+            "query": "¿Quién, entre sus dos hijos/as, cree que se beneficiaría más del curso?",
             "values": ["{child1name}", "{child2name}"],
             "datatype": "text",
             "required": true
@@ -89,15 +89,24 @@
         {
             "question_id": "transfer_skill",
             "type": "singleselect",
-            "query": "¿Qué tan difícil cree que sería para sus hijos/as enseñar a sus hermanos sobre el contenido del curso?",
+            "query": "¿Qué tan difícil cree que sería para sus hijos/as enseñar a sus hermanos/as sobre el contenido del curso?",
             "values": ["Nada difícil", "Algo difícil", "Algo fácil", "Muy fácil"],
             "datatype": "text",
             "required": true
         },
         {
+            "question_id": "ineq_aver",
+            "type": "open",
+            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir “no me describe para nada” y 10 significa “me describe perfectamente”.<br><br>Si yo estuviera en una situación en la que tuviera que distribuir recursos con otros, priorizaría la equidad por encima de aumentar mis propios beneficios.",
+            "datatype": "number",
+            "required": true
+
+        },
+        {
             "question_id": "prompt_end",
             "type": "plaintext",
-            "text": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación. Durante el ejercicio de asignación de unidades, el color naranja fue asignado a {child1name}, y el color verde fue asignado a {child2name}. Esto quiere decir que {child1name} ha obtenido {allocation_num_final_1} y {child2name} recibe {allocation_num_final_2} sesiones del curso de Inteligencia Artificial. Nosotros inscribiremos de manera automática a sus hijos/as al curso, y además le entregaremos en este momento los vales in físico. Si tiene cualquier otra duda, no dude en hacérnosla saber."
+            "text": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación.<br><br> Nos pondremos en contacto con usted para informarle sobre el número de cursos al que sus hijos/as tendrán acceso, las fechas, y el proceso de inscripción gratuito y voluntario."
+
         }
     ]
 }

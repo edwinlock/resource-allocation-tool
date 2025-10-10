@@ -1,6 +1,6 @@
 // Main application entry point - modularized slider application
 import { CONFIG } from './modules/constants.js';
-import { SCENARIOS, loadScenarios } from './modules/scenario-loader.js';
+import { SCENARIOS, SCENARIOS_METADATA, loadScenarios } from './modules/scenario-loader.js';
 import { appState } from './modules/app-state.js';
 import { ChartManager } from './modules/chart-factory.js';
 import { uiManager } from './modules/ui-slider.js';
@@ -45,11 +45,27 @@ class SliderApp {
             const scenariosFile = isDummyMode ? 'scenarios-dummy.json' : 'scenarios.json';
             await loadScenarios(scenariosFile);
 
-            // Update the total scenarios display in the UI
+            // Update the UI with scenarios metadata
             const totalScenariosSpan = document.getElementById('total-scenarios');
             if (totalScenariosSpan) {
                 totalScenariosSpan.textContent = SCENARIOS.length;
             }
+
+            // Update infotext from scenarios metadata
+            const infotextElement = document.getElementById('scenarios-infotext');
+            if (infotextElement && SCENARIOS_METADATA.infotext) {
+                infotextElement.innerHTML = SCENARIOS_METADATA.infotext;
+            }
+
+            // Update child names in the UI
+            const child1NameElements = document.querySelectorAll('.child1-name, #child1-name');
+            const child2NameElements = document.querySelectorAll('.child2-name, #child2-name');
+            child1NameElements.forEach(el => {
+                el.textContent = SCENARIOS_METADATA.child1_name || 'Child 1';
+            });
+            child2NameElements.forEach(el => {
+                el.textContent = SCENARIOS_METADATA.child2_name || 'Child 2';
+            });
 
             if (!sessionId) {
                 throw new Error('No session ID provided in URL. Please access this page from the session manager.');
@@ -58,23 +74,13 @@ class SliderApp {
             // Load session from database
             const session = await this.loadSessionFromDatabase(sessionId);
 
-            // Check if slider has already been completed
-            if (session.sliderStatus === 'completed') {
-                throw new Error('This slider session has already been completed. Please return to the session manager to view results.');
-            }
+            // Note: We allow re-doing the slider - existing responses will be overwritten
+            // when the slider is completed (saveAllResponses deletes old ones first)
 
-            // Show practice round message if in dummy mode
-            if (isDummyMode) {
-                const practiceMessage = document.getElementById('practice-round-message');
-                if (practiceMessage) {
-                    practiceMessage.style.display = 'block';
-                }
-            }
-
-            // Initialize ChartManager with generic child labels
+            // Initialize ChartManager with child names from scenarios metadata
             this.chartManager = new ChartManager(
-                'Child 1',
-                'Child 2'
+                SCENARIOS_METADATA.child1_name || 'Child 1',
+                SCENARIOS_METADATA.child2_name || 'Child 2'
             );
 
             // Update app state with real session data and dummy mode flag
