@@ -6,7 +6,6 @@ from flask import render_template, request, jsonify, current_app, send_file
 from flask_security import login_required, roles_required, current_user, hash_password
 from babel.dates import format_datetime
 import pandas as pd
-from sqlalchemy.exc import IntegrityError
 # render_table is available in Jinja2 templates via flask_bootstrap
 from webapp.models import db, Session, ChildSession, ParentSession, SurveyResponse, SliderResponse, User, Role
 
@@ -196,10 +195,12 @@ def create_slider_response_objects(session_id, slider_responses):
     """Create list of SliderResponse objects."""
     slider_objects = []
     for response in slider_responses:
+        # Include scenarios_id in the ID to prevent duplicates between practice and real sliders
+        scenarios_id = response['scenariosId']
         new_slider_response = SliderResponse(
-            id=f"{session_id}_slider_{response['displayOrder']}",
+            id=f"{session_id}_{scenarios_id}_slider_{response['displayOrder']}",
             parent_session_id=session_id,  # Now links to parent_session
-            scenarios_id=response['scenariosId'],  # Include scenarios_id
+            scenarios_id=scenarios_id,  # Include scenarios_id
             scenario_number=response['scenarioNumber'],
             display_order=response['displayOrder'],
             child1_investment=response['child1investment'],  # Frontend uses lowercase 'investment'
@@ -220,50 +221,26 @@ def create_slider_response_objects(session_id, slider_responses):
     return slider_objects
 
 def save_session_data(session_obj, survey_objects, slider_objects):
-    """Save all session data in a single database transaction."""
+    """Save all session data in a single database transaction.
+
+    Uses merge() to update existing records or insert new ones.
+    This allows re-uploading sessions without errors.
+    """
     try:
-        # Add all objects to the session
-        db.session.add(session_obj)
+        # Merge session (updates if exists, inserts if new)
+        db.session.merge(session_obj)
+
+        # Merge survey responses
         for survey_obj in survey_objects:
-            db.session.add(survey_obj)
+            db.session.merge(survey_obj)
+
+        # Merge slider responses
         for slider_obj in slider_objects:
-            db.session.add(slider_obj)
+            db.session.merge(slider_obj)
 
         # Commit the transaction
         db.session.commit()
         return True, None
-
-    except IntegrityError as e:
-        db.session.rollback()
-        error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
-        current_app.logger.error(f"Database integrity error: {error_msg}")
-
-        # Check for specific constraint violations
-        if 'UNIQUE constraint failed' in error_msg or 'unique constraint' in error_msg.lower():
-            if 'session.id' in error_msg:
-                return False, {
-                    "error": "duplicate_session",
-                    "message": "A session with this ID already exists",
-                    "details": {"session_id": session_obj.id}
-                }
-            elif 'unique_session_survey_question' in error_msg:
-                return False, {
-                    "error": "duplicate_survey_response",
-                    "message": "Duplicate survey response detected",
-                    "details": {"error": error_msg}
-                }
-            else:
-                return False, {
-                    "error": "duplicate_entry",
-                    "message": "A duplicate entry was detected",
-                    "details": {"error": error_msg}
-                }
-        else:
-            return False, {
-                "error": "integrity_error",
-                "message": "Database constraint violation",
-                "details": {"error": error_msg}
-            }
 
     except Exception as e:
         db.session.rollback()
