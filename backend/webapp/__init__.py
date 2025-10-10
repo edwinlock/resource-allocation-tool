@@ -81,6 +81,28 @@ def create_users():
         user_datastore.add_role_to_user(edwin_user, admin_role)
         user_datastore.add_role_to_user(edwin_user, enum_role)
 
+    # Create Michelle   
+    michelle_email = os.environ.get('MICHELLE_EMAIL', 'michelle.gonzalez.am@gmail.com')
+    if not user_datastore.find_user(email=michelle_email):
+        michelle_user = user_datastore.create_user(
+            email=michelle_email,
+            password=hash_password("learn_michelle"),
+            active=True
+        )
+        user_datastore.add_role_to_user(michelle_user, admin_role)
+        user_datastore.add_role_to_user(michelle_user, enum_role)
+
+    # Create Esther   
+    esther_email = os.environ.get('ESTHER_EMAIL', 'esther.gehrke@wur.nl')
+    if not user_datastore.find_user(email=esther_email):
+        esther_user = user_datastore.create_user(
+            email=esther_email,
+            password=hash_password("learn_esther"),
+            active=True
+        )
+        user_datastore.add_role_to_user(esther_user, admin_role)
+        user_datastore.add_role_to_user(esther_user, enum_role)
+
     db.session.commit()
 
 with app.app_context():
