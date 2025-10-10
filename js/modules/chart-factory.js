@@ -606,17 +606,17 @@ export class ChartManager {
                 this.charts.multiBarChart.options.plugins.datalabels = getDataLabelsConfig('multiBar', selectedIndex, sd);
                 
                 // Update highlighting for selected bar
-                const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#aecbea');
-                const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ffc788');
-                const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill('#1f77b4');
-                const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill('#ff7f0e');
+                const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR);  // Light green
+                const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR);  // Light orange
+                const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR);  // Green
+                const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR);  // Orange
                 const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(0);
-                
-                // Highlight selected bar
-                backgroundColors1[selectedIndex] = '#1f77b4';
-                backgroundColors2[selectedIndex] = '#ff7f0e';
-                borderColors1[selectedIndex] = '#0f4c75';
-                borderColors2[selectedIndex] = '#cc5500';
+
+                // Highlight selected bar (darker for selected)
+                backgroundColors1[selectedIndex] = CHILD1_COLOR;  // Green
+                backgroundColors2[selectedIndex] = CHILD2_COLOR;  // Orange
+                borderColors1[selectedIndex] = CHILD1_DARK_COLOR;  // Dark green
+                borderColors2[selectedIndex] = CHILD2_DARK_COLOR;  // Dark orange
                 
                 this.charts.multiBarChart.data.datasets[0].backgroundColor = backgroundColors1;
                 this.charts.multiBarChart.data.datasets[0].borderColor = borderColors1;
