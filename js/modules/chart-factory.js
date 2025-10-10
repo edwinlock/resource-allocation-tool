@@ -85,6 +85,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
             y: {
                 ...baseY,
                 title: { display: false, text: 'Earnings' },
+                ticks: { display: false },  // Hide Y-axis numbers
                 grid: { display: true, color: '#f0f0f0' }
             }
         };
@@ -100,6 +101,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
             y: {
                 ...baseY,
                 title: { display: false, text: 'Earnings' },
+                ticks: { display: false },  // Hide Y-axis numbers
                 grid: { display: false },
                 stacked: true
             }
