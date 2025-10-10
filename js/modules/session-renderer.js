@@ -395,6 +395,7 @@ export class SessionRenderer {
             if (tbody) {
                 tbody.innerHTML = responses.map(response => `
                     <tr>
+                        <td>${response.scenariosId || '-'}</td>
                         <td>${response.displayOrder}</td>
                         <td>${response.scenarioNumber}</td>
                         <td>${response.child1investment}</td>

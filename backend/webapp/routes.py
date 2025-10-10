@@ -199,6 +199,7 @@ def create_slider_response_objects(session_id, slider_responses):
         new_slider_response = SliderResponse(
             id=f"{session_id}_slider_{response['displayOrder']}",
             parent_session_id=session_id,  # Now links to parent_session
+            scenarios_id=response['scenariosId'],  # Include scenarios_id
             scenario_number=response['scenarioNumber'],
             display_order=response['displayOrder'],
             child1_investment=response['child1investment'],  # Frontend uses lowercase 'investment'
@@ -650,6 +651,7 @@ def generate_slider_responses_df():
             'response_id': response.id,
             'parent_session_id': response.parent_session_id,
             'family_id': parent_session.family_id if parent_session else None,
+            'scenarios_id': response.scenarios_id,
             'scenario_number': response.scenario_number,
             'display_order': response.display_order,
             'child1_investment': response.child1_investment,
