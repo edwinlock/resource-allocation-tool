@@ -10,7 +10,8 @@ from flask_babel import Babel
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_security.signals import user_registered
+
 
 app = Flask(__name__)
 app.config.from_object('webapp.config.Config')
@@ -36,12 +37,12 @@ CORS(app,
 # )
 
 # Initialize rate limiter
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://",
-)
-limiter.init_app(app)
+# limiter = Limiter(
+#     key_func=get_remote_address,
+#     default_limits=["200 per day", "50 per hour"],
+#     storage_uri="memory://",
+# )
+# limiter.init_app(app)
 
 # Set up Flask-Security
 # Define models for Flask-Security
@@ -103,6 +104,12 @@ def create_users():
         user_datastore.add_role_to_user(esther_user, admin_role)
         user_datastore.add_role_to_user(esther_user, enum_role)
 
+    db.session.commit()
+
+@user_registered.connect_via(app)
+def user_registered_sighandler(sender, user, **extra):
+    default_role = user_datastore.find_role("enumerator")
+    user_datastore.add_role_to_user(user, default_role)
     db.session.commit()
 
 with app.app_context():
