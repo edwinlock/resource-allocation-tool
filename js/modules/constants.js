@@ -10,14 +10,14 @@ export const CONFIG = {
 
 // Chart Colors - colorblind-friendly matplotlib-style palette
 export const COLORS = {
-    CHILD1_COLOR: '#1f77b4',        // Matplotlib blue border
-    CHILD1_BG_COLOR: '#aecbea',     // Light blue background
-    CHILD1_DARK_COLOR: '#0f4c75',   // Dark blue for highlighting/text
-    CHILD2_COLOR: '#ff7f0e',        // Matplotlib orange border
+    CHILD1_COLOR: '#2ca02c',        // Green for Child 1
+    CHILD1_BG_COLOR: '#a8d4a8',     // Light green background
+    CHILD1_DARK_COLOR: '#1a701a',   // Dark green for highlighting/text
+    CHILD2_COLOR: '#ff7f0e',        // Orange for Child 2
     CHILD2_BG_COLOR: '#ffc788',     // Light orange background
     CHILD2_DARK_COLOR: '#cc5500',   // Dark orange for highlighting/text
-    COMBINED_COLOR: '#2ca02c',      // Matplotlib green border
-    COMBINED_BG_COLOR: '#a8d4a8',   // Light green background
+    COMBINED_COLOR: '#1f77b4',      // Blue for Combined
+    COMBINED_BG_COLOR: '#aecbea',   // Light blue background
     LABEL_BG_COLOR: 'rgba(255, 255, 255, 0.9)',  // Semi-transparent white for labels
     LABEL_BORDER_COLOR: '#ccc'      // Light gray for label borders
 };

@@ -6,10 +6,10 @@
     "scenarios": [
         {
             "name": "A",
-            "description": "σ=1, θ=1",
+            "description": "σ=1, θ=2",
             "gamma": 0.5,
             "sigma": 1,
-            "theta": 1
+            "theta": 2
         }
     ]
 }
