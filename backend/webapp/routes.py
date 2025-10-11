@@ -6,6 +6,7 @@ from flask import render_template, request, jsonify, current_app, send_file
 from flask_security import login_required, roles_required, current_user, hash_password
 from babel.dates import format_datetime
 import pandas as pd
+from sqlalchemy.exc import IntegrityError
 # render_table is available in Jinja2 templates via flask_bootstrap
 from webapp.models import db, Session, ChildSession, ParentSession, SurveyResponse, SliderResponse, User, Role
 
@@ -224,28 +225,113 @@ def create_slider_response_objects(session_id, slider_responses):
 def save_session_data(session_obj, survey_objects, slider_objects):
     """Save all session data in a single database transaction.
 
-    Uses merge() to update existing records or insert new ones.
-    This allows re-uploading sessions without errors.
+    Attempts to INSERT new records. If session already exists (IntegrityError),
+    updates the existing session instead. This allows re-uploading sessions.
     """
+    session_id = session_obj.id
+    session_type = session_obj.session_type
+
+    current_app.logger.info(f"Attempting to save {session_type} session {session_id} with {len(survey_objects)} survey responses and {len(slider_objects)} slider responses")
+
     try:
-        # Merge session (updates if exists, inserts if new)
-        db.session.merge(session_obj)
+        # Try to add new session
+        db.session.add(session_obj)
 
-        # Merge survey responses
+        # Add survey responses
         for survey_obj in survey_objects:
-            db.session.merge(survey_obj)
+            db.session.add(survey_obj)
 
-        # Merge slider responses
+        # Add slider responses
         for slider_obj in slider_objects:
-            db.session.merge(slider_obj)
+            db.session.add(slider_obj)
 
         # Commit the transaction
         db.session.commit()
+        current_app.logger.info(f"Successfully inserted new {session_type} session {session_id}")
         return True, None
+
+    except IntegrityError as e:
+        # Session already exists - rollback and update instead
+        db.session.rollback()
+        current_app.logger.warning(f"Session {session_id} already exists (IntegrityError), attempting to update instead. Error: {str(e)}")
+
+        try:
+            # Query existing session
+            existing_session = db.session.get(type(session_obj), session_id)
+
+            if existing_session:
+                current_app.logger.info(f"Found existing session {session_id}, updating attributes")
+
+                # Update existing session attributes
+                updated_fields = []
+                for key, value in session_obj.__dict__.items():
+                    if not key.startswith('_'):  # Skip SQLAlchemy internal attributes
+                        old_value = getattr(existing_session, key, None)
+                        if old_value != value:
+                            updated_fields.append(key)
+                        setattr(existing_session, key, value)
+
+                if updated_fields:
+                    current_app.logger.info(f"Updated fields for session {session_id}: {', '.join(updated_fields)}")
+
+                # Update or add survey responses
+                surveys_updated = 0
+                surveys_added = 0
+                for survey_obj in survey_objects:
+                    existing_survey = db.session.get(SurveyResponse, survey_obj.id)
+                    if existing_survey:
+                        # Update existing
+                        for key, value in survey_obj.__dict__.items():
+                            if not key.startswith('_'):
+                                setattr(existing_survey, key, value)
+                        surveys_updated += 1
+                    else:
+                        # Add new
+                        db.session.add(survey_obj)
+                        surveys_added += 1
+
+                current_app.logger.info(f"Survey responses for session {session_id}: {surveys_updated} updated, {surveys_added} added")
+
+                # Update or add slider responses
+                sliders_updated = 0
+                sliders_added = 0
+                for slider_obj in slider_objects:
+                    existing_slider = db.session.get(SliderResponse, slider_obj.id)
+                    if existing_slider:
+                        # Update existing
+                        for key, value in slider_obj.__dict__.items():
+                            if not key.startswith('_'):
+                                setattr(existing_slider, key, value)
+                        sliders_updated += 1
+                    else:
+                        # Add new
+                        db.session.add(slider_obj)
+                        sliders_added += 1
+
+                if slider_objects:
+                    current_app.logger.info(f"Slider responses for session {session_id}: {sliders_updated} updated, {sliders_added} added")
+
+                db.session.commit()
+                current_app.logger.info(f"Successfully updated existing {session_type} session {session_id}")
+                return True, None
+            else:
+                # This shouldn't happen, but handle it
+                error_msg = f"Session {session_id} reported as existing but not found in database"
+                current_app.logger.error(error_msg)
+                raise Exception(error_msg)
+
+        except Exception as update_error:
+            db.session.rollback()
+            current_app.logger.error(f"Failed to update existing session {session_id}: {str(update_error)}")
+            return False, {
+                "error": "update_failed",
+                "message": "Failed to update existing session data",
+                "details": {"error": str(update_error)}
+            }
 
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Database transaction failed: {str(e)}")
+        current_app.logger.error(f"Database transaction failed for session {session_id}: {str(e)}")
         return False, {
             "error": "transaction_failed",
             "message": "Failed to save session data",
@@ -301,10 +387,6 @@ def upload_session_page():
         session_id = session_metadata['sessionId']
 
         # 4. Check business rules
-        session_exists, error_response = check_session_exists(session_id)
-        if session_exists:
-            return jsonify(error_response), 409
-
         enumerator_valid, enumerator, error_response = validate_enumerator_exists(session_metadata['enumeratorId'])
         if not enumerator_valid:
             return jsonify(error_response), 422
