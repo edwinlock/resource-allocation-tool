@@ -11,10 +11,21 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
 from flask_security.signals import user_registered
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 app = Flask(__name__)
 app.config.from_object('webapp.config.Config')
+
+# Configure ProxyFix for PythonAnywhere reverse proxy
+# This allows Flask to see the real client IP from X-Forwarded-For headers
+app.wsgi_app = ProxyFix(
+    app.wsgi_app,
+    x_for=1,      # Trust X-Forwarded-For from 1 proxy
+    x_proto=1,    # Trust X-Forwarded-Proto from 1 proxy
+    x_host=1,     # Trust X-Forwarded-Host from 1 proxy
+    x_prefix=1    # Trust X-Forwarded-Prefix from 1 proxy
+)
 
 # Initialise plugins
 csrf = CSRFProtect(app)
