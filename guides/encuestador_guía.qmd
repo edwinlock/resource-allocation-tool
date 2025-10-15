@@ -1,0 +1,287 @@
+---
+format: html
+toc: true
+---
+
+## App de Encuestas
+
+Esta aplicación te ayuda a administrar y realizar sesiones experimentales con niños y padres. La aplicación funciona sin conexión, por lo que puedes recopilar datos incluso sin acceso a internet.
+
+## 1. Inicio de Sesión
+
+### Cuándo Iniciar Sesión
+
+* **Solo inicia sesión cuando tengas acceso a internet**
+* Inicia sesión al comienzo de tu periodo de recolección de datos
+* Tus credenciales de inicio identificarán que tú eres el encuestador de todas las sesiones que generes
+
+### Cómo Iniciar Sesión
+
+1. Haz clic en el botón **🔑 Login** en la esquina superior derecha
+2. Ingresa tu correo electrónico y contraseña
+3. Haz clic en **Login**
+4. Una vez dentro, verás tu nombre e ID en la esquina superior derecha
+
+### ⚠️ Advertencia Importante
+
+**¡NO cierres sesión cuando no tengas conexión a internet!**
+
+* Si cierras sesión sin internet, no podrás volver a entrar
+* Solo puedes iniciar sesión cuando tengas conexión a internet
+* Permanece con la sesión iniciada durante todo el periodo de recolección de datos sin conexión
+
+---
+
+## 2. Creación de Sesiones
+
+Una vez que hayas iniciado sesión, tu ID de encuestador se llenará automáticamente al crear nuevas sesiones.
+
+### Crear una Sesión para Estudiantes
+
+1. Haz clic en **👶 New Child Session**
+2. Aparecerá un formulario con tu ID de encuestador prellenado (no se puede cambiar)
+3. Completa la información requerida:
+
+   * **School**: Selecciona la escuela de la lista desplegable
+   * **Family ID**: Ingresa el identificador de la familia
+   * **Child ID**: Ingresa el identificador del estudiante
+   * **Child Name**: Ingresa el primer nombre del estudiante (sin apellidos)
+4. Haz clic en **Create Session**
+
+### Crear una Sesión de Padres
+
+1. Haz clic en **👨‍👩‍👧‍👦 New Parent Session**
+2. Aparecerá un formulario con tu ID de encuestador prellenado (no se puede cambiar)
+3. Completa la información requerida:
+
+   * **School**: Selecciona de la lista desplegable (determina si es grupo de tratamiento o control)
+   * **Family ID**: Ingresa el identificador de la familia (
+   * **Child 1 Name**: Ingresa el nombre del primer hijo deberás pedirles que te compartan el primer nombre de uno de sus hijos/as)
+   * **Child 2 Name**: Ingresa el nombre del segundo hijo deberás pedirles que te compartan el primer nombre de uno de sus hijos/as)
+4. Haz clic en **Create Session**
+
+---
+
+## 3. Ejecución de Sesiones
+
+### Tabla de Sesiones Actuales
+
+La tabla **📝 Current Sessions** muestra todas las sesiones que aún no se han subido. Las sesiones más recientes aparecen arriba.
+
+**Columnas de la Tabla:**
+
+* **Session ID**: Identificador único de la sesión (primeros 8 caracteres)
+* **FamID**: Identificador de familia
+* **EnumID**: Tu ID de encuestador
+* **Session**: Tipo (Niño o Padres)
+* **Status**: Muestra el estado de finalización
+
+  * **Incomplete**: Faltan componentes por terminar
+  * **Redady to Upload**: Todos los componentes completados
+
+**Colores de Fila:**
+
+* **Azul Claro**: Sesiones de estudiantes
+* **Verde Claro**: Sesiones de padres
+
+### Iniciar una Sesión
+
+#### Para Sesiones de Estudiantes:
+
+1. Busca la sesión en la tabla de Current Sessions
+2. Haz clic en el botón **Start**
+3. Completa el cuestionario del estudiante
+4. La sesión guardará automáticamente tu progreso
+
+#### Para Sesiones de Padres:
+
+1. Busca la sesión en la tabla de Sesiones Actuales
+2. Haz clic en el botón **Start**
+3. Completa los siguientes componentes:
+
+   * **Parent Questionnaire** (todos los grupos)
+   * **Slider (deslizador)** (solo grupo de tratamiento)
+   * **Exit Survey** (solo grupo de tratamiento)
+4. La sesión guardará automáticamente tu progreso
+
+### Entendiendo el Estado de la Sesión
+
+* Botón **Start** **blue/green**: Sesión lista para comenzar o continuar
+* Botón **Start ✓** **gris**: Sesión completa
+* Etiqueta **Incomplete**: Indica los componentes que faltan
+
+---
+
+## 4. Ver Detalles de una Sesión
+
+### ¿Por Qué Revisar los Detalles?
+
+Siempre verifica que los datos se hayan registrado correctamente antes de subirlos.
+
+### Cómo Ver los Detalles
+
+1. Busca la sesión en la tabla de Current Sessions o en Uploaded Sessions
+2. Haz clic en el botón **Details**
+3. Revisa la información de la sesión:
+
+   * **Session Overview**: IDs, fechas, información de la escuela
+   * **Session Status**: Estado de finalización de cada componente
+   * **Survey Responses**: Todas las respuestas registradas
+   * **Slider Responses**: Decisiones de inversión (solo padres del grupo de tratamiento)
+
+### Qué Verificar
+
+* ✅ Todos los componentes requeridos aparecen como “Completados”
+* ✅ Las respuestas del cuestionario están presentes y correctas
+* ✅ Las respuestas del control deslizante están registradas (para padres de tratamiento)
+* ✅ Las fechas y horas parecen razonables
+
+---
+
+## 5. Subir Sesiones Completadas
+
+### Requisitos para Subir
+
+* ✅ Debes haber **iniciado sesión**
+* ✅ Debes tener **conexión a internet**
+* ✅ La sesión debe estar **completa** (todos los componentes terminados)
+
+### Entendiendo el Botón de Subida
+
+El botón **⬆️ Upload Completed** cambia según tu estado:
+
+**Cuando NO has iniciado sesión o NO tienes sesiones completas:**
+
+* El botón muestra: **"⬆️ Upload Completed"**
+* El botón está **gris** y deshabilitado
+* No puedes subir
+
+**Cuando has iniciado sesión Y tienes sesiones completas:**
+
+* El botón muestra: **"⬆️ Upload X Completed Session(s)"** (donde X es la cantidad)
+* El botón está **verde** y habilitado
+* Haz clic para subir todas las sesiones completadas
+
+### Cómo Subir
+
+1. Asegúrate de haber iniciado sesión y tener internet
+2. Revisa el botón de subida:
+
+   * Si está verde y muestra un número, tienes sesiones listas para subir
+   * Si está gris, o no has iniciado sesión o no tienes sesiones completas
+3. Haz clic en el **botón de Upload**
+4. La aplicación subirá todas las sesiones completadas de una sola vez
+5. Verás un mensaje de éxito con la cantidad de sesiones subidas
+
+### Después de Subir
+
+* Las sesiones subidas se moverán a la tabla **✅ Uploaded Sessions**
+* Se registrará la fecha y hora de subida
+* Aún podrás ver los detalles de las sesiones subidas para verificar
+
+---
+
+## 6. Administración de Sesiones
+
+### Eliminar una Sesión
+
+Si necesitas eliminar una sesión (por ejemplo, información incorrecta):
+
+1. Busca la sesión en la tabla de Sesiones Actuales
+2. Haz clic en el botón **Delete**
+3. Confirma la eliminación
+4. ⚠️ **Warning**: ¡Esto no se puede deshacer!
+
+### Conteo de Sesiones
+
+En la parte superior de la página verás:
+
+* **Current**: Número de sesiones aún no subidas
+* **Uploaded**: Número de sesiones subidas exitosamente
+* **Total**: Número total de sesiones en la base de datos
+
+---
+
+## 7. Solución de Problemas
+
+### “No puedo iniciar sesión”
+
+* ✅ Verifica que tengas conexión a internet
+* ✅ Asegúrate de que tu correo y contraseña sean correctos
+* ✅ Confirma que no hayas iniciado sesión ya
+
+### “El botón de upload está gris”
+
+* ✅ Verifica que hayas iniciado sesión (deberías ver tu nombre arriba a la derecha)
+* ✅ Asegúrate de tener conexión a internet
+* ✅ Revisa que las sesiones estén completas (no digan “Incompleta”)
+* ✅ Si el botón dice “Subir Sesiones Completadas” (sin número), no tienes sesiones listas
+
+### “El estado de mi sesión dice Incompleta”
+
+* Haz clic en **Details** para ver qué componentes faltan
+* Completa los componentes faltantes:
+
+  * Sesiones de niños: Cuestionario del niño
+  * Sesiones de padres (control): Cuestionario de padres
+  * Sesiones de padres (tratamiento): Cuestionario de padres + Ejercicio deslizante + Encuesta de salida
+
+### “Cerré sesión sin internet por accidente”
+
+* Deberás esperar a tener conexión a internet para volver a iniciar sesión
+* Tus sesiones locales están seguras y no se perderán
+* Cuando tengas internet, inicia sesión y continúa normalmente
+
+---
+
+## 8. Buenas Prácticas
+
+### Al Comenzar el Día
+
+1. ✅ Conéctate a internet
+2. ✅ Inicia sesión en la aplicación
+3. ✅ Verifica que veas tu nombre e ID en la esquina superior derecha
+4. ✅ Mantén la aplicación abierta en tu navegador
+
+### Durante la Recolección de Datos (Sin Conexión)
+
+1. ✅ Crea sesiones según sea necesario
+2. ✅ Realiza las sesiones con los participantes
+3. ✅ Verifica los detalles de las sesiones después de completarlas
+4. ✅ **NO cierres sesión**
+
+### Al Final del Día (Con Internet)
+
+1. ✅ Conéctate a internet
+2. ✅ Verifica que sigas con sesión iniciada
+3. ✅ Revisa el botón de subida – debe mostrar una cantidad si hay sesiones listas
+4. ✅ Haz clic en el botón de subir para enviar todas las sesiones completadas
+5. ✅ Verifica que la subida haya sido exitosa
+6. ✅ Revisa la tabla de Sesiones Subidas para confirmar
+
+### Emergencia: Reiniciar la Base de Datos Local
+
+* Hay un botón **Reset Local DB** en la parte inferior de la página
+* ⚠️ **DANGER**: Esto borra TODAS las sesiones de tu dispositivo
+* Úsalo solo si tu supervisor te lo indica
+* Esto **NO afecta** las sesiones que ya se subieron al servidor
+
+---
+
+## Referencia Rápida
+
+| Acción                 | Botón / Ubicación                       | Requisitos                                      |
+| ---------------------- | --------------------------------------- | ----------------------------------------------- |
+| Iniciar Sesión         | 🔑 Login (arriba a la derecha) | Conexión a internet                             |
+| Crear Sesión de Estudiante   | 👶 New Child Session                 | Sesión iniciada                                 |
+| Crear Sesión de Padres | 👨‍👩‍👧‍👦 New Parent Session      | Sesión iniciada                                 |
+| Iniciar Sesión         | Start (en la fila de la tabla)        | Sesión creada                                   |
+| Ver Detalles           | Details (en la fila de la tabla)       | En cualquier momento                            |
+| Subir Sesiones         | ⬆️ Upload Completed                    | Sesión iniciada + Internet + Sesiones completas |
+| Eliminar Sesión        | Delete (en la fila de la tabla)       | En cualquier momento                            |
+
+---
+
+## Soporte
+
+Si encuentras algún problema no cubierto en esta guía, contacta a tu supervisor o al equipo de soporte técnico (Edwin o Michelle).

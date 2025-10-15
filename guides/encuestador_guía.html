@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>encuestador_guía</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="encuestador_guía_files/libs/clipboard/clipboard.min.js"></script>
+<script src="encuestador_guía_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="encuestador_guía_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="encuestador_guía_files/libs/quarto-html/popper.min.js"></script>
+<script src="encuestador_guía_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="encuestador_guía_files/libs/quarto-html/anchor.min.js"></script>
+<link href="encuestador_guía_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="encuestador_guía_files/libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="encuestador_guía_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="encuestador_guía_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="encuestador_guía_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#app-de-encuestas" id="toc-app-de-encuestas" class="nav-link active" data-scroll-target="#app-de-encuestas">App de Encuestas</a></li>
+  <li><a href="#inicio-de-sesión" id="toc-inicio-de-sesión" class="nav-link" data-scroll-target="#inicio-de-sesión">1. Inicio de Sesión</a>
+  <ul class="collapse">
+  <li><a href="#cuándo-iniciar-sesión" id="toc-cuándo-iniciar-sesión" class="nav-link" data-scroll-target="#cuándo-iniciar-sesión">Cuándo Iniciar Sesión</a></li>
+  <li><a href="#cómo-iniciar-sesión" id="toc-cómo-iniciar-sesión" class="nav-link" data-scroll-target="#cómo-iniciar-sesión">Cómo Iniciar Sesión</a></li>
+  <li><a href="#advertencia-importante" id="toc-advertencia-importante" class="nav-link" data-scroll-target="#advertencia-importante">⚠️ Advertencia Importante</a></li>
+  </ul></li>
+  <li><a href="#creación-de-sesiones" id="toc-creación-de-sesiones" class="nav-link" data-scroll-target="#creación-de-sesiones">2. Creación de Sesiones</a>
+  <ul class="collapse">
+  <li><a href="#crear-una-sesión-para-estudiantes" id="toc-crear-una-sesión-para-estudiantes" class="nav-link" data-scroll-target="#crear-una-sesión-para-estudiantes">Crear una Sesión para Estudiantes</a></li>
+  <li><a href="#crear-una-sesión-de-padres" id="toc-crear-una-sesión-de-padres" class="nav-link" data-scroll-target="#crear-una-sesión-de-padres">Crear una Sesión de Padres</a></li>
+  </ul></li>
+  <li><a href="#ejecución-de-sesiones" id="toc-ejecución-de-sesiones" class="nav-link" data-scroll-target="#ejecución-de-sesiones">3. Ejecución de Sesiones</a>
+  <ul class="collapse">
+  <li><a href="#tabla-de-sesiones-actuales" id="toc-tabla-de-sesiones-actuales" class="nav-link" data-scroll-target="#tabla-de-sesiones-actuales">Tabla de Sesiones Actuales</a></li>
+  <li><a href="#iniciar-una-sesión" id="toc-iniciar-una-sesión" class="nav-link" data-scroll-target="#iniciar-una-sesión">Iniciar una Sesión</a></li>
+  <li><a href="#entendiendo-el-estado-de-la-sesión" id="toc-entendiendo-el-estado-de-la-sesión" class="nav-link" data-scroll-target="#entendiendo-el-estado-de-la-sesión">Entendiendo el Estado de la Sesión</a></li>
+  </ul></li>
+  <li><a href="#ver-detalles-de-una-sesión" id="toc-ver-detalles-de-una-sesión" class="nav-link" data-scroll-target="#ver-detalles-de-una-sesión">4. Ver Detalles de una Sesión</a>
+  <ul class="collapse">
+  <li><a href="#por-qué-revisar-los-detalles" id="toc-por-qué-revisar-los-detalles" class="nav-link" data-scroll-target="#por-qué-revisar-los-detalles">¿Por Qué Revisar los Detalles?</a></li>
+  <li><a href="#cómo-ver-los-detalles" id="toc-cómo-ver-los-detalles" class="nav-link" data-scroll-target="#cómo-ver-los-detalles">Cómo Ver los Detalles</a></li>
+  <li><a href="#qué-verificar" id="toc-qué-verificar" class="nav-link" data-scroll-target="#qué-verificar">Qué Verificar</a></li>
+  </ul></li>
+  <li><a href="#subir-sesiones-completadas" id="toc-subir-sesiones-completadas" class="nav-link" data-scroll-target="#subir-sesiones-completadas">5. Subir Sesiones Completadas</a>
+  <ul class="collapse">
+  <li><a href="#requisitos-para-subir" id="toc-requisitos-para-subir" class="nav-link" data-scroll-target="#requisitos-para-subir">Requisitos para Subir</a></li>
+  <li><a href="#entendiendo-el-botón-de-subida" id="toc-entendiendo-el-botón-de-subida" class="nav-link" data-scroll-target="#entendiendo-el-botón-de-subida">Entendiendo el Botón de Subida</a></li>
+  <li><a href="#cómo-subir" id="toc-cómo-subir" class="nav-link" data-scroll-target="#cómo-subir">Cómo Subir</a></li>
+  <li><a href="#después-de-subir" id="toc-después-de-subir" class="nav-link" data-scroll-target="#después-de-subir">Después de Subir</a></li>
+  </ul></li>
+  <li><a href="#administración-de-sesiones" id="toc-administración-de-sesiones" class="nav-link" data-scroll-target="#administración-de-sesiones">6. Administración de Sesiones</a>
+  <ul class="collapse">
+  <li><a href="#eliminar-una-sesión" id="toc-eliminar-una-sesión" class="nav-link" data-scroll-target="#eliminar-una-sesión">Eliminar una Sesión</a></li>
+  <li><a href="#conteo-de-sesiones" id="toc-conteo-de-sesiones" class="nav-link" data-scroll-target="#conteo-de-sesiones">Conteo de Sesiones</a></li>
+  </ul></li>
+  <li><a href="#solución-de-problemas" id="toc-solución-de-problemas" class="nav-link" data-scroll-target="#solución-de-problemas">7. Solución de Problemas</a>
+  <ul class="collapse">
+  <li><a href="#no-puedo-iniciar-sesión" id="toc-no-puedo-iniciar-sesión" class="nav-link" data-scroll-target="#no-puedo-iniciar-sesión">“No puedo iniciar sesión”</a></li>
+  <li><a href="#el-botón-de-upload-está-gris" id="toc-el-botón-de-upload-está-gris" class="nav-link" data-scroll-target="#el-botón-de-upload-está-gris">“El botón de upload está gris”</a></li>
+  <li><a href="#el-estado-de-mi-sesión-dice-incompleta" id="toc-el-estado-de-mi-sesión-dice-incompleta" class="nav-link" data-scroll-target="#el-estado-de-mi-sesión-dice-incompleta">“El estado de mi sesión dice Incompleta”</a></li>
+  <li><a href="#cerré-sesión-sin-internet-por-accidente" id="toc-cerré-sesión-sin-internet-por-accidente" class="nav-link" data-scroll-target="#cerré-sesión-sin-internet-por-accidente">“Cerré sesión sin internet por accidente”</a></li>
+  </ul></li>
+  <li><a href="#buenas-prácticas" id="toc-buenas-prácticas" class="nav-link" data-scroll-target="#buenas-prácticas">8. Buenas Prácticas</a>
+  <ul class="collapse">
+  <li><a href="#al-comenzar-el-día" id="toc-al-comenzar-el-día" class="nav-link" data-scroll-target="#al-comenzar-el-día">Al Comenzar el Día</a></li>
+  <li><a href="#durante-la-recolección-de-datos-sin-conexión" id="toc-durante-la-recolección-de-datos-sin-conexión" class="nav-link" data-scroll-target="#durante-la-recolección-de-datos-sin-conexión">Durante la Recolección de Datos (Sin Conexión)</a></li>
+  <li><a href="#al-final-del-día-con-internet" id="toc-al-final-del-día-con-internet" class="nav-link" data-scroll-target="#al-final-del-día-con-internet">Al Final del Día (Con Internet)</a></li>
+  <li><a href="#emergencia-reiniciar-la-base-de-datos-local" id="toc-emergencia-reiniciar-la-base-de-datos-local" class="nav-link" data-scroll-target="#emergencia-reiniciar-la-base-de-datos-local">Emergencia: Reiniciar la Base de Datos Local</a></li>
+  </ul></li>
+  <li><a href="#referencia-rápida" id="toc-referencia-rápida" class="nav-link" data-scroll-target="#referencia-rápida">Referencia Rápida</a></li>
+  <li><a href="#soporte" id="toc-soporte" class="nav-link" data-scroll-target="#soporte">Soporte</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="app-de-encuestas" class="level2">
+<h2 class="anchored" data-anchor-id="app-de-encuestas">App de Encuestas</h2>
+<p>Esta aplicación te ayuda a administrar y realizar sesiones experimentales con niños y padres. La aplicación funciona sin conexión, por lo que puedes recopilar datos incluso sin acceso a internet.</p>
+</section>
+<section id="inicio-de-sesión" class="level2">
+<h2 class="anchored" data-anchor-id="inicio-de-sesión">1. Inicio de Sesión</h2>
+<section id="cuándo-iniciar-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="cuándo-iniciar-sesión">Cuándo Iniciar Sesión</h3>
+<ul>
+<li><strong>Solo inicia sesión cuando tengas acceso a internet</strong></li>
+<li>Inicia sesión al comienzo de tu periodo de recolección de datos</li>
+<li>Tus credenciales de inicio identificarán que tú eres el encuestador de todas las sesiones que generes</li>
+</ul>
+</section>
+<section id="cómo-iniciar-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="cómo-iniciar-sesión">Cómo Iniciar Sesión</h3>
+<ol type="1">
+<li>Haz clic en el botón <strong>🔑 Login</strong> en la esquina superior derecha</li>
+<li>Ingresa tu correo electrónico y contraseña</li>
+<li>Haz clic en <strong>Login</strong></li>
+<li>Una vez dentro, verás tu nombre e ID en la esquina superior derecha</li>
+</ol>
+</section>
+<section id="advertencia-importante" class="level3">
+<h3 class="anchored" data-anchor-id="advertencia-importante">⚠️ Advertencia Importante</h3>
+<p><strong>¡NO cierres sesión cuando no tengas conexión a internet!</strong></p>
+<ul>
+<li>Si cierras sesión sin internet, no podrás volver a entrar</li>
+<li>Solo puedes iniciar sesión cuando tengas conexión a internet</li>
+<li>Permanece con la sesión iniciada durante todo el periodo de recolección de datos sin conexión</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="creación-de-sesiones" class="level2">
+<h2 class="anchored" data-anchor-id="creación-de-sesiones">2. Creación de Sesiones</h2>
+<p>Una vez que hayas iniciado sesión, tu ID de encuestador se llenará automáticamente al crear nuevas sesiones.</p>
+<section id="crear-una-sesión-para-estudiantes" class="level3">
+<h3 class="anchored" data-anchor-id="crear-una-sesión-para-estudiantes">Crear una Sesión para Estudiantes</h3>
+<ol type="1">
+<li><p>Haz clic en <strong>👶 New Child Session</strong></p></li>
+<li><p>Aparecerá un formulario con tu ID de encuestador prellenado (no se puede cambiar)</p></li>
+<li><p>Completa la información requerida:</p>
+<ul>
+<li><strong>School</strong>: Selecciona la escuela de la lista desplegable</li>
+<li><strong>Family ID</strong>: Ingresa el identificador de la familia</li>
+<li><strong>Child ID</strong>: Ingresa el identificador del estudiante</li>
+<li><strong>Child Name</strong>: Ingresa el primer nombre del estudiante (sin apellidos)</li>
+</ul></li>
+<li><p>Haz clic en <strong>Create Session</strong></p></li>
+</ol>
+</section>
+<section id="crear-una-sesión-de-padres" class="level3">
+<h3 class="anchored" data-anchor-id="crear-una-sesión-de-padres">Crear una Sesión de Padres</h3>
+<ol type="1">
+<li><p>Haz clic en <strong>👨‍👩‍👧‍👦 New Parent Session</strong></p></li>
+<li><p>Aparecerá un formulario con tu ID de encuestador prellenado (no se puede cambiar)</p></li>
+<li><p>Completa la información requerida:</p>
+<ul>
+<li><strong>School</strong>: Selecciona de la lista desplegable (determina si es grupo de tratamiento o control)</li>
+<li><strong>Family ID</strong>: Ingresa el identificador de la familia (</li>
+<li><strong>Child 1 Name</strong>: Ingresa el nombre del primer hijo deberás pedirles que te compartan el primer nombre de uno de sus hijos/as)</li>
+<li><strong>Child 2 Name</strong>: Ingresa el nombre del segundo hijo deberás pedirles que te compartan el primer nombre de uno de sus hijos/as)</li>
+</ul></li>
+<li><p>Haz clic en <strong>Create Session</strong></p></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="ejecución-de-sesiones" class="level2">
+<h2 class="anchored" data-anchor-id="ejecución-de-sesiones">3. Ejecución de Sesiones</h2>
+<section id="tabla-de-sesiones-actuales" class="level3">
+<h3 class="anchored" data-anchor-id="tabla-de-sesiones-actuales">Tabla de Sesiones Actuales</h3>
+<p>La tabla <strong>📝 Current Sessions</strong> muestra todas las sesiones que aún no se han subido. Las sesiones más recientes aparecen arriba.</p>
+<p><strong>Columnas de la Tabla:</strong></p>
+<ul>
+<li><p><strong>Session ID</strong>: Identificador único de la sesión (primeros 8 caracteres)</p></li>
+<li><p><strong>FamID</strong>: Identificador de familia</p></li>
+<li><p><strong>EnumID</strong>: Tu ID de encuestador</p></li>
+<li><p><strong>Session</strong>: Tipo (Niño o Padres)</p></li>
+<li><p><strong>Status</strong>: Muestra el estado de finalización</p>
+<ul>
+<li><strong>Incomplete</strong>: Faltan componentes por terminar</li>
+<li><strong>Redady to Upload</strong>: Todos los componentes completados</li>
+</ul></li>
+</ul>
+<p><strong>Colores de Fila:</strong></p>
+<ul>
+<li><strong>Azul Claro</strong>: Sesiones de estudiantes</li>
+<li><strong>Verde Claro</strong>: Sesiones de padres</li>
+</ul>
+</section>
+<section id="iniciar-una-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="iniciar-una-sesión">Iniciar una Sesión</h3>
+<section id="para-sesiones-de-estudiantes" class="level4">
+<h4 class="anchored" data-anchor-id="para-sesiones-de-estudiantes">Para Sesiones de Estudiantes:</h4>
+<ol type="1">
+<li>Busca la sesión en la tabla de Current Sessions</li>
+<li>Haz clic en el botón <strong>Start</strong></li>
+<li>Completa el cuestionario del estudiante</li>
+<li>La sesión guardará automáticamente tu progreso</li>
+</ol>
+</section>
+<section id="para-sesiones-de-padres" class="level4">
+<h4 class="anchored" data-anchor-id="para-sesiones-de-padres">Para Sesiones de Padres:</h4>
+<ol type="1">
+<li><p>Busca la sesión en la tabla de Sesiones Actuales</p></li>
+<li><p>Haz clic en el botón <strong>Start</strong></p></li>
+<li><p>Completa los siguientes componentes:</p>
+<ul>
+<li><strong>Parent Questionnaire</strong> (todos los grupos)</li>
+<li><strong>Slider (deslizador)</strong> (solo grupo de tratamiento)</li>
+<li><strong>Exit Survey</strong> (solo grupo de tratamiento)</li>
+</ul></li>
+<li><p>La sesión guardará automáticamente tu progreso</p></li>
+</ol>
+</section>
+</section>
+<section id="entendiendo-el-estado-de-la-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="entendiendo-el-estado-de-la-sesión">Entendiendo el Estado de la Sesión</h3>
+<ul>
+<li>Botón <strong>Start</strong> <strong>blue/green</strong>: Sesión lista para comenzar o continuar</li>
+<li>Botón <strong>Start ✓</strong> <strong>gris</strong>: Sesión completa</li>
+<li>Etiqueta <strong>Incomplete</strong>: Indica los componentes que faltan</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="ver-detalles-de-una-sesión" class="level2">
+<h2 class="anchored" data-anchor-id="ver-detalles-de-una-sesión">4. Ver Detalles de una Sesión</h2>
+<section id="por-qué-revisar-los-detalles" class="level3">
+<h3 class="anchored" data-anchor-id="por-qué-revisar-los-detalles">¿Por Qué Revisar los Detalles?</h3>
+<p>Siempre verifica que los datos se hayan registrado correctamente antes de subirlos.</p>
+</section>
+<section id="cómo-ver-los-detalles" class="level3">
+<h3 class="anchored" data-anchor-id="cómo-ver-los-detalles">Cómo Ver los Detalles</h3>
+<ol type="1">
+<li><p>Busca la sesión en la tabla de Current Sessions o en Uploaded Sessions</p></li>
+<li><p>Haz clic en el botón <strong>Details</strong></p></li>
+<li><p>Revisa la información de la sesión:</p>
+<ul>
+<li><strong>Session Overview</strong>: IDs, fechas, información de la escuela</li>
+<li><strong>Session Status</strong>: Estado de finalización de cada componente</li>
+<li><strong>Survey Responses</strong>: Todas las respuestas registradas</li>
+<li><strong>Slider Responses</strong>: Decisiones de inversión (solo padres del grupo de tratamiento)</li>
+</ul></li>
+</ol>
+</section>
+<section id="qué-verificar" class="level3">
+<h3 class="anchored" data-anchor-id="qué-verificar">Qué Verificar</h3>
+<ul>
+<li>✅ Todos los componentes requeridos aparecen como “Completados”</li>
+<li>✅ Las respuestas del cuestionario están presentes y correctas</li>
+<li>✅ Las respuestas del control deslizante están registradas (para padres de tratamiento)</li>
+<li>✅ Las fechas y horas parecen razonables</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="subir-sesiones-completadas" class="level2">
+<h2 class="anchored" data-anchor-id="subir-sesiones-completadas">5. Subir Sesiones Completadas</h2>
+<section id="requisitos-para-subir" class="level3">
+<h3 class="anchored" data-anchor-id="requisitos-para-subir">Requisitos para Subir</h3>
+<ul>
+<li>✅ Debes haber <strong>iniciado sesión</strong></li>
+<li>✅ Debes tener <strong>conexión a internet</strong></li>
+<li>✅ La sesión debe estar <strong>completa</strong> (todos los componentes terminados)</li>
+</ul>
+</section>
+<section id="entendiendo-el-botón-de-subida" class="level3">
+<h3 class="anchored" data-anchor-id="entendiendo-el-botón-de-subida">Entendiendo el Botón de Subida</h3>
+<p>El botón <strong>⬆️ Upload Completed</strong> cambia según tu estado:</p>
+<p><strong>Cuando NO has iniciado sesión o NO tienes sesiones completas:</strong></p>
+<ul>
+<li>El botón muestra: <strong>“⬆️ Upload Completed”</strong></li>
+<li>El botón está <strong>gris</strong> y deshabilitado</li>
+<li>No puedes subir</li>
+</ul>
+<p><strong>Cuando has iniciado sesión Y tienes sesiones completas:</strong></p>
+<ul>
+<li>El botón muestra: <strong>“⬆️ Upload X Completed Session(s)”</strong> (donde X es la cantidad)</li>
+<li>El botón está <strong>verde</strong> y habilitado</li>
+<li>Haz clic para subir todas las sesiones completadas</li>
+</ul>
+</section>
+<section id="cómo-subir" class="level3">
+<h3 class="anchored" data-anchor-id="cómo-subir">Cómo Subir</h3>
+<ol type="1">
+<li><p>Asegúrate de haber iniciado sesión y tener internet</p></li>
+<li><p>Revisa el botón de subida:</p>
+<ul>
+<li>Si está verde y muestra un número, tienes sesiones listas para subir</li>
+<li>Si está gris, o no has iniciado sesión o no tienes sesiones completas</li>
+</ul></li>
+<li><p>Haz clic en el <strong>botón de Upload</strong></p></li>
+<li><p>La aplicación subirá todas las sesiones completadas de una sola vez</p></li>
+<li><p>Verás un mensaje de éxito con la cantidad de sesiones subidas</p></li>
+</ol>
+</section>
+<section id="después-de-subir" class="level3">
+<h3 class="anchored" data-anchor-id="después-de-subir">Después de Subir</h3>
+<ul>
+<li>Las sesiones subidas se moverán a la tabla <strong>✅ Uploaded Sessions</strong></li>
+<li>Se registrará la fecha y hora de subida</li>
+<li>Aún podrás ver los detalles de las sesiones subidas para verificar</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="administración-de-sesiones" class="level2">
+<h2 class="anchored" data-anchor-id="administración-de-sesiones">6. Administración de Sesiones</h2>
+<section id="eliminar-una-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="eliminar-una-sesión">Eliminar una Sesión</h3>
+<p>Si necesitas eliminar una sesión (por ejemplo, información incorrecta):</p>
+<ol type="1">
+<li>Busca la sesión en la tabla de Sesiones Actuales</li>
+<li>Haz clic en el botón <strong>Delete</strong></li>
+<li>Confirma la eliminación</li>
+<li>⚠️ <strong>Warning</strong>: ¡Esto no se puede deshacer!</li>
+</ol>
+</section>
+<section id="conteo-de-sesiones" class="level3">
+<h3 class="anchored" data-anchor-id="conteo-de-sesiones">Conteo de Sesiones</h3>
+<p>En la parte superior de la página verás:</p>
+<ul>
+<li><strong>Current</strong>: Número de sesiones aún no subidas</li>
+<li><strong>Uploaded</strong>: Número de sesiones subidas exitosamente</li>
+<li><strong>Total</strong>: Número total de sesiones en la base de datos</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="solución-de-problemas" class="level2">
+<h2 class="anchored" data-anchor-id="solución-de-problemas">7. Solución de Problemas</h2>
+<section id="no-puedo-iniciar-sesión" class="level3">
+<h3 class="anchored" data-anchor-id="no-puedo-iniciar-sesión">“No puedo iniciar sesión”</h3>
+<ul>
+<li>✅ Verifica que tengas conexión a internet</li>
+<li>✅ Asegúrate de que tu correo y contraseña sean correctos</li>
+<li>✅ Confirma que no hayas iniciado sesión ya</li>
+</ul>
+</section>
+<section id="el-botón-de-upload-está-gris" class="level3">
+<h3 class="anchored" data-anchor-id="el-botón-de-upload-está-gris">“El botón de upload está gris”</h3>
+<ul>
+<li>✅ Verifica que hayas iniciado sesión (deberías ver tu nombre arriba a la derecha)</li>
+<li>✅ Asegúrate de tener conexión a internet</li>
+<li>✅ Revisa que las sesiones estén completas (no digan “Incompleta”)</li>
+<li>✅ Si el botón dice “Subir Sesiones Completadas” (sin número), no tienes sesiones listas</li>
+</ul>
+</section>
+<section id="el-estado-de-mi-sesión-dice-incompleta" class="level3">
+<h3 class="anchored" data-anchor-id="el-estado-de-mi-sesión-dice-incompleta">“El estado de mi sesión dice Incompleta”</h3>
+<ul>
+<li><p>Haz clic en <strong>Details</strong> para ver qué componentes faltan</p></li>
+<li><p>Completa los componentes faltantes:</p>
+<ul>
+<li>Sesiones de niños: Cuestionario del niño</li>
+<li>Sesiones de padres (control): Cuestionario de padres</li>
+<li>Sesiones de padres (tratamiento): Cuestionario de padres + Ejercicio deslizante + Encuesta de salida</li>
+</ul></li>
+</ul>
+</section>
+<section id="cerré-sesión-sin-internet-por-accidente" class="level3">
+<h3 class="anchored" data-anchor-id="cerré-sesión-sin-internet-por-accidente">“Cerré sesión sin internet por accidente”</h3>
+<ul>
+<li>Deberás esperar a tener conexión a internet para volver a iniciar sesión</li>
+<li>Tus sesiones locales están seguras y no se perderán</li>
+<li>Cuando tengas internet, inicia sesión y continúa normalmente</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="buenas-prácticas" class="level2">
+<h2 class="anchored" data-anchor-id="buenas-prácticas">8. Buenas Prácticas</h2>
+<section id="al-comenzar-el-día" class="level3">
+<h3 class="anchored" data-anchor-id="al-comenzar-el-día">Al Comenzar el Día</h3>
+<ol type="1">
+<li>✅ Conéctate a internet</li>
+<li>✅ Inicia sesión en la aplicación</li>
+<li>✅ Verifica que veas tu nombre e ID en la esquina superior derecha</li>
+<li>✅ Mantén la aplicación abierta en tu navegador</li>
+</ol>
+</section>
+<section id="durante-la-recolección-de-datos-sin-conexión" class="level3">
+<h3 class="anchored" data-anchor-id="durante-la-recolección-de-datos-sin-conexión">Durante la Recolección de Datos (Sin Conexión)</h3>
+<ol type="1">
+<li>✅ Crea sesiones según sea necesario</li>
+<li>✅ Realiza las sesiones con los participantes</li>
+<li>✅ Verifica los detalles de las sesiones después de completarlas</li>
+<li>✅ <strong>NO cierres sesión</strong></li>
+</ol>
+</section>
+<section id="al-final-del-día-con-internet" class="level3">
+<h3 class="anchored" data-anchor-id="al-final-del-día-con-internet">Al Final del Día (Con Internet)</h3>
+<ol type="1">
+<li>✅ Conéctate a internet</li>
+<li>✅ Verifica que sigas con sesión iniciada</li>
+<li>✅ Revisa el botón de subida – debe mostrar una cantidad si hay sesiones listas</li>
+<li>✅ Haz clic en el botón de subir para enviar todas las sesiones completadas</li>
+<li>✅ Verifica que la subida haya sido exitosa</li>
+<li>✅ Revisa la tabla de Sesiones Subidas para confirmar</li>
+</ol>
+</section>
+<section id="emergencia-reiniciar-la-base-de-datos-local" class="level3">
+<h3 class="anchored" data-anchor-id="emergencia-reiniciar-la-base-de-datos-local">Emergencia: Reiniciar la Base de Datos Local</h3>
+<ul>
+<li>Hay un botón <strong>Reset Local DB</strong> en la parte inferior de la página</li>
+<li>⚠️ <strong>DANGER</strong>: Esto borra TODAS las sesiones de tu dispositivo</li>
+<li>Úsalo solo si tu supervisor te lo indica</li>
+<li>Esto <strong>NO afecta</strong> las sesiones que ya se subieron al servidor</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="referencia-rápida" class="level2">
+<h2 class="anchored" data-anchor-id="referencia-rápida">Referencia Rápida</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 36%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acción</th>
+<th>Botón / Ubicación</th>
+<th>Requisitos</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Iniciar Sesión</td>
+<td>🔑 Login (arriba a la derecha)</td>
+<td>Conexión a internet</td>
+</tr>
+<tr class="even">
+<td>Crear Sesión de Estudiante</td>
+<td>👶 New Child Session</td>
+<td>Sesión iniciada</td>
+</tr>
+<tr class="odd">
+<td>Crear Sesión de Padres</td>
+<td>👨‍👩‍👧‍👦 New Parent Session</td>
+<td>Sesión iniciada</td>
+</tr>
+<tr class="even">
+<td>Iniciar Sesión</td>
+<td>Start (en la fila de la tabla)</td>
+<td>Sesión creada</td>
+</tr>
+<tr class="odd">
+<td>Ver Detalles</td>
+<td>Details (en la fila de la tabla)</td>
+<td>En cualquier momento</td>
+</tr>
+<tr class="even">
+<td>Subir Sesiones</td>
+<td>⬆️ Upload Completed</td>
+<td>Sesión iniciada + Internet + Sesiones completas</td>
+</tr>
+<tr class="odd">
+<td>Eliminar Sesión</td>
+<td>Delete (en la fila de la tabla)</td>
+<td>En cualquier momento</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="soporte" class="level2">
+<h2 class="anchored" data-anchor-id="soporte">Soporte</h2>
+<p>Si encuentras algún problema no cubierto en esta guía, contacta a tu supervisor o al equipo de soporte técnico (Edwin o Michelle).</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
