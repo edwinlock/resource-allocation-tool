@@ -130,11 +130,12 @@ def user_registered_sighandler(sender, user, **extra):
     user_datastore.add_role_to_user(user, default_role)
     db.session.commit()
 
-# Initialize default users on first request
+# Initialize default users when the app starts
 # Note: Database tables are created via flask db upgrade (migrations)
-@app.before_request
-def before_first_request():
-    """Create default users if they don't exist."""
-    if not hasattr(app, '_users_created'):
+with app.app_context():
+    try:
         create_users()
-        app._users_created = True
+    except Exception as e:
+        # Log the error but don't crash the app
+        # This can happen if tables don't exist yet (e.g., before migrations run)
+        app.logger.warning(f'Could not create default users on startup: {str(e)}')
