@@ -1,0 +1,343 @@
+---
+title: "Resource Allocation Slider: Technical Documentation"
+format: html
+---
+
+## Overview
+
+The slider page presents participants with multiple scenarios where they allocate resources between two children. The system randomizes which child has higher initial ability per scenario, computes economic outcomes based on participant choices, and stores all data for analysis.
+
+## Data Flow: From JSON Configuration to Saved Output
+
+### 1. Scenario Configuration (JSON Files)
+
+Three scenario files exist:
+
+- `scenarios/scenarios.json` - Main experiment scenarios (6 scenarios: C, D, E, F, G, H)
+- `scenarios/scenarios-dummy.json` - First practice scenario (Walmart/Soriana framing)
+- `scenarios/scenarios-dummy-2.json` - Second practice scenario
+
+#### Global Metadata (per JSON file)
+
+Each JSON file contains:
+
+- `scenarios_id`: Unique identifier (e.g., "main-v1", "practice-v1")
+- `allocatable_budget`: Total resources to distribute (9 units)
+- `max_sessions`: Maximum allowed sessions (15)
+- `child_high_name` / `child_low_name`: Labels for high/low ability children
+- **Color scheme:**
+  - High child: Orange (`#ff7f0e`)
+  - Low child: Green (`#2ca02c`)
+  - Combined: Blue (`#1f77b4`)
+- `infotext`: Instructions displayed to participants
+
+#### Per-Scenario Parameters
+
+Each scenario within the JSON file specifies:
+
+- `name`: Scenario identifier (e.g., "C", "D", "dummy-sigma1theta2")
+- `gamma` (γ): Skill complementarity parameter (0.5)
+- `sigma` (σ): Substitutability parameter (ranges: -2, 0, 0.5, 1)
+- `theta` (θ): Returns to scale parameter (1 or 2)
+- `pre_earnings`: Array `[high_value, low_value]` for initial abilities
+  - Examples: `[5, 2]`, `[6, 1]`, `[4, 3]`
+
+### 2. Randomization (Per Scenario)
+
+When each scenario loads, the following randomization occurs:
+
+1. **Coin flip** determines which child (1 or 2) is "high ability"
+   ```javascript
+   // Uses cryptographically secure random number generator
+   const randomBuffer = new Uint32Array(1);
+   crypto.getRandomValues(randomBuffer);
+   high_child = (randomBuffer[0] % 2) + 1;  // Returns 1 or 2
+   ```
+
+   **Random Number Generator Quality:**
+   - Uses `crypto.getRandomValues()` (Web Crypto API)
+   - Cryptographically secure, meets NIST SP 800-90A standards
+   - Superior to `Math.random()` for experimental research
+   - Provides true 50/50 probability with no predictability
+   - Consistent quality across all browsers
+
+2. **Pre-earnings assigned** based on flip:
+   - If `high_child === 1`:
+     - Child 1 gets `pre_earnings[0]` (high)
+     - Child 2 gets `pre_earnings[1]` (low)
+   - If `high_child === 2`:
+     - Child 1 gets `pre_earnings[1]` (low)
+     - Child 2 gets `pre_earnings[0]` (high)
+
+3. **Child labels and colors** update dynamically:
+   - High child → orange color + `child_high_name` label
+   - Low child → green color + `child_low_name` label
+   - **Important:** X-axis always shows "Investment in Child 1" (positional, not ability-based)
+
+### 3. Economic Calculations
+
+For each possible investment allocation (0-9 units to Child 1), the system computes:
+
+#### Computation Formula
+
+$$
+\alpha = \frac{B^{1-\gamma}}{(e_1^\sigma + e_2^\sigma)^{\frac{1-\gamma}{\sigma}}}
+$$
+
+$$
+y_1 = \alpha \cdot (e_1^\sigma + x_1^\sigma)^{\frac{\theta}{\sigma}}
+$$
+
+$$
+y_2 = \alpha \cdot (e_2^\sigma + x_2^\sigma)^{\frac{\theta}{\sigma}}
+$$
+
+$$
+y_{total} = y_1 + y_2
+$$
+
+Where:
+
+- $B$ = `allocatable_budget` (9 units)
+- $e_1, e_2$ = `pre_earnings1`, `pre_earnings2` (randomized per scenario)
+- $x_1$ = `child1_investment` (participant's choice)
+- $x_2$ = `child2_investment` = $B - x_1$
+- $\gamma, \sigma, \theta$ = scenario parameters
+- $\alpha$ = normalization constant
+- $y_1, y_2$ = final earnings for each child
+- $y_{total}$ = aggregate household earnings
+
+All earnings values are **rounded to integers** for display.
+
+The computation creates arrays indexed by `child1_investment` (0 to `allocatable_budget`), allowing instant lookup as the slider moves.
+
+### 4. User Interface
+
+Participants interact with:
+
+#### Progress Tracking
+- **Progress bar**: Shows current scenario number / total scenarios
+- **Scenario counter**: "Scenario X of Y"
+
+#### Allocation Control
+- **Slider control**: Allocates units between Child 1 and Child 2
+  - Range: 0 to `allocatable_budget` (9)
+  - Resets to 0 (leftmost) for each new scenario
+  - Must be moved to enable "Next Scenario" button
+  - Shows current allocation for each child in real-time
+
+#### Visualization
+- **Interactive graphs**:
+  - Multi-bar chart (default) or line chart
+  - Shows earnings for each child + combined total
+  - Updates in real-time as slider moves
+  - Colors match high/low child assignment (orange/green)
+  - Selected allocation point highlighted
+
+#### Dynamic Labels
+- **Child names**: Display dynamically based on `high_child` value
+  - If Child 1 is high: Child 1 shows `child_high_name`, Child 2 shows `child_low_name`
+  - If Child 2 is high: Child 1 shows `child_low_name`, Child 2 shows `child_high_name`
+  - Labels update when advancing to new scenario
+  - Chart colors also update to match (high child = orange, low child = green)
+
+### 5. Data Stored Per Response
+
+For each scenario, the following is saved to both **IndexedDB** (offline frontend storage) and **backend SQLite database**:
+
+#### Scenario Identification
+| Field | Type | Description |
+|-------|------|-------------|
+| `scenariosId` | String | Which scenario set (main-v1, practice-v1, etc.) |
+| `scenarioNumber` | Integer | Index in array (0-5 for main scenarios) |
+| `scenarioName` | String | Scenario identifier ("C", "D", "E", etc.) |
+| `displayOrder` | Integer | Presentation order (1-6, randomized per participant) |
+
+#### Participant Choice
+| Field | Type | Description |
+|-------|------|-------------|
+| `child1investment` | Integer | Units allocated to Child 1 (0-9) |
+| `child2investment` | Integer | Units allocated to Child 2 (explicit, not computed) |
+| `allocatableBudget` | Integer | Total available units (9) |
+
+#### Randomization
+| Field | Type | Description |
+|-------|------|-------------|
+| `highChild` | Integer | Which child (1 or 2) was assigned high pre-earnings |
+| `preEarnings1` | Float | Child 1's initial ability (varies by coin flip) |
+| `preEarnings2` | Float | Child 2's initial ability (varies by coin flip) |
+
+#### Scenario Parameters
+| Field | Type | Description |
+|-------|------|-------------|
+| `scenarioGamma` | Float | Skill complementarity parameter (γ) |
+| `scenarioSigma` | Float | Substitutability parameter (σ) |
+| `scenarioTheta` | Float | Returns to scale parameter (θ) |
+
+#### Computed Outcomes
+| Field | Type | Description |
+|-------|------|-------------|
+| `scenarioAlpha` | Float | Computed normalization constant (α) |
+| `child1FinalEarnings` | Float | Child 1's final earnings (rounded) |
+| `child2FinalEarnings` | Float | Child 2's final earnings (rounded) |
+| `aggregateFinalEarnings` | Float | Total household earnings (rounded) |
+
+#### Metadata
+| Field | Type | Description |
+|-------|------|-------------|
+| `completedAt` | DateTime | UTC timestamp of response |
+| `sessionId` | String | Links to parent session |
+
+## Key Features for Analysis
+
+### 1. No Defaults or Fallbacks
+All values are **explicitly stored**. No field is computed from other stored data during analysis. This ensures data integrity and reproducibility.
+
+### 2. Randomization Tracking
+The `highChild` field enables analysis of:
+
+- **Ability-based effects**: Do parents favor the high-ability child?
+- **Positional effects**: Do parents favor Child 1 regardless of ability?
+- **Interaction effects**: Does the relationship vary by scenario parameters?
+
+**Important**: The `highChild` field is **critical** for the research design. Without it, you cannot distinguish between:
+- Parents who favor Child 1 due to position bias (always giving more to the first child)
+- Parents who favor the high-ability child regardless of position
+
+This field must be stored with every slider response for meaningful analysis.
+
+### 3. Full Reproducibility
+All parameters stored allow exact reconstruction of:
+
+- The scenario presented to the participant
+- The economic outcomes shown in the graphs
+- The randomization state (which child was high/low)
+
+### 4. Scenario Set Separation
+The `scenariosId` field allows filtering:
+
+- Practice scenarios (`practice-v1`, `practice-v2`) vs. real data (`main-v1`)
+- Different versions of the same experiment
+- Comparison across scenario configurations
+
+### 5. Order Tracking
+The `displayOrder` field preserves presentation sequence for analyzing:
+
+- Fatigue effects (do allocations change over time?)
+- Learning effects (do participants adjust strategy?)
+- Consistency across scenarios
+
+## Workflow Integration
+
+### Treatment Group Workflow
+```
+Treatment Survey
+  → Dummy Slider 1 (practice-v1)
+  → Dummy Slider 2 (practice-v2)
+  → Sandwich Survey
+  → Real Slider (main-v1)
+  → Exit Survey
+```
+
+### Control Group Workflow
+```
+Control Survey
+  (No sliders - survey only)
+```
+
+### Redirection Logic
+
+After completing each slider phase:
+
+- **practice-v1** → Redirects to `slider.html?sessionId={id}&dummy=2`
+- **practice-v2** → Redirects to `survey.html?survey_id=Sandwich&session_id={id}`
+- **main-v1** → Redirects to `survey.html?survey_id=Exit&session_id={id}`
+
+### URL Parameter System
+
+The same `slider.html` page is reused for all three slider instances, differentiated by URL parameters:
+
+- **First practice slider**: `slider.html?sessionId={id}&dummy=1`
+  - Loads `scenarios/scenarios-dummy.json`
+  - Contains `scenarios_id: "practice-v1"`
+
+- **Second practice slider**: `slider.html?sessionId={id}&dummy=2`
+  - Loads `scenarios/scenarios-dummy-2.json`
+  - Contains `scenarios_id: "practice-v2"`
+
+- **Real slider**: `slider.html?sessionId={id}`
+  - Loads `scenarios/scenarios.json` (no dummy parameter)
+  - Contains `scenarios_id: "main-v1"`
+
+The `dummy` parameter is essential for distinguishing between practice and real sliders, and for loading the correct scenario configuration.
+
+## Technical Implementation Notes
+
+### Frontend Storage (IndexedDB)
+- Database: `SliderResponseDB`
+- Schema version: 7
+- Stores responses offline before syncing to backend
+- Survives page refresh and browser restart
+
+### Backend Storage (SQLite)
+- Table: `slider_response`
+- All fields non-nullable (ensures data completeness)
+- Foreign key to `parent_session` table
+- Indexed on `parent_session_id` and `display_order`
+
+### Color Scheme (Colorblind-Friendly)
+- **High child (Orange)**: `#ff7f0e` (border), `#ffc788` (fill), `#cc5500` (dark)
+- **Low child (Green)**: `#2ca02c` (border), `#a8d4a8` (fill), `#1a701a` (dark)
+- **Combined (Blue)**: `#1f77b4` (border), `#aecbea` (fill)
+
+These colors are specified in the scenarios JSON files and loaded dynamically, allowing easy customization per scenario set.
+
+## Example Scenario Configuration
+
+```json
+{
+  "scenarios_id": "main-v1",
+  "infotext": "You will be shown <span id=\"total-scenarios\">6</span> scenarios...",
+  "child_high_name": "Alto",
+  "child_low_name": "Bajo",
+  "allocatable_budget": 9,
+  "max_sessions": 15,
+  "child_high_color": "#ff7f0e",
+  "child_high_bg_color": "#ffc788",
+  "child_high_dark_color": "#cc5500",
+  "child_low_color": "#2ca02c",
+  "child_low_bg_color": "#a8d4a8",
+  "child_low_dark_color": "#1a701a",
+  "combined_color": "#1f77b4",
+  "combined_bg_color": "#aecbea",
+  "label_bg_color": "rgba(255, 255, 255, 0.9)",
+  "label_border_color": "#ccc",
+  "scenarios": [
+    {
+      "name": "C",
+      "description": "σ=0.5, θ=1",
+      "gamma": 0.5,
+      "sigma": 0.5,
+      "theta": 1,
+      "pre_earnings": [5, 2]
+    },
+    {
+      "name": "D",
+      "description": "σ=0, θ=1",
+      "gamma": 0.5,
+      "sigma": 0,
+      "theta": 1,
+      "pre_earnings": [5, 2]
+    }
+  ]
+}
+```
+
+## Data Export
+
+Slider responses can be exported from the backend `/data` route as:
+
+- **CSV**: Flat table with one row per scenario response
+- **JSON**: Hierarchical structure preserving all relationships
+
+Both formats include all fields listed in the "Data Stored Per Response" section above.

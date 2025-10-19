@@ -114,10 +114,6 @@ class ParentSession(Session):
     school = db.Column(db.String(255), nullable=False)
     group_type = db.Column(db.String(50), nullable=False)  # 'treatment' or 'control'
 
-    # Pre-earnings for economic model
-    preEarnings1 = db.Column(db.Integer, nullable=False)
-    preEarnings2 = db.Column(db.Integer, nullable=False)
-
     # Survey status tracking
     survey_status = db.Column(db.String(50), default='not_started')
     survey_completed_at = db.Column(db.DateTime, nullable=True)
@@ -141,8 +137,6 @@ class ParentSession(Session):
     # Constraints
     __table_args__ = (
         db.Index('idx_parent_family', 'family_id'),
-        db.CheckConstraint('preEarnings1 >= 1 AND preEarnings1 <= 6', name='check_preEarnings1'),
-        db.CheckConstraint('preEarnings2 >= 1 AND preEarnings2 <= 6', name='check_preEarnings2'),
         db.CheckConstraint("group_type IN ('treatment', 'control')", name='check_group_type'),
     )
 
@@ -178,8 +172,6 @@ class ParentSession(Session):
             'child2_name': self.child2_name,
             'school': self.school,
             'group_type': self.group_type,
-            'preEarnings1': self.preEarnings1,
-            'preEarnings2': self.preEarnings2,
             'survey_status': self.survey_status,
             'survey_completed_at': self.survey_completed_at.isoformat() if self.survey_completed_at else None,
             'exit_survey_status': self.exit_survey_status,
@@ -245,6 +237,7 @@ class SliderResponse(db.Model):
     # Session-specific inputs (vary by family)
     pre_earnings1 = db.Column(db.Float, nullable=False)
     pre_earnings2 = db.Column(db.Float, nullable=False)
+    high_child = db.Column(db.Integer, nullable=False)  # Which child (1 or 2) has higher pre-earnings
 
     # Computed economic values
     scenario_alpha = db.Column(db.Float, nullable=False)
@@ -276,6 +269,7 @@ class SliderResponse(db.Model):
             'scenario_theta': self.scenario_theta,
             'pre_earnings1': self.pre_earnings1,
             'pre_earnings2': self.pre_earnings2,
+            'high_child': self.high_child,
             'scenario_alpha': self.scenario_alpha,
             'child1_final_earnings': self.child1_final_earnings,
             'child2_final_earnings': self.child2_final_earnings,

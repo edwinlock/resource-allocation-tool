@@ -7,6 +7,26 @@ import { uiManager } from './modules/ui-slider.js';
 import { sessionManager } from './modules/session-coordinator.js';
 import { getUTCDate } from './modules/utilities.js';
 
+// Helper function to update child labels based on which child is high
+function updateChildLabels() {
+    const isChild1High = appState.session.high_child === 1;
+
+    // Determine names based on which child is high
+    const child1Name = isChild1High ? SCENARIOS_METADATA.child_high_name : SCENARIOS_METADATA.child_low_name;
+    const child2Name = isChild1High ? SCENARIOS_METADATA.child_low_name : SCENARIOS_METADATA.child_high_name;
+
+    // Update all child name elements in the UI
+    const child1NameElements = document.querySelectorAll('.child1-name, #child1-name');
+    const child2NameElements = document.querySelectorAll('.child2-name, #child2-name');
+
+    child1NameElements.forEach(el => {
+        el.textContent = child1Name || 'Child 1';
+    });
+    child2NameElements.forEach(el => {
+        el.textContent = child2Name || 'Child 2';
+    });
+}
+
 // Application initialization
 class SliderApp {
     constructor() {
@@ -73,15 +93,8 @@ class SliderApp {
                 infotextElement.innerHTML = SCENARIOS_METADATA.infotext;
             }
 
-            // Update child names in the UI
-            const child1NameElements = document.querySelectorAll('.child1-name, #child1-name');
-            const child2NameElements = document.querySelectorAll('.child2-name, #child2-name');
-            child1NameElements.forEach(el => {
-                el.textContent = SCENARIOS_METADATA.child1_name || 'Child 1';
-            });
-            child2NameElements.forEach(el => {
-                el.textContent = SCENARIOS_METADATA.child2_name || 'Child 2';
-            });
+            // Note: Child names will be set dynamically based on high_child after scenario loads
+            // This happens in updateChildLabels() function called after computeScenarioOutcomes()
 
             if (!sessionId) {
                 throw new Error('No session ID provided in URL. Please access this page from the session manager.');
@@ -93,11 +106,8 @@ class SliderApp {
             // Note: We allow re-doing the slider - existing responses will be overwritten
             // when the slider is completed (saveAllResponses deletes old ones first)
 
-            // Initialize ChartManager with child names from scenarios metadata
-            this.chartManager = new ChartManager(
-                SCENARIOS_METADATA.child1_name || 'Child 1',
-                SCENARIOS_METADATA.child2_name || 'Child 2'
-            );
+            // Initialize ChartManager with placeholder names (will be updated after scenario loads)
+            this.chartManager = new ChartManager('Child 1', 'Child 2');
 
             // Update app state with real session data and dummy mode flag
             appState.updateSession({
@@ -106,9 +116,8 @@ class SliderApp {
                 enumerator_id: session.enumeratorId,
                 date_created: session.createdAt || getUTCDate(),
                 date_modified: session.sliderStartedAt || getUTCDate(),
-                preEarnings1: session.preEarnings1 || 5, // Default values if not set
-                preEarnings2: session.preEarnings2 || 2,
-                isDummyMode: isDummyMode
+                // Pre-earnings are now set per-scenario by computeScenarioOutcomes()
+                isDummyMode: dummyMode !== null
             });
 
             // Initialize UI manager
@@ -119,6 +128,15 @@ class SliderApp {
             
             // Setup the chart update callback for session manager
             const chartUpdateCallback = () => {
+                // Update child labels in case high_child changed (after navigation to new scenario)
+                updateChildLabels();
+
+                // Update chart manager child names
+                const isChild1High = appState.session.high_child === 1;
+                this.chartManager.child1Name = isChild1High ? SCENARIOS_METADATA.child_high_name : SCENARIOS_METADATA.child_low_name;
+                this.chartManager.child2Name = isChild1High ? SCENARIOS_METADATA.child_low_name : SCENARIOS_METADATA.child_high_name;
+
+                // Update chart data
                 this.chartManager.updateChartData(appState, CONFIG);
             };
             
@@ -139,7 +157,15 @@ class SliderApp {
             // Now compute outcomes for the first randomized scenario
             const currentScenario = SCENARIOS[appState.sliderState.currentScenarioNumber];
             appState.computeScenarioOutcomes(currentScenario);
-            
+
+            // Update child labels based on which child is high for this scenario
+            updateChildLabels();
+
+            // Update chart manager with correct child names based on high_child
+            const isChild1High = appState.session.high_child === 1;
+            this.chartManager.child1Name = isChild1High ? SCENARIOS_METADATA.child_high_name : SCENARIOS_METADATA.child_low_name;
+            this.chartManager.child2Name = isChild1High ? SCENARIOS_METADATA.child_low_name : SCENARIOS_METADATA.child_high_name;
+
             // Create charts with proper scenario data
             this.chartManager.createAllCharts(uiManager, appState);
             
@@ -203,15 +229,22 @@ class SliderApp {
 let globalChartManager = null;
 
 // Initialize the app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    
+function initializeSliderApp() {
     // Small delay to ensure all DOM elements are ready
     setTimeout(async () => {
         const app = new SliderApp();
         globalChartManager = app.chartManager;
         await app.initialize();
     }, CONFIG.DOM_SETUP_DELAY_MS);
-});
+}
+
+// Check if DOM is already loaded (common with module scripts which are deferred)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSliderApp);
+} else {
+    // DOM is already ready, initialize immediately
+    initializeSliderApp();
+}
 
 // Cleanup resources when page is being unloaded
 window.addEventListener('beforeunload', () => {

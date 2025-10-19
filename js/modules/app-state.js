@@ -11,8 +11,9 @@ class AppState {
             enumerator_id: null,
             date_created: getUTCDate(),
             date_modified: getUTCDate(),
-            preEarnings1: 5, // Default pre-earnings
-            preEarnings2: 2,
+            preEarnings1: null, // Will be set per scenario based on coin flip
+            preEarnings2: null, // Will be set per scenario based on coin flip
+            high_child: null,   // Which child (1 or 2) has higher pre-earnings for current scenario
             isDummyMode: false, // Whether this is a practice round (don't save responses)
         };
 
@@ -67,7 +68,34 @@ class AppState {
     }
 
     // Compute new scenario outcomes and update state
-    computeScenarioOutcomes(scenario) {
+    computeScenarioOutcomes(scenario, savedHighChild = null) {
+        // Determine high_child:
+        // - If savedHighChild is provided (going back to previous scenario), use it
+        // - Otherwise, flip coin for new scenario using cryptographically secure RNG
+        let high_child;
+        if (savedHighChild !== null) {
+            high_child = savedHighChild;
+        } else {
+            // Use crypto.getRandomValues() for better randomness
+            const randomBuffer = new Uint32Array(1);
+            crypto.getRandomValues(randomBuffer);
+            // Convert to 0 or 1, then add 1 to get 1 or 2
+            high_child = (randomBuffer[0] % 2) + 1;
+        }
+
+        // Assign pre-earnings based on high_child
+        // scenario.pre_earnings = [high_value, low_value]
+        if (high_child === 1) {
+            this.session.preEarnings1 = scenario.pre_earnings[0]; // high
+            this.session.preEarnings2 = scenario.pre_earnings[1]; // low
+        } else {
+            this.session.preEarnings1 = scenario.pre_earnings[1]; // low
+            this.session.preEarnings2 = scenario.pre_earnings[0]; // high
+        }
+
+        this.session.high_child = high_child;
+
+        // Compute economic outcomes with the assigned pre-earnings
         const newData = computeOutcomes(this.session, scenario);
         this.updateScenarioData(newData);
     }
@@ -131,6 +159,7 @@ class AppState {
             child1investment,
             child2investment,
             allocatableBudget,
+            highChild: this.session.high_child,  // Which child (1 or 2) has higher pre-earnings
             completedAt: getUTCDate(),
 
             // Scenario parameters
@@ -192,18 +221,22 @@ class AppState {
     async processPreviousScenario() {
         // Go to previous scenario
         this.goToPreviousScenario();
-        
-        // Get the previous scenario and recalculate outcomes
-        const prevScenario = SCENARIOS[this.sliderState.currentScenarioNumber];
-        this.computeScenarioOutcomes(prevScenario);
-        
+
         // Get the saved response if it exists
         const savedResponse = this.sliderState.responses[this.sliderState.currentIndex];
-        
-        return { 
+
+        // Get the previous scenario and recalculate outcomes
+        const prevScenario = SCENARIOS[this.sliderState.currentScenarioNumber];
+
+        // If we have a saved response, restore the saved high_child value
+        // Otherwise flip a new coin (shouldn't happen, but safe fallback)
+        const savedHighChild = savedResponse ? savedResponse.highChild : null;
+        this.computeScenarioOutcomes(prevScenario, savedHighChild);
+
+        return {
             prevScenario,
             savedResponse,
-            currentIndex: this.sliderState.currentIndex 
+            currentIndex: this.sliderState.currentIndex
         };
     }
 

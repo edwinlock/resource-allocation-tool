@@ -27,7 +27,7 @@ export class SessionDB {
                 childSessionDetails: 'id, familyId, childId, name, school, surveyStatus',
 
                 // Parent session details (separate table)
-                parentSessionDetails: 'id, familyId, school, groupType, preEarnings1, preEarnings2, surveyStatus, sliderStatus',
+                parentSessionDetails: 'id, familyId, school, groupType, surveyStatus, sliderStatus',
             });
 
             // Version 5: Add sandwich survey fields for treatment workflow
@@ -35,7 +35,7 @@ export class SessionDB {
                 // Keep existing schema, just adding new fields to parentSessionDetails
                 sessions: 'id, sessionType, enumeratorId, createdAt, uploadStatus, uploadedAt',
                 childSessionDetails: 'id, familyId, childId, name, school, surveyStatus',
-                parentSessionDetails: 'id, familyId, school, groupType, preEarnings1, preEarnings2, surveyStatus, sliderStatus, sandwichSurveyStatus',
+                parentSessionDetails: 'id, familyId, school, groupType, surveyStatus, sliderStatus, sandwichSurveyStatus',
             }).upgrade(async tx => {
                 // Migration: Add sandwich survey fields to existing parent sessions
                 await tx.table('parentSessionDetails').toCollection().modify(session => {
@@ -111,7 +111,7 @@ export class SessionDB {
 
     // ===== PARENT SESSION OPERATIONS =====
 
-    async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType, preEarnings1, preEarnings2) {
+    async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType) {
         if (!this.db) {
             throw new Error('Database not available');
         }
@@ -140,8 +140,6 @@ export class SessionDB {
                     child2Name: child2Name,
                     school: school,
                     groupType: groupType,
-                    preEarnings1: preEarnings1,
-                    preEarnings2: preEarnings2,
                     surveyStatus: 'not_started',
                     surveyCompletedAt: null,
                     exitSurveyStatus: 'not_started',

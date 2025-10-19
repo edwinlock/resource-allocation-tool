@@ -68,7 +68,7 @@ def validate_session_metadata(session_metadata):
                 "details": {"missing_fields": missing_child_fields}
             }
     elif session_type == 'parent':
-        required_parent_fields = ['child1Name', 'child2Name', 'groupType', 'preEarnings1', 'preEarnings2']
+        required_parent_fields = ['child1Name', 'child2Name', 'groupType']
         missing_parent_fields = [field for field in required_parent_fields if field not in session_metadata]
         if missing_parent_fields:
             return False, {
@@ -143,8 +143,6 @@ def create_session_object(session_metadata, completion_timestamps):
             child2_name=session_metadata['child2Name'],
             school=session_metadata['school'],
             group_type=session_metadata['groupType'],
-            preEarnings1=session_metadata['preEarnings1'],
-            preEarnings2=session_metadata['preEarnings2'],
             upload_status='uploaded',
             uploaded_at=datetime.utcnow()
         )
@@ -215,6 +213,7 @@ def create_slider_response_objects(session_id, slider_responses):
             scenario_theta=response['scenarioTheta'],
             pre_earnings1=response['preEarnings1'],
             pre_earnings2=response['preEarnings2'],
+            high_child=response['highChild'],
             scenario_alpha=response['scenarioAlpha'],
             child1_final_earnings=response['child1FinalEarnings'],
             child2_final_earnings=response['child2FinalEarnings'],
@@ -612,8 +611,6 @@ def generate_parent_sessions_df():
             'child2_name': session.child2_name,
             'school': session.school,
             'group_type': session.group_type,
-            'preEarnings1': session.preEarnings1,
-            'preEarnings2': session.preEarnings2,
             'survey_status': session.survey_status,
             'survey_completed_at': session.survey_completed_at.isoformat() if session.survey_completed_at else None,
             'exit_survey_status': session.exit_survey_status,
@@ -635,17 +632,34 @@ def generate_survey_responses_df():
 
     rows = []
     for response in survey_responses:
-        # Get the session to access family_id and child_id
+        # Get the session to access all session information
         session = response.session
 
-        # Get child_id if this is a child session, otherwise None
+        # Prepare session-specific fields
         child_id = None
+        child_name = None
+        child1_name = None
+        child2_name = None
+        group_type = None
+        school = None
+
         if session and session.session_type == 'child':
             # Import here to avoid circular imports
             from webapp.models import ChildSession
             child_session = ChildSession.query.get(session.id)
             if child_session:
                 child_id = child_session.child_id
+                child_name = child_session.name
+                school = child_session.school
+        elif session and session.session_type == 'parent':
+            # Import here to avoid circular imports
+            from webapp.models import ParentSession
+            parent_session = ParentSession.query.get(session.id)
+            if parent_session:
+                child1_name = parent_session.child1_name
+                child2_name = parent_session.child2_name
+                group_type = parent_session.group_type
+                school = parent_session.school
 
         # Try to parse JSON answers, fall back to string
         try:
@@ -657,10 +671,27 @@ def generate_survey_responses_df():
             answer = response.answer
 
         rows.append({
+            # Response identification
             'response_id': response.id,
             'session_id': response.session_id,
+
+            # Session information (common to all session types)
+            'enumerator_id': session.enumerator_id if session else None,
             'family_id': session.family_id if session else None,
+            'school': school,
+            'session_created_at': session.created_at.isoformat() if session and session.created_at else None,
+            'session_uploaded_at': session.uploaded_at.isoformat() if session and session.uploaded_at else None,
+
+            # Child session specific fields
             'child_id': child_id,
+            'child_name': child_name,
+
+            # Parent session specific fields
+            'child1_name': child1_name,
+            'child2_name': child2_name,
+            'group_type': group_type,
+
+            # Survey response data
             'survey_id': response.survey_id,
             'question_id': response.question_id,
             'answer': answer,
@@ -676,26 +707,52 @@ def generate_slider_responses_df():
 
     rows = []
     for response in slider_responses:
-        # Get the parent session to access family_id
+        # Get the parent session to access all session information
         parent_session = response.parent_session
 
         rows.append({
+            # Response identification
             'response_id': response.id,
             'parent_session_id': response.parent_session_id,
-            'family_id': parent_session.family_id if parent_session else None,
+
+            # Session information
+            'enumerator_id': parent_session.enumerator_id,
+            'family_id': parent_session.family_id,
+            'child1_name': parent_session.child1_name,
+            'child2_name': parent_session.child2_name,
+            'school': parent_session.school,
+            'group_type': parent_session.group_type,
+            'session_created_at': parent_session.created_at.isoformat() if parent_session.created_at else None,
+            'session_uploaded_at': parent_session.uploaded_at.isoformat() if parent_session.uploaded_at else None,
+
+            # Session completion timestamps
+            'survey_completed_at': parent_session.survey_completed_at.isoformat() if parent_session.survey_completed_at else None,
+            'slider_started_at': parent_session.slider_started_at.isoformat() if parent_session.slider_started_at else None,
+            'slider_completed_at': parent_session.slider_completed_at.isoformat() if parent_session.slider_completed_at else None,
+            'exit_survey_completed_at': parent_session.exit_survey_completed_at.isoformat() if parent_session.exit_survey_completed_at else None,
+
+            # Scenario identification
             'scenarios_id': response.scenarios_id,
             'scenario_number': response.scenario_number,
+            'scenario_name': response.scenario_name,
             'display_order': response.display_order,
+
+            # Investment data
             'child1_investment': response.child1_investment,
             'child2_investment': response.child2_investment,
+            'allocatable_budget': response.allocatable_budget,
             'completed_at': response.completed_at.isoformat() if response.completed_at else None,
-            # Economic parameters
+
+            # Economic parameters (per scenario)
             'scenario_gamma': response.scenario_gamma,
             'scenario_sigma': response.scenario_sigma,
             'scenario_theta': response.scenario_theta,
             'pre_earnings1': response.pre_earnings1,
             'pre_earnings2': response.pre_earnings2,
+            'high_child': response.high_child,
             'scenario_alpha': response.scenario_alpha,
+
+            # Economic outcomes
             'child1_final_earnings': response.child1_final_earnings,
             'child2_final_earnings': response.child2_final_earnings,
             'aggregate_final_earnings': response.aggregate_final_earnings

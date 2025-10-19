@@ -1,52 +1,68 @@
 {
     "scenarios_id": "main-v1",
     "infotext": "Por favor distribuya las fichas de la manera que mejor represente el resultado que a usted le gustaría ver. Cualquiera que sea su decisión, está bien. Sus hijos/as no sabrán que usted tuvo alguna influencia sobre el número de sesiones que recibirán.",
-    "child1_name": "Hijo/a A",
-    "child2_name": "Hijo/a B",
+    "child_high_name": "Higher Ability Child",
+    "child_low_name": "Lower Ability Child",
     "allocatable_budget": 9,
     "max_sessions": 15,
+    "child_high_color": "#ff7f0e",
+    "child_high_bg_color": "#ffc788",
+    "child_high_dark_color": "#cc5500",
+    "child_low_color": "#2ca02c",
+    "child_low_bg_color": "#a8d4a8",
+    "child_low_dark_color": "#1a701a",
+    "combined_color": "#1f77b4",
+    "combined_bg_color": "#aecbea",
+    "label_bg_color": "rgba(255, 255, 255, 0.9)",
+    "label_border_color": "#ccc",
     "scenarios": [
         {
             "name": "C",
             "description": "σ=0.5, θ=1",
             "gamma": 0.5,
             "sigma": 0.5,
-            "theta": 1
+            "theta": 1,
+            "pre_earnings": [5, 2]
         },
         {
             "name": "D",
             "description": "σ=0.5, θ=2",
             "gamma": 0.5,
             "sigma": 0.5,
-            "theta": 2
+            "theta": 2,
+            "pre_earnings": [5, 2]
         },
         {
             "name": "E",
             "description": "σ=0, θ=1",
             "gamma": 0.5,
             "sigma": 0,
-            "theta": 1
+            "theta": 1,
+            "pre_earnings": [6, 1]
         },
         {
             "name": "F",
             "description": "σ=0, θ=2",
             "gamma": 0.5,
             "sigma": 0,
-            "theta": 2
+            "theta": 2,
+            "pre_earnings": [6, 1]
         },
         {
             "name": "G",
             "description": "σ=-2, θ=1",
             "gamma": 0.5,
             "sigma": -2,
-            "theta": 1
+            "theta": 1,
+            "pre_earnings": [4, 3]
         },
         {
             "name": "H",
             "description": "σ=-2, θ=2",
             "gamma": 0.5,
             "sigma": -2,
-            "theta": 2
+            "theta": 2,
+            "pre_earnings": [4, 3]
         }
     ]
 }

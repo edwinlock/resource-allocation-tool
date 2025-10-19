@@ -153,8 +153,8 @@ export class SessionCoordinator {
         return await this.sessionDB.createChildSession(enumeratorId, familyId, childId, name, school);
     }
 
-    async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType, preEarnings1, preEarnings2) {
-        return await this.sessionDB.createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType, preEarnings1, preEarnings2);
+    async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType) {
+        return await this.sessionDB.createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType);
     }
 
     async loadSessions() {
@@ -367,8 +367,6 @@ export class SessionCoordinator {
                 aggregatedData.sessionMetadata.child1Name = session.child1Name;
                 aggregatedData.sessionMetadata.child2Name = session.child2Name;
                 aggregatedData.sessionMetadata.groupType = session.groupType;
-                aggregatedData.sessionMetadata.preEarnings1 = session.preEarnings1;
-                aggregatedData.sessionMetadata.preEarnings2 = session.preEarnings2;
 
                 aggregatedData.completionTimestamps = {
                     surveyCompleted: session.surveyCompletedAt
@@ -385,6 +383,7 @@ export class SessionCoordinator {
                         child1investment: response.child1investment,
                         child2investment: response.child2investment,
                         allocatableBudget: response.allocatableBudget,
+                        highChild: response.highChild,
                         completedAt: response.completedAt,
                         scenarioGamma: response.scenarioGamma,
                         scenarioSigma: response.scenarioSigma,

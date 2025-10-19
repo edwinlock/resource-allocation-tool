@@ -140,9 +140,10 @@ The **📝 Current Sessions** table shows all sessions that haven't been uploade
 2. Click the **Start** button
 3. Complete the workflow in this order:
    - **Parent questionnaire** (treatment version)
-   - **Practice slider** (1 scenario - not saved, just for practice)
+   - **Practice slider 1** (1 scenario - not saved, just for practice)
+   - **Practice slider 2** (1 scenario - not saved, just for practice)
    - **Sandwich survey** (questions between practice and real slider)
-   - **Real slider exercise** (8 scenarios - saved for analysis)
+   - **Real slider exercise** (6 scenarios - saved for analysis)
    - **Exit survey**
 4. The app will automatically guide you through each step
 5. All progress is saved automatically
@@ -151,6 +152,30 @@ The **📝 Current Sessions** table shows all sessions that haven't been uploade
 - **Start** button is **blue/green**: Session is ready to begin or continue
 - **Start ✓** button is **grayed out**: Session is complete
 - **Incomplete** badge: Shows which components are still needed
+
+### Understanding the Slider Exercise (Treatment Group Only)
+
+The slider exercise uses **randomization** to avoid bias:
+
+**What happens automatically:**
+- Each of the 6 scenarios randomly assigns which child is "higher ability"
+- The child labels and graph colors change based on this randomization:
+  - **Orange** = higher ability child
+  - **Green** = lower ability child
+- The randomization is different for each participant and scenario
+- All randomization data is automatically recorded for analysis
+
+**What you need to know:**
+- ✅ The colors and labels changing is **normal and expected**
+- ✅ Sometimes Child 1 will be orange, sometimes green
+- ✅ This is automatic - you don't need to do anything
+- ✅ Just help the participant understand the graphs and make their choices
+- ⚠️ Do NOT try to explain the randomization to participants
+
+**What participants see:**
+- They will see labels like "Higher Ability Child" and "Lower Ability Child"
+- The colors help them identify which child has which starting ability
+- The x-axis always shows "Investment in Child 1" (position stays the same)
 
 ---
 
@@ -183,7 +208,7 @@ Always verify that data has been recorded correctly before uploading.
 - ✅ Sandwich survey shows as "Completed"
 - ✅ Slider exercise shows as "Completed"
 - ✅ Exit survey shows as "Completed"
-- ✅ 8 slider responses are recorded (practice slider is NOT saved)
+- ✅ 6 slider responses are recorded (practice sliders are NOT saved)
 - ✅ All survey responses are present
 - ✅ Dates and times look reasonable
 

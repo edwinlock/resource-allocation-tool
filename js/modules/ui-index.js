@@ -10,12 +10,21 @@ class IndexUIManager {
     }
 
     bindEvents() {
-        document.addEventListener('DOMContentLoaded', () => {
+        // Check if DOM is already loaded (common with module scripts which are deferred)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.loadSchools();
+                this.setupFormHandlers();
+                this.loadAndRenderSessions();
+                this.updateUIBasedOnAuthStatus();
+            });
+        } else {
+            // DOM is already ready, initialize immediately
             this.loadSchools();
             this.setupFormHandlers();
             this.loadAndRenderSessions();
             this.updateUIBasedOnAuthStatus();
-        });
+        }
     }
 
     async loadSchools() {
@@ -538,12 +547,6 @@ class IndexUIManager {
         const schoolName = school.name;
         const groupType = school.type; // 'treatment' or 'control'
 
-        // Generate preEarnings from one of four specific pairs: [1,6], [2,5], [5,2], [6,1]
-        const preEarningsPairs = [[1,6], [2,5], [5,2], [6,1]];
-        const randomPair = preEarningsPairs[Math.floor(Math.random() * 4)];
-        const preEarnings1 = randomPair[0];
-        const preEarnings2 = randomPair[1];
-
         try {
             await sessionManager.createParentSession(
                 enumeratorId,
@@ -551,9 +554,7 @@ class IndexUIManager {
                 child1Name,
                 child2Name,
                 schoolName,
-                groupType,
-                preEarnings1,
-                preEarnings2
+                groupType
             );
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Parent session created successfully');

@@ -17,8 +17,8 @@ export class SliderResponseDB {
 
         try {
             this.db = new Dexie('SliderResponsesDB');
-            this.db.version(6).stores({
-                pageResponses: 'id, sessionId, scenariosId, [sessionId+scenariosId], scenarioNumber, scenarioName, displayOrder, child1investment, child2investment, allocatableBudget, completedAt, scenarioGamma, scenarioSigma, scenarioTheta, preEarnings1, preEarnings2, scenarioAlpha, child1FinalEarnings, child2FinalEarnings, aggregateFinalEarnings'
+            this.db.version(7).stores({
+                pageResponses: 'id, sessionId, scenariosId, [sessionId+scenariosId], scenarioNumber, scenarioName, displayOrder, child1investment, child2investment, allocatableBudget, highChild, completedAt, scenarioGamma, scenarioSigma, scenarioTheta, preEarnings1, preEarnings2, scenarioAlpha, child1FinalEarnings, child2FinalEarnings, aggregateFinalEarnings'
             });
         } catch (error) {
             console.error('Failed to initialize SliderResponsesDB:', error);
@@ -60,6 +60,7 @@ export class SliderResponseDB {
             child1investment: response.child1investment,
             child2investment: response.child2investment,
             allocatableBudget: response.allocatableBudget,
+            highChild: response.highChild,
             completedAt: response.completedAt,
             scenarioGamma: response.scenarioGamma,
             scenarioSigma: response.scenarioSigma,
@@ -121,6 +122,7 @@ export class SliderResponseDB {
             child1investment: response.child1investment,
             child2investment: response.child2investment,
             allocatableBudget: response.allocatableBudget,
+            highChild: response.highChild,
             completedAt: response.completedAt || getUTCDate(),
             scenarioGamma: response.scenarioGamma,
             scenarioSigma: response.scenarioSigma,

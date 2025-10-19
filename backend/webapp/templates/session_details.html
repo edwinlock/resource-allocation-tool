@@ -103,10 +103,7 @@
                         </p>
                         <p><strong>Child 1:</strong> {{ session.child1name }}</p>
                         <p><strong>Child 2:</strong> {{ session.child2name }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Pre-Earnings Child 1:</strong> {{ session.preEarnings1 }}</p>
-                        <p><strong>Pre-Earnings Child 2:</strong> {{ session.preEarnings2 }}</p>
+                        <p><strong>School:</strong> {{ session.school }}</p>
                     </div>
                 </div>
 
@@ -180,8 +177,14 @@
                 {{ render_table(slider_responses, titles=[
                     ('display_order', 'Order'),
                     ('scenario_number', 'Scenario'),
+                    ('high_child', 'High Child'),
+                    ('pre_earnings1', 'Child 1 Pre-Earnings'),
+                    ('pre_earnings2', 'Child 2 Pre-Earnings'),
                     ('child1_investment', 'Child 1 Investment'),
                     ('child2_investment', 'Child 2 Investment'),
+                    ('child1_final_earnings', 'Child 1 Final Earnings'),
+                    ('child2_final_earnings', 'Child 2 Final Earnings'),
+                    ('aggregate_final_earnings', 'Aggregate Final Earnings'),
                     ('completed_at_formatted', 'Completed At')
                 ]) }}
             </div>

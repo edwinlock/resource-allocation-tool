@@ -253,8 +253,7 @@ export class SessionRenderer {
 
             SessionUIUtils.updateElementText('child1Name', session.child1Name || '-');
             SessionUIUtils.updateElementText('child2Name', session.child2Name || '-');
-            SessionUIUtils.updateElementText('child1PreEarnings', session.preEarnings1 || '-');
-            SessionUIUtils.updateElementText('child2PreEarnings', session.preEarnings2 || '-');
+            // Pre-earnings are now stored per-scenario in slider responses, not at session level
             SessionUIUtils.updateElementText('groupType', session.groupType ? session.groupType.charAt(0).toUpperCase() + session.groupType.slice(1) : '-');
 
             // Parent status

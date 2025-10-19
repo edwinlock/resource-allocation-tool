@@ -10,9 +10,15 @@ class SessionDetailUIManager {
     }
 
     bindEvents() {
-        document.addEventListener('DOMContentLoaded', () => {
+        // Check if DOM is already loaded (common with module scripts which are deferred)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.initialize();
+            });
+        } else {
+            // DOM is already ready, initialize immediately
             this.initialize();
-        });
+        }
     }
 
     async initialize() {

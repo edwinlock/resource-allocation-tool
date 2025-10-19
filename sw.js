@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v34';
+const CACHE_NAME = 'resource-allocation-v42';
 const urlsToCache = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const urlsToCache = [
   './schools.json',
   './css/slider.css',
   './css/shared-styles.css',
+  './js/config.js',
   './js/slider.js',
   './js/modules/app-state.js',
   './js/modules/chart-factory.js',

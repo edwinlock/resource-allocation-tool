@@ -39,8 +39,7 @@ class SurveyUIManager {
                 variables.childName = this.sessionData.name || 'Child';
                 variables.childId = this.sessionData.childId || '';
             } else if (this.sessionData.sessionType === 'parent') {
-                variables.preEarnings1 = this.sessionData.preEarnings1 || 5;
-                variables.preEarnings2 = this.sessionData.preEarnings2 || 2;
+                // Pre-earnings are now determined per-scenario, not at session level
                 variables.child1name = this.sessionData.child1Name || 'Child 1';
                 variables.child2name = this.sessionData.child2Name || 'Child 2';
             }
@@ -165,6 +164,11 @@ class SurveyUIManager {
 }
 
 // Initialize the survey UI manager when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        new SurveyUIManager();
+    });
+} else {
+    // DOM is already ready, initialize immediately
     new SurveyUIManager();
-});
+}

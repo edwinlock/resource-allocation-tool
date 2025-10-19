@@ -1,12 +1,25 @@
-import { COLORS } from './constants.js';
 import { SCENARIOS_METADATA } from './scenario-loader.js';
 import { appState } from './app-state.js';
-const {
-    CHILD1_COLOR, CHILD1_BG_COLOR, CHILD1_DARK_COLOR,
-    CHILD2_COLOR, CHILD2_BG_COLOR, CHILD2_DARK_COLOR,
-    COMBINED_COLOR, COMBINED_BG_COLOR,
-    LABEL_BG_COLOR, LABEL_BORDER_COLOR
-} = COLORS;
+
+// Get colors based on which child is high/low
+// If high_child === 1: child1 gets high colors (orange), child2 gets low colors (green)
+// If high_child === 2: child1 gets low colors (green), child2 gets high colors (orange)
+function getChildColors() {
+    const isChild1High = appState.session.high_child === 1;
+
+    return {
+        CHILD1_COLOR: isChild1High ? SCENARIOS_METADATA.child_high_color : SCENARIOS_METADATA.child_low_color,
+        CHILD1_BG_COLOR: isChild1High ? SCENARIOS_METADATA.child_high_bg_color : SCENARIOS_METADATA.child_low_bg_color,
+        CHILD1_DARK_COLOR: isChild1High ? SCENARIOS_METADATA.child_high_dark_color : SCENARIOS_METADATA.child_low_dark_color,
+        CHILD2_COLOR: isChild1High ? SCENARIOS_METADATA.child_low_color : SCENARIOS_METADATA.child_high_color,
+        CHILD2_BG_COLOR: isChild1High ? SCENARIOS_METADATA.child_low_bg_color : SCENARIOS_METADATA.child_high_bg_color,
+        CHILD2_DARK_COLOR: isChild1High ? SCENARIOS_METADATA.child_low_dark_color : SCENARIOS_METADATA.child_high_dark_color,
+        COMBINED_COLOR: SCENARIOS_METADATA.combined_color,
+        COMBINED_BG_COLOR: SCENARIOS_METADATA.combined_bg_color,
+        LABEL_BG_COLOR: SCENARIOS_METADATA.label_bg_color,
+        LABEL_BORDER_COLOR: SCENARIOS_METADATA.label_border_color
+    };
+}
 
 // Chart Configuration Functions - Structured Composition Approach
 
@@ -111,6 +124,8 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
 }
 
 function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 2') {
+    const colors = getChildColors();
+
     if (chartType === 'singleBar') {
         return { display: false };
     }
@@ -123,20 +138,20 @@ function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 
                 generateLabels: function(chart) {
                     return [{
                         text: child1Name,
-                        fillStyle: CHILD1_COLOR,
-                        strokeStyle: CHILD1_COLOR,
+                        fillStyle: colors.CHILD1_COLOR,
+                        strokeStyle: colors.CHILD1_COLOR,
                         lineWidth: 0,
                         datasetIndex: 0
                     }, {
                         text: child2Name,
-                        fillStyle: CHILD2_COLOR,
-                        strokeStyle: CHILD2_COLOR,
+                        fillStyle: colors.CHILD2_COLOR,
+                        strokeStyle: colors.CHILD2_COLOR,
                         lineWidth: 0,
                         datasetIndex: 1
                     }, {
                         text: 'Total',
-                        fillStyle: COMBINED_COLOR,
-                        strokeStyle: COMBINED_COLOR,
+                        fillStyle: colors.COMBINED_COLOR,
+                        strokeStyle: colors.COMBINED_COLOR,
                         lineWidth: 0,
                         datasetIndex: 2
                     }];
@@ -144,7 +159,7 @@ function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 
             }
         };
     }
-    
+
     if (chartType === 'multiBar') {
         return {
             display: true,
@@ -153,14 +168,14 @@ function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 
                 generateLabels: function(chart) {
                     return [{
                         text: child1Name,
-                        fillStyle: CHILD1_BG_COLOR,
-                        strokeStyle: CHILD1_COLOR,
+                        fillStyle: colors.CHILD1_BG_COLOR,
+                        strokeStyle: colors.CHILD1_COLOR,
                         lineWidth: 0,
                         datasetIndex: 0
                     }, {
                         text: child2Name,
-                        fillStyle: CHILD2_BG_COLOR,
-                        strokeStyle: CHILD2_COLOR,
+                        fillStyle: colors.CHILD2_BG_COLOR,
+                        strokeStyle: colors.CHILD2_COLOR,
                         lineWidth: 0,
                         datasetIndex: 1
                     }];
@@ -168,15 +183,16 @@ function getLegendConfig(chartType, child1Name = 'Child 1', child2Name = 'Child 
             }
         };
     }
-    
+
     return { display: false };
 }
 
 function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
+    const colors = getChildColors();
     const baseConfig = {
         formatter: (value) => value.toLocaleString(),
         font: { weight: 'bold' },
-        backgroundColor: LABEL_BG_COLOR,
+        backgroundColor: colors.LABEL_BG_COLOR,
         borderWidth: 1,
         borderRadius: 4,
         padding: 4
@@ -239,10 +255,10 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
             offset: 10,
             font: { weight: 'bold', size: 11 },
             color: '#333',
-            borderColor: LABEL_BORDER_COLOR
+            borderColor: colors.LABEL_BORDER_COLOR
         };
     }
-    
+
     if (chartType === 'multiBar') {
         return {
             ...baseConfig,
@@ -258,10 +274,10 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
             offset: 8,
             font: { weight: 'bold', size: 11 },
             color: function(context) {
-                return context.datasetIndex === 0 ? CHILD1_DARK_COLOR : CHILD2_DARK_COLOR;
+                return context.datasetIndex === 0 ? colors.CHILD1_DARK_COLOR : colors.CHILD2_DARK_COLOR;
             },
             borderColor: function(context) {
-                return context.datasetIndex === 0 ? CHILD1_DARK_COLOR : CHILD2_DARK_COLOR;
+                return context.datasetIndex === 0 ? colors.CHILD1_DARK_COLOR : colors.CHILD2_DARK_COLOR;
             }
         };
     }
@@ -283,14 +299,15 @@ function getLabels(chartType, child1Name = 'Child 1', child2Name = 'Child 2') {
 }
 
 function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 1') {
+    const colors = getChildColors();
     const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // For single bar chart, Child1 data is just the current value
         return {
             label: 'Earnings',
             data: [0, 0, 0], // Will be updated with current values
-            backgroundColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
-            borderColor: [CHILD1_COLOR, CHILD2_COLOR, COMBINED_COLOR],
+            backgroundColor: [colors.CHILD1_COLOR, colors.CHILD2_COLOR, colors.COMBINED_COLOR],
+            borderColor: [colors.CHILD1_COLOR, colors.CHILD2_COLOR, colors.COMBINED_COLOR],
             borderWidth: 0,
             barPercentage: 0.5,
             categoryPercentage: 1
@@ -301,13 +318,13 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
         return {
             label: child1Name,
             data: scenarioData.postEarnings1Rounded,
-            borderColor: CHILD1_COLOR,
-            backgroundColor: CHILD1_BG_COLOR,
+            borderColor: colors.CHILD1_COLOR,
+            backgroundColor: colors.CHILD1_BG_COLOR,
             borderWidth: 3,
             tension: 0.1,
             pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
             pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
-            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
+            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD1_COLOR),
             pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
             pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
         };
@@ -317,8 +334,8 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
         return {
             label: child1Name,
             data: scenarioData.postEarnings1Rounded,
-            backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR),
-            borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR),
+            backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD1_BG_COLOR),
+            borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD1_COLOR),
             borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(0),
             barPercentage: 0.8,
             categoryPercentage: 0.9
@@ -329,6 +346,7 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
 }
 
 function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 2') {
+    const colors = getChildColors();
     const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // Single bar chart handles all data in one dataset
@@ -339,13 +357,13 @@ function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 
         return {
             label: child2Name,
             data: scenarioData.postEarnings2Rounded,
-            borderColor: CHILD2_COLOR,
-            backgroundColor: CHILD2_BG_COLOR,
+            borderColor: colors.CHILD2_COLOR,
+            backgroundColor: colors.CHILD2_BG_COLOR,
             borderWidth: 3,
             tension: 0.1,
             pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
             pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
-            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
+            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD2_COLOR),
             pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
             pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
         };
@@ -355,8 +373,8 @@ function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 
         return {
             label: child2Name,
             data: scenarioData.postEarnings2Rounded,
-            backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR),
-            borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR),
+            backgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD2_BG_COLOR),
+            borderColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD2_COLOR),
             borderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(0),
             barPercentage: 0.8,
             categoryPercentage: 0.9
@@ -367,6 +385,7 @@ function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 
 }
 
 function createCombinedDisplayConfig(chartType, scenarioData) {
+    const colors = getChildColors();
     const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // Single bar chart handles all data in one dataset
@@ -377,23 +396,23 @@ function createCombinedDisplayConfig(chartType, scenarioData) {
         return {
             label: 'Combined',
             data: scenarioData.aggrEarningsRounded,
-            borderColor: COMBINED_COLOR,
-            backgroundColor: COMBINED_BG_COLOR,
+            borderColor: colors.COMBINED_COLOR,
+            backgroundColor: colors.COMBINED_BG_COLOR,
             borderWidth: 3,
             tension: 0.1,
             pointRadius: Array(ALLOCATABLE_BUDGET + 1).fill(4),
             pointHoverRadius: Array(ALLOCATABLE_BUDGET + 1).fill(6),
-            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(COMBINED_COLOR),
+            pointBackgroundColor: Array(ALLOCATABLE_BUDGET + 1).fill(colors.COMBINED_COLOR),
             pointBorderColor: Array(ALLOCATABLE_BUDGET + 1).fill('#ffffff'),
             pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
         };
     }
-    
+
     if (chartType === 'multiBar') {
         // Multi bar chart only shows Child 1 and Child 2
         return null;
     }
-    
+
     return {};
 }
 
@@ -536,6 +555,7 @@ export class ChartManager {
     }
 
     updateChartData(appState, CONFIG) {
+        const colors = getChildColors();
         const sd = appState.scenarioData;
         const selectedIndex = appState.selectedInvestment;
         const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
@@ -551,7 +571,7 @@ export class ChartManager {
             try {
                 this.charts.barChart.data.datasets[0].data = [
                     sd.postEarnings1Rounded[selectedIndex],
-                    sd.postEarnings2Rounded[selectedIndex], 
+                    sd.postEarnings2Rounded[selectedIndex],
                     sd.aggrEarningsRounded[selectedIndex]
                 ];
                 this.charts.barChart.update();
@@ -567,13 +587,13 @@ export class ChartManager {
                 this.charts.lineChart.data.datasets[0].data = sd.postEarnings1Rounded;
                 this.charts.lineChart.data.datasets[1].data = sd.postEarnings2Rounded;
                 this.charts.lineChart.data.datasets[2].data = sd.aggrEarningsRounded;
-                
+
                 // Update datalabels configuration for selected point
                 this.charts.lineChart.options.plugins.datalabels = getDataLabelsConfig('line', selectedIndex, sd);
-                
+
                 // Update y-axis max
                 this.charts.lineChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
-                
+
                 // Update point highlighting (larger dot for selected point)
                 const highlightedRadius = Array(ALLOCATABLE_BUDGET + 1).fill(4);
                 const highlightedBorderWidth = Array(ALLOCATABLE_BUDGET + 1).fill(2);
@@ -593,7 +613,7 @@ export class ChartManager {
                     }
                     dataset.pointBorderColor = borderColors;
                 });
-                
+
                 this.charts.lineChart.update();
             } catch (error) {
                 console.error('Error updating line chart:', error);
@@ -606,33 +626,33 @@ export class ChartManager {
             try {
                 this.charts.multiBarChart.data.datasets[0].data = sd.postEarnings1Rounded;
                 this.charts.multiBarChart.data.datasets[1].data = sd.postEarnings2Rounded;
-                
+
                 // Update datalabels configuration
                 this.charts.multiBarChart.options.plugins.datalabels = getDataLabelsConfig('multiBar', selectedIndex, sd);
-                
+
                 // Update highlighting for selected bar
-                const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_BG_COLOR);  // Light green
-                const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_BG_COLOR);  // Light orange
-                const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD1_COLOR);  // Green
-                const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(CHILD2_COLOR);  // Orange
+                const backgroundColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD1_BG_COLOR);
+                const backgroundColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD2_BG_COLOR);
+                const borderColors1 = Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD1_COLOR);
+                const borderColors2 = Array(ALLOCATABLE_BUDGET + 1).fill(colors.CHILD2_COLOR);
                 const borderWidths = Array(ALLOCATABLE_BUDGET + 1).fill(0);
 
                 // Highlight selected bar (darker for selected)
-                backgroundColors1[selectedIndex] = CHILD1_COLOR;  // Green
-                backgroundColors2[selectedIndex] = CHILD2_COLOR;  // Orange
-                borderColors1[selectedIndex] = CHILD1_DARK_COLOR;  // Dark green
-                borderColors2[selectedIndex] = CHILD2_DARK_COLOR;  // Dark orange
-                
+                backgroundColors1[selectedIndex] = colors.CHILD1_COLOR;
+                backgroundColors2[selectedIndex] = colors.CHILD2_COLOR;
+                borderColors1[selectedIndex] = colors.CHILD1_DARK_COLOR;
+                borderColors2[selectedIndex] = colors.CHILD2_DARK_COLOR;
+
                 this.charts.multiBarChart.data.datasets[0].backgroundColor = backgroundColors1;
                 this.charts.multiBarChart.data.datasets[0].borderColor = borderColors1;
                 this.charts.multiBarChart.data.datasets[0].borderWidth = borderWidths;
                 this.charts.multiBarChart.data.datasets[1].backgroundColor = backgroundColors2;
                 this.charts.multiBarChart.data.datasets[1].borderColor = borderColors2;
                 this.charts.multiBarChart.data.datasets[1].borderWidth = borderWidths;
-                
+
                 // Update y-axis max
                 this.charts.multiBarChart.options.scales.y.max = sd.maximumEarningsRounded * 1.1;
-                
+
                 this.charts.multiBarChart.update();
             } catch (error) {
                 console.error('Error updating multi-bar chart:', error);

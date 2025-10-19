@@ -1,31 +1,30 @@
 // Import environment-specific configuration
-import { ENV_CONFIG } from '../config.js';
+// Try config.local.js first (local dev), fall back to config.js (production/GitHub Pages)
+// Using dynamic import with fallback
+const loadConfig = async () => {
+    try {
+        const localConfig = await import('../config.local.js');
+        console.log('Loaded local development config from config.local.js');
+        return localConfig.ENV_CONFIG;
+    } catch (error) {
+        // config.local.js doesn't exist, use production config
+        const prodConfig = await import('../config.js');
+        console.log('Loaded production config from config.js');
+        return prodConfig.ENV_CONFIG;
+    }
+};
+
+const ENV_CONFIG = await loadConfig();
 
 // Application Configuration Constants
 export const CONFIG = {
-    ALLOCATABLE_BUDGET: 9,
-    MAX_SESSIONS: 15,
     // UI Constants
     ALERT_TIMEOUT_MS: 5000,
     DOM_SETUP_DELAY_MS: 100
 };
 
-// Chart Colors - colorblind-friendly matplotlib-style palette
-export const COLORS = {
-    CHILD1_COLOR: '#2ca02c',        // Green for Child 1
-    CHILD1_BG_COLOR: '#a8d4a8',     // Light green background
-    CHILD1_DARK_COLOR: '#1a701a',   // Dark green for highlighting/text
-    CHILD2_COLOR: '#ff7f0e',        // Orange for Child 2
-    CHILD2_BG_COLOR: '#ffc788',     // Light orange background
-    CHILD2_DARK_COLOR: '#cc5500',   // Dark orange for highlighting/text
-    COMBINED_COLOR: '#1f77b4',      // Blue for Combined
-    COMBINED_BG_COLOR: '#aecbea',   // Light blue background
-    LABEL_BG_COLOR: 'rgba(255, 255, 255, 0.9)',  // Semi-transparent white for labels
-    LABEL_BORDER_COLOR: '#ccc'      // Light gray for label borders
-};
-
-// Note: Scenarios are now loaded from scenarios/scenarios.json
-// See scenario-loader.js module
+// Note: ALLOCATABLE_BUDGET, MAX_SESSIONS, and all chart colors are now loaded from scenarios JSON files
+// See scenario-loader.js module for SCENARIOS_METADATA
 
 // API Configuration (loaded from environment config)
 export const API_CONFIG = {
