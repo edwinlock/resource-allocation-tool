@@ -6,7 +6,9 @@ let SCENARIOS_METADATA = {
     scenarios_id: null,
     infotext: null,
     child1_name: null,
-    child2_name: null
+    child2_name: null,
+    allocatable_budget: null,
+    max_sessions: null
 };
 
 /**
@@ -52,7 +54,9 @@ async function loadScenarios(filename = 'scenarios.json') {
             scenarios_id: data.scenarios_id,
             infotext: data.infotext,
             child1_name: data.child1_name || 'Child 1',  // Default fallback
-            child2_name: data.child2_name || 'Child 2'   // Default fallback
+            child2_name: data.child2_name || 'Child 2',   // Default fallback
+            allocatable_budget: data.allocatable_budget,
+            max_sessions: data.max_sessions
         };
 
         return { scenarios, metadata: SCENARIOS_METADATA };

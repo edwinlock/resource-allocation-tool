@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Create Enumerator - LEARN{% endblock %}
+{% block title %}Create User - LEARN{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <h1 class="mb-4">Create New Enumerator</h1>
+            <h1 class="mb-4">Create New User</h1>
 
             {% if success %}
                 <!-- Success Message -->
                 <div class="alert alert-success" role="alert">
-                    <h4 class="alert-heading">✅ Enumerator Created Successfully!</h4>
-                    <p>A new enumerator account has been created for: <strong>{{ email }}</strong></p>
+                    <h4 class="alert-heading">✅ User Created Successfully!</h4>
+                    <p>A new user account has been created for: <strong>{{ email }}</strong></p>
                     <hr>
                     <p class="mb-0">
-                        <a href="{{ url_for('enumerators_page') }}" class="btn btn-primary">Back to Enumerators</a>
+                        <a href="{{ url_for('users_page') }}" class="btn btn-primary">Back to Users</a>
                         <a href="{{ url_for('create_enumerator') }}" class="btn btn-secondary">Create Another</a>
                     </p>
                 </div>
@@ -31,7 +31,7 @@
                 <!-- Create Form -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Enumerator Details</h5>
+                        <h5 class="mb-0">User Details</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -45,7 +45,7 @@
                                     id="email"
                                     name="email"
                                     required
-                                    placeholder="enumerator@example.com"
+                                    placeholder="user@example.com"
                                     autocomplete="off">
                                 <div class="form-text">
                                     This will be used as the username for login
@@ -69,14 +69,14 @@
                             </div>
 
                             <div class="alert alert-info">
-                                <strong>Note:</strong> The enumerator will be created with an active account and can log in immediately.
+                                <strong>Note:</strong> The user will be created with the default 'enumerator' role and an active account. You can edit roles from the Users page.
                             </div>
 
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-plus-circle"></i> Create Enumerator
+                                    <i class="bi bi-plus-circle"></i> Create User
                                 </button>
-                                <a href="{{ url_for('enumerators_page') }}" class="btn btn-secondary">
+                                <a href="{{ url_for('users_page') }}" class="btn btn-secondary">
                                     Cancel
                                 </a>
                             </div>

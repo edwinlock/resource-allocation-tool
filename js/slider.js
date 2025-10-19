@@ -20,9 +20,18 @@ class SliderApp {
     }
 
     // Parse URL parameters to check for dummy mode
+    // Returns: 1, 2, or null
     getDummyModeFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('dummy') === 'true';
+        const dummyParam = urlParams.get('dummy');
+
+        // Support dummy=1, dummy=2, or legacy dummy=true (treated as dummy=1)
+        if (dummyParam === '1' || dummyParam === 'true') {
+            return 1;
+        } else if (dummyParam === '2') {
+            return 2;
+        }
+        return null;
     }
 
     // Load session data from database
@@ -39,10 +48,17 @@ class SliderApp {
         try {
             // Get session ID and dummy mode from URL first
             const sessionId = this.getSessionIdFromURL();
-            const isDummyMode = this.getDummyModeFromURL();
+            const dummyMode = this.getDummyModeFromURL();
 
-            // Load scenarios from JSON file - use dummy scenarios for practice round
-            const scenariosFile = isDummyMode ? 'scenarios-dummy.json' : 'scenarios.json';
+            // Load scenarios from JSON file - use appropriate dummy file or real scenarios
+            let scenariosFile;
+            if (dummyMode === 1) {
+                scenariosFile = 'scenarios-dummy.json';
+            } else if (dummyMode === 2) {
+                scenariosFile = 'scenarios-dummy-2.json';
+            } else {
+                scenariosFile = 'scenarios.json';
+            }
             await loadScenarios(scenariosFile);
 
             // Update the UI with scenarios metadata

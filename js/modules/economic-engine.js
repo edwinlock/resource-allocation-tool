@@ -1,6 +1,4 @@
-import { CONFIG } from './constants.js';
-
-const { ALLOCATABLE_BUDGET, MAX_SESSIONS } = CONFIG;
+import { SCENARIOS_METADATA } from './scenario-loader.js';
 
 // Compute child-specific human capital, as a combination of ability and parental investment
 function humanCapital(ability, investment, scenario) {
@@ -18,6 +16,8 @@ function humanCapital(ability, investment, scenario) {
 
 function computeAlpha(preEarnings1, preEarnings2, scenario) {
     const amax = Math.max(preEarnings1, preEarnings2)
+    const MAX_SESSIONS = SCENARIOS_METADATA.max_sessions;
+    const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     return MAX_SESSIONS / (humanCapital(amax, ALLOCATABLE_BUDGET, scenario)**scenario.theta)
 }
 
@@ -31,10 +31,11 @@ function earnings(ability, investment, scenario, alpha) {
 export function computeOutcomes(session, scenario) {
     const preEarnings1 = session.preEarnings1;
     const preEarnings2 = session.preEarnings2;
+    const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
 
     // Compute alpha first since earnings depend on it
     const alpha = computeAlpha(preEarnings1, preEarnings2, scenario);
-    
+
     // Initialize arrays
     const investments1 = Array(ALLOCATABLE_BUDGET+1).fill(0);
     const investments2 = Array(ALLOCATABLE_BUDGET+1).fill(0);
@@ -44,7 +45,7 @@ export function computeOutcomes(session, scenario) {
     const postEarnings1Rounded = Array(ALLOCATABLE_BUDGET+1).fill(0);
     const postEarnings2Rounded = Array(ALLOCATABLE_BUDGET+1).fill(0);
     const aggrEarningsRounded = Array(ALLOCATABLE_BUDGET+1).fill(0);
-    
+
     for (let i=0; i <= ALLOCATABLE_BUDGET; i++) {
         investments1[i] = i;
         investments2[i] = ALLOCATABLE_BUDGET - i;

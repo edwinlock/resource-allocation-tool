@@ -230,8 +230,11 @@ class SliderResponse(db.Model):
     parent_session_id = db.Column(db.String(255), db.ForeignKey('parent_session.id'), nullable=False)
     scenarios_id = db.Column(db.String(255), nullable=False)  # e.g., "main-v1" or "practice-v1"
     scenario_number = db.Column(db.Integer, nullable=False)
+    scenario_name = db.Column(db.String(255), nullable=False)  # e.g., "A", "B", "C" - scenario identifier
     display_order = db.Column(db.Integer, nullable=False)
     child1_investment = db.Column(db.Integer, nullable=False)
+    child2_investment = db.Column(db.Integer, nullable=False)  # Stored value, not computed
+    allocatable_budget = db.Column(db.Integer, nullable=False)  # Total budget for this scenario set
     completed_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # Scenario parameters (constant per scenario)
@@ -253,13 +256,7 @@ class SliderResponse(db.Model):
     __table_args__ = (
         db.Index('idx_parent_session_display_order', 'parent_session_id', 'display_order'),
         db.Index('idx_scenarios_id', 'scenarios_id'),
-        db.CheckConstraint('child1_investment >= 0 AND child1_investment <= 9', name='check_child1_investment'),
     )
-
-    @hybrid_property
-    def child2_investment(self):
-        """Calculate child2 investment as remainder of total budget (9)."""
-        return 9 - self.child1_investment
 
     def to_dict(self):
         """Convert slider response to dictionary for JSON serialization."""
@@ -268,9 +265,11 @@ class SliderResponse(db.Model):
             'parent_session_id': self.parent_session_id,
             'scenarios_id': self.scenarios_id,
             'scenario_number': self.scenario_number,
+            'scenario_name': self.scenario_name,
             'display_order': self.display_order,
             'child1_investment': self.child1_investment,
             'child2_investment': self.child2_investment,
+            'allocatable_budget': self.allocatable_budget,
             'completed_at': self.completed_at.isoformat() if self.completed_at else None,
             'scenario_gamma': self.scenario_gamma,
             'scenario_sigma': self.scenario_sigma,

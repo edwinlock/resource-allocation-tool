@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v33';
+const CACHE_NAME = 'resource-allocation-v34';
 const urlsToCache = [
   './',
   './index.html',
@@ -50,6 +50,7 @@ const urlsToCache = [
   './surveys/raven/mat12.png',
   './scenarios/scenarios.json',
   './scenarios/scenarios-dummy.json',
+  './scenarios/scenarios-dummy-2.json',
   './guides/enumerator_guide.html',
   './guides/enumerator_guide_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css',
   './guides/enumerator_guide_files/libs/bootstrap/bootstrap-icons.css',

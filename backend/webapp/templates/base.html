@@ -28,13 +28,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     {% if current_user.is_authenticated %}
-                        {% if current_user.has_role('administrator') %}
+                        {% if current_user.has_role('administrator') or current_user.has_role('supervisor') %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('session_page') }}">Sessions</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('enumerators_page') }}">Enumerators</a>
+                                <a class="nav-link" href="{{ url_for('users_page') }}">Users</a>
                             </li>
+                        {% endif %}
+                        {% if current_user.has_role('administrator') %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('data_export_page') }}">Data Export</a>
                             </li>

@@ -44,20 +44,92 @@ export class SurveyQuestion {
 
 // Open question - single text input
 export class OpenQuestion extends SurveyQuestion {
+    constructor(questionData) {
+        super(questionData);
+        this.prefix = questionData.prefix || null;
+        this.decimalPlaces = questionData.decimal_places;
+        this.commaSeparated = questionData.comma_separated || false;
+    }
+
     render(variables = {}) {
         const query = this.substituteVariables(this.query, variables);
         const inputType = this.datatype === 'number' ? 'number' : 'text';
         const requiredAttr = this.required ? 'required' : '';
 
+        // Calculate step attribute based on decimal_places
+        let stepAttr = '';
+        if (this.datatype === 'number' && this.decimalPlaces !== undefined) {
+            if (this.decimalPlaces === 0) {
+                stepAttr = 'step="1"';
+            } else {
+                const stepValue = Math.pow(10, -this.decimalPlaces);
+                stepAttr = `step="${stepValue}"`;
+            }
+        }
+
+        // Substitute variables in prefix if present
+        const displayPrefix = this.prefix ? this.substituteVariables(this.prefix, variables) : null;
+
+        // Build input HTML with optional prefix
+        let inputHTML;
+        if (displayPrefix) {
+            inputHTML = `
+                <div class="input-group">
+                    <span class="input-group-text">${displayPrefix}</span>
+                    <input type="${inputType}" ${stepAttr} class="form-control" id="q_${this.questionId}"
+                           data-question-id="${this.questionId}" ${requiredAttr}>
+                </div>
+            `;
+        } else {
+            inputHTML = `
+                <input type="${inputType}" ${stepAttr} class="form-control" id="q_${this.questionId}"
+                       data-question-id="${this.questionId}" ${requiredAttr}>
+            `;
+        }
+
+        // Setup event listeners for comma-separated formatting if needed
+        if (this.commaSeparated) {
+            setTimeout(() => this.setupEventListeners(), 0);
+        }
+
         return `
             <div class="mb-4">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
-                    <input type="${inputType}" class="form-control" id="q_${this.questionId}"
-                           data-question-id="${this.questionId}" ${requiredAttr}>
+                    ${inputHTML}
+                    ${this.commaSeparated ? `<small class="form-text text-muted mt-1" id="q_${this.questionId}_formatted"></small>` : ''}
                 </fieldset>
             </div>
         `;
+    }
+
+    setupEventListeners() {
+        const input = document.getElementById(`q_${this.questionId}`);
+        const formattedDiv = document.getElementById(`q_${this.questionId}_formatted`);
+
+        if (input && formattedDiv) {
+            input.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                if (!isNaN(value)) {
+                    const formatted = this.formatNumber(value);
+                    formattedDiv.textContent = formatted;
+                } else {
+                    formattedDiv.textContent = '';
+                }
+            });
+        }
+    }
+
+    formatNumber(value) {
+        if (value === null || value === '') return '';
+
+        if (this.decimalPlaces !== undefined) {
+            return value.toLocaleString('es-MX', {
+                minimumFractionDigits: this.decimalPlaces,
+                maximumFractionDigits: this.decimalPlaces
+            });
+        }
+        return value.toLocaleString('es-MX');
     }
 
     getValue() {
@@ -186,7 +258,7 @@ export class SingleSelectQuestion extends SurveyQuestion {
                     <div class="col-auto mb-2">
                         <div class="form-check">
                             <input class="form-check-input survey-option-input" type="radio" name="q_${this.questionId}"
-                                   id="q_${this.questionId}_${index}" value="${value}"
+                                   id="q_${this.questionId}_${index}" value="${displayValue}"
                                    data-question-id="${this.questionId}" ${requiredAttr}>
                             <label class="form-check-label survey-option-label" for="q_${this.questionId}_${index}">
                                 ${displayValue}
@@ -203,7 +275,7 @@ export class SingleSelectQuestion extends SurveyQuestion {
                 html += `
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="q_${this.questionId}"
-                               id="q_${this.questionId}_${index}" value="${value}"
+                               id="q_${this.questionId}_${index}" value="${displayValue}"
                                data-question-id="${this.questionId}" ${requiredAttr}>
                         <label class="form-check-label" for="q_${this.questionId}_${index}">
                             ${displayValue}
@@ -271,7 +343,7 @@ export class MultiSelectQuestion extends SurveyQuestion {
                     <div class="col-auto mb-2">
                         <div class="form-check">
                             <input class="form-check-input survey-option-input" type="checkbox"
-                                   id="q_${this.questionId}_${index}" value="${value}"
+                                   id="q_${this.questionId}_${index}" value="${displayValue}"
                                    data-question-id="${this.questionId}" data-index="${index}">
                             <label class="form-check-label survey-option-label" for="q_${this.questionId}_${index}">
                                 ${displayValue}
@@ -288,7 +360,7 @@ export class MultiSelectQuestion extends SurveyQuestion {
                 html += `
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox"
-                               id="q_${this.questionId}_${index}" value="${value}"
+                               id="q_${this.questionId}_${index}" value="${displayValue}"
                                data-question-id="${this.questionId}" data-index="${index}">
                         <label class="form-check-label" for="q_${this.questionId}_${index}">
                             ${displayValue}
@@ -360,7 +432,7 @@ export class GridQuestion extends SurveyQuestion {
                                 <input class="form-check-input survey-option-input" type="radio"
                                        name="q_${this.questionId}_row_${rowIndex}"
                                        id="q_${this.questionId}_${rowIndex}_${colIndex}"
-                                       value="${option}"
+                                       value="${displayOption}"
                                        data-question-id="${this.questionId}"
                                        data-row="${rowIndex}" data-col="${colIndex}" ${requiredAttr}>
                                 <label class="form-check-label survey-option-label" for="q_${this.questionId}_${rowIndex}_${colIndex}">
@@ -491,6 +563,9 @@ export class MPLQuestion extends SurveyQuestion {
     }
 
     render(variables = {}) {
+        // Store variables for use in handleMPLSelection
+        this.renderedVariables = variables;
+
         const query = this.substituteVariables(this.query, variables);
         const requiredAttr = this.required ? 'required' : '';
 
@@ -516,7 +591,7 @@ export class MPLQuestion extends SurveyQuestion {
                                 <input class="form-check-input survey-option-input" type="radio"
                                        name="q_${this.questionId}_row_${rowIndex}"
                                        id="q_${this.questionId}_${rowIndex}_${colIndex}"
-                                       value="${option}"
+                                       value="${displayOption}"
                                        data-question-id="${this.questionId}"
                                        data-row="${rowIndex}" data-col="${colIndex}" ${requiredAttr}>
                                 <label class="form-check-label survey-option-label" for="q_${this.questionId}_${rowIndex}_${colIndex}">
@@ -561,17 +636,19 @@ export class MPLQuestion extends SurveyQuestion {
     handleMPLSelection(selectedRow, selectedValue) {
         // 1. The clicked row keeps its selection (already handled by browser)
 
-        // 2. Set all rows above to "yes" (first option)
+        // 2. Set all rows above to "yes" (first option - substituted)
         for (let row = 0; row < selectedRow; row++) {
-            const yesRadio = document.querySelector(`input[name="q_${this.questionId}_row_${row}"][value="${this.options[row]?.[0]}"]`);
+            const yesValue = this.substituteVariables(String(this.options[row]?.[0] || ''), this.renderedVariables || {});
+            const yesRadio = document.querySelector(`input[name="q_${this.questionId}_row_${row}"][value="${yesValue}"]`);
             if (yesRadio) {
                 yesRadio.checked = true;
             }
         }
 
-        // 3. Set all rows below to "no" (second option)
+        // 3. Set all rows below to "no" (second option - substituted)
         for (let row = selectedRow + 1; row < this.prefixes.length; row++) {
-            const noRadio = document.querySelector(`input[name="q_${this.questionId}_row_${row}"][value="${this.options[row]?.[1]}"]`);
+            const noValue = this.substituteVariables(String(this.options[row]?.[1] || ''), this.renderedVariables || {});
+            const noRadio = document.querySelector(`input[name="q_${this.questionId}_row_${row}"][value="${noValue}"]`);
             if (noRadio) {
                 noRadio.checked = true;
             }

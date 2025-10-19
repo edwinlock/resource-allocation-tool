@@ -1,7 +1,9 @@
+// Import environment-specific configuration
+import { ENV_CONFIG } from '../config.js';
+
 // Application Configuration Constants
 export const CONFIG = {
     ALLOCATABLE_BUDGET: 9,
-    GAP_THRESHOLD: 6,
     MAX_SESSIONS: 15,
     // UI Constants
     ALERT_TIMEOUT_MS: 5000,
@@ -25,15 +27,10 @@ export const COLORS = {
 // Note: Scenarios are now loaded from scenarios/scenarios.json
 // See scenario-loader.js module
 
-// API Configuration
+// API Configuration (loaded from environment config)
 export const API_CONFIG = {
-    BACKEND_URL: 'https://learn.education-equity-technology.com', // Backend Flask app
-    UPLOAD_TIMEOUT: 30000, // 30 seconds
-    ENDPOINTS: {
-        UPLOAD_SESSION: '/upload-session',
-        HEALTH_CHECK: '/health',
-        LOGIN: '/login',
-        PROFILE: '/profile'
-    }
+    BACKEND_URL: ENV_CONFIG.BACKEND_URL,
+    UPLOAD_TIMEOUT: ENV_CONFIG.UPLOAD_TIMEOUT,
+    ENDPOINTS: ENV_CONFIG.ENDPOINTS
 };
 

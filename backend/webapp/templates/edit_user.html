@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - LEARN{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>Edit User Roles</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <p class="mb-1"><strong>User:</strong> {{ user.email }}</p>
+                    <p class="mb-1"><strong>ID:</strong> {{ user.id }}</p>
+                    <p class="mb-1">
+                        <strong>Status:</strong>
+                        {% if user.active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <hr>
+
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.roles.label.text }}</label>
+                        {% for value, label in form.roles.choices %}
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="roles"
+                                       id="role_{{ value }}"
+                                       value="{{ value }}"
+                                       {% if value in form.roles.data %}checked{% endif %}>
+                                <label class="form-check-label" for="role_{{ value }}">
+                                    {{ label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        <small class="form-text text-muted mt-2 d-block">
+                            Select one or more roles for this user. Users can have multiple roles.
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('users_page') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Users
+                        </a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

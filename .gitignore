@@ -33,6 +33,9 @@ yarn.lock
 .env.test.local
 .env.production.local
 
+# Frontend configuration (environment-specific)
+js/config.js
+
 # Build outputs
 dist/
 build/

@@ -1,8 +1,5 @@
-import { CONFIG } from './constants.js';
 import { SCENARIOS, SCENARIOS_METADATA } from './scenario-loader.js';
 import { appState } from './app-state.js';
-
-const { ALLOCATABLE_BUDGET } = CONFIG;
 
 // DOM element management and event handlers
 export class UIManager {
@@ -65,8 +62,9 @@ export class UIManager {
         if (this.child1Display) {
             this.child1Display.textContent = selected;
         }
-        
+
         if (this.child2Display) {
+            const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
             this.child2Display.textContent = ALLOCATABLE_BUDGET - selected;
         }
     }
@@ -142,6 +140,7 @@ export class UIManager {
     // Restore UI state from saved response
     restoreUIFromResponse(response) {
         if (response && this.investmentSlider && this.child1Display && this.child2Display) {
+            const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
             appState.setSelectedInvestment(response.child1investment);
             this.investmentSlider.value = response.child1investment;
             this.child1Display.textContent = response.child1investment;
@@ -169,7 +168,20 @@ export class UIManager {
     // Reset slider state for new scenario
     resetSliderForNewScenario() {
         if (this.investmentSlider) {
+            // Reset slider to leftmost position (value 0)
+            this.investmentSlider.value = 0;
             this.investmentSlider.classList.remove('slider-touched');
+
+            // Update displays to show 0 investment
+            if (this.child1Display) {
+                this.child1Display.textContent = 0;
+            }
+            if (this.child2Display) {
+                const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
+                this.child2Display.textContent = ALLOCATABLE_BUDGET;
+            }
+
+            // Reset state
             appState.resetSliderTouched();
             this.disableNextButton();
         }
@@ -187,7 +199,10 @@ export class UIManager {
                 const scenariosId = SCENARIOS_METADATA.scenarios_id;
 
                 if (scenariosId === 'practice-v1') {
-                    // Practice slider complete - go to sandwich survey
+                    // First practice slider complete - go to second dummy slider
+                    window.location.href = `slider.html?sessionId=${sessionId}&dummy=2`;
+                } else if (scenariosId === 'practice-v2') {
+                    // Second practice slider complete - go to sandwich survey
                     window.location.href = `survey.html?survey_id=Sandwich&session_id=${sessionId}`;
                 } else {
                     // Real slider complete - go to exit survey

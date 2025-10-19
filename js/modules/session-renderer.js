@@ -1,4 +1,3 @@
-import { CONFIG } from './constants.js';
 import { SessionUIUtils } from './shared-utils.js';
 
 // UI rendering utilities for session data
@@ -395,11 +394,11 @@ export class SessionRenderer {
             if (tbody) {
                 tbody.innerHTML = responses.map(response => `
                     <tr>
-                        <td>${response.scenariosId || '-'}</td>
+                        <td>${response.scenariosId}</td>
+                        <td>${response.scenarioName}</td>
                         <td>${response.displayOrder}</td>
-                        <td>${response.scenarioNumber}</td>
                         <td>${response.child1investment}</td>
-                        <td>${CONFIG.ALLOCATABLE_BUDGET - response.child1investment}</td>
+                        <td>${response.child2investment}</td>
                         <td>${SessionUIUtils.formatDate(response.completedAt)}</td>
                     </tr>
                 `).join('');

@@ -136,6 +136,9 @@
             "type": "open",
             "query": "¿En cuánto estima el ingreso mensual total de su hogar?\n (Si prefiere no responder, puede dejar la respuesta en blanco.)",
             "datatype": "number",
+            "decimal_places": 2,
+            "comma_separated": true,
+            "prefix": "$",
             "required": false
         },
         {

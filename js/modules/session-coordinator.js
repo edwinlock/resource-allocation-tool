@@ -380,9 +380,11 @@ export class SessionCoordinator {
                     aggregatedData.sliderResponses = sliderResponses.map(response => ({
                         scenariosId: response.scenariosId,
                         scenarioNumber: response.scenarioNumber,
+                        scenarioName: response.scenarioName,
                         displayOrder: response.displayOrder,
                         child1investment: response.child1investment,
-                        child2investment: response.child1investment ? (9 - response.child1investment) : null,
+                        child2investment: response.child2investment,
+                        allocatableBudget: response.allocatableBudget,
                         completedAt: response.completedAt,
                         scenarioGamma: response.scenarioGamma,
                         scenarioSigma: response.scenarioSigma,

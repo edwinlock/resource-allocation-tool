@@ -2,11 +2,10 @@ from datetime import datetime
 import json
 import io
 import zipfile
-from flask import render_template, request, jsonify, current_app, send_file
+from flask import render_template, request, jsonify, current_app, send_file, redirect, url_for, flash
 from flask_security import login_required, roles_required, current_user, hash_password
 from babel.dates import format_datetime
 import pandas as pd
-from sqlalchemy.exc import IntegrityError
 # render_table is available in Jinja2 templates via flask_bootstrap
 from webapp.models import db, Session, ChildSession, ParentSession, SurveyResponse, SliderResponse, User, Role
 
@@ -186,7 +185,7 @@ def create_survey_response_objects(session_id, survey_responses, session_metadat
             session_id=session_id,
             survey_id=response['surveyId'],
             question_id=response['questionId'],
-            answer=json.dumps(response['answer']) if isinstance(response['answer'], (list, dict)) else str(response['answer']),
+            answer=json.dumps(response['answer'], ensure_ascii=False) if isinstance(response['answer'], (list, dict)) else str(response['answer']),
             completed_at=datetime.fromisoformat(response['completedAt'].replace('Z', '+00:00'))
         )
         survey_objects.append(new_survey_response)
@@ -204,8 +203,11 @@ def create_slider_response_objects(session_id, slider_responses):
             parent_session_id=session_id,  # Now links to parent_session
             scenarios_id=scenarios_id,  # Include scenarios_id
             scenario_number=response['scenarioNumber'],
+            scenario_name=response['scenarioName'],  # Scenario name/id
             display_order=response['displayOrder'],
             child1_investment=response['child1investment'],  # Frontend uses lowercase 'investment'
+            child2_investment=response['child2investment'],  # Store child2 investment
+            allocatable_budget=response['allocatableBudget'],  # Store allocatable budget
             completed_at=datetime.fromisoformat(response['completedAt'].replace('Z', '+00:00')),
             # Economic parameters
             scenario_gamma=response['scenarioGamma'],
@@ -225,8 +227,8 @@ def create_slider_response_objects(session_id, slider_responses):
 def save_session_data(session_obj, survey_objects, slider_objects):
     """Save all session data in a single database transaction.
 
-    Attempts to INSERT new records. If session already exists (IntegrityError),
-    updates the existing session instead. This allows re-uploading sessions.
+    If session already exists, deletes the old one and replaces it completely.
+    This allows re-uploading sessions without complexity.
     """
     session_id = session_obj.id
     session_type = session_obj.session_type
@@ -234,7 +236,16 @@ def save_session_data(session_obj, survey_objects, slider_objects):
     current_app.logger.info(f"Attempting to save {session_type} session {session_id} with {len(survey_objects)} survey responses and {len(slider_objects)} slider responses")
 
     try:
-        # Try to add new session
+        # Check if session already exists
+        existing_session = db.session.get(type(session_obj), session_id)
+
+        if existing_session:
+            current_app.logger.warning(f"Session {session_id} already exists, deleting and replacing")
+            # Delete existing session (cascade will delete related survey/slider responses)
+            db.session.delete(existing_session)
+            db.session.flush()  # Ensure delete is processed before insert
+
+        # Add new session
         db.session.add(session_obj)
 
         # Add survey responses
@@ -247,87 +258,13 @@ def save_session_data(session_obj, survey_objects, slider_objects):
 
         # Commit the transaction
         db.session.commit()
-        current_app.logger.info(f"Successfully inserted new {session_type} session {session_id}")
+
+        if existing_session:
+            current_app.logger.info(f"Successfully replaced {session_type} session {session_id}")
+        else:
+            current_app.logger.info(f"Successfully inserted new {session_type} session {session_id}")
+
         return True, None
-
-    except IntegrityError as e:
-        # Session already exists - rollback and update instead
-        db.session.rollback()
-        current_app.logger.warning(f"Session {session_id} already exists (IntegrityError), attempting to update instead. Error: {str(e)}")
-
-        try:
-            # Query existing session
-            existing_session = db.session.get(type(session_obj), session_id)
-
-            if existing_session:
-                current_app.logger.info(f"Found existing session {session_id}, updating attributes")
-
-                # Update existing session attributes
-                updated_fields = []
-                for key, value in session_obj.__dict__.items():
-                    if not key.startswith('_'):  # Skip SQLAlchemy internal attributes
-                        old_value = getattr(existing_session, key, None)
-                        if old_value != value:
-                            updated_fields.append(key)
-                        setattr(existing_session, key, value)
-
-                if updated_fields:
-                    current_app.logger.info(f"Updated fields for session {session_id}: {', '.join(updated_fields)}")
-
-                # Update or add survey responses
-                surveys_updated = 0
-                surveys_added = 0
-                for survey_obj in survey_objects:
-                    existing_survey = db.session.get(SurveyResponse, survey_obj.id)
-                    if existing_survey:
-                        # Update existing
-                        for key, value in survey_obj.__dict__.items():
-                            if not key.startswith('_'):
-                                setattr(existing_survey, key, value)
-                        surveys_updated += 1
-                    else:
-                        # Add new
-                        db.session.add(survey_obj)
-                        surveys_added += 1
-
-                current_app.logger.info(f"Survey responses for session {session_id}: {surveys_updated} updated, {surveys_added} added")
-
-                # Update or add slider responses
-                sliders_updated = 0
-                sliders_added = 0
-                for slider_obj in slider_objects:
-                    existing_slider = db.session.get(SliderResponse, slider_obj.id)
-                    if existing_slider:
-                        # Update existing
-                        for key, value in slider_obj.__dict__.items():
-                            if not key.startswith('_'):
-                                setattr(existing_slider, key, value)
-                        sliders_updated += 1
-                    else:
-                        # Add new
-                        db.session.add(slider_obj)
-                        sliders_added += 1
-
-                if slider_objects:
-                    current_app.logger.info(f"Slider responses for session {session_id}: {sliders_updated} updated, {sliders_added} added")
-
-                db.session.commit()
-                current_app.logger.info(f"Successfully updated existing {session_type} session {session_id}")
-                return True, None
-            else:
-                # This shouldn't happen, but handle it
-                error_msg = f"Session {session_id} reported as existing but not found in database"
-                current_app.logger.error(error_msg)
-                raise Exception(error_msg)
-
-        except Exception as update_error:
-            db.session.rollback()
-            current_app.logger.error(f"Failed to update existing session {session_id}: {str(update_error)}")
-            return False, {
-                "error": "update_failed",
-                "message": "Failed to update existing session data",
-                "details": {"error": str(update_error)}
-            }
 
     except Exception as e:
         db.session.rollback()
@@ -423,23 +360,58 @@ def upload_session_page():
         }), 500
     
 
-@app.route("/enumerators")
+@app.route("/users")
 @roles_required("administrator")
-def enumerators_page():
-    """Show a list of enumerator users using bootstrap-flask render_table() function."""
-    # Get all users with enumerator role
-    enumerator_role = Role.query.filter_by(name='enumerator').first()
-    if not enumerator_role:
-        enumerators = []
-    else:
-        enumerators = enumerator_role.users.all()
+def users_page():
+    """Show a list of all users."""
+    # Get all users
+    users = User.query.order_by(User.id).all()
 
-        # Add formatted date attributes for display using Babel
-        for user in enumerators:
-            user.last_login_formatted = format_datetime(user.last_login_at, 'short', locale='en_GB') if user.last_login_at else 'Never'
-            user.current_login_formatted = format_datetime(user.current_login_at, 'short', locale='en_GB') if user.current_login_at else 'Never'
+    # Add formatted date attributes and role names for display
+    for user in users:
+        user.last_login_formatted = format_datetime(user.last_login_at, 'short', locale='en_GB') if user.last_login_at else 'Never'
+        user.current_login_formatted = format_datetime(user.current_login_at, 'short', locale='en_GB') if user.current_login_at else 'Never'
+        # Get role names as comma-separated string
+        user.role_names = ', '.join([role.name.capitalize() for role in user.roles])
 
-    return render_template('enumerators.html', enumerators=enumerators)
+    return render_template('users.html', users=users)
+
+
+@app.route("/users/<int:user_id>", methods=['GET', 'POST'])
+@roles_required("administrator")
+def edit_user(user_id):
+    """Edit user roles (administrator only)."""
+    from webapp import user_datastore
+    from webapp.forms import EditUserRolesForm
+
+    user = User.query.get_or_404(user_id)
+    form = EditUserRolesForm()
+
+    if request.method == 'GET':
+        # Pre-populate form with current roles
+        form.roles.data = [role.name for role in user.roles]
+
+    if form.validate_on_submit():
+        # Get selected role names from form
+        selected_roles = form.roles.data
+
+        # Get all available roles
+        all_roles = {role.name: role for role in Role.query.all()}
+
+        # Remove all current roles
+        for role in list(user.roles):
+            user_datastore.remove_role_from_user(user, role)
+
+        # Add selected roles
+        for role_name in selected_roles:
+            if role_name in all_roles:
+                user_datastore.add_role_to_user(user, all_roles[role_name])
+
+        db.session.commit()
+        flash(f'Roles updated for {user.email}', 'success')
+        return redirect(url_for('users_page'))
+
+    return render_template('edit_user.html', user=user, form=form)
 
 
 @app.route("/enumerators/new", methods=['GET', 'POST'])
@@ -678,9 +650,9 @@ def generate_survey_responses_df():
         # Try to parse JSON answers, fall back to string
         try:
             answer = json.loads(response.answer) if isinstance(response.answer, str) else response.answer
-            # Convert lists/dicts to string representation
+            # Convert lists/dicts to string representation for CSV export
             if isinstance(answer, (list, dict)):
-                answer = json.dumps(answer)
+                answer = json.dumps(answer, ensure_ascii=False)
         except (json.JSONDecodeError, TypeError):
             answer = response.answer
 

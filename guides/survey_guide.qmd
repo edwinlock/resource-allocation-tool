@@ -19,6 +19,15 @@ format: html
 
 Use `{variableName}` in any text field to inject session data. **Available variables depend on the session type.**
 
+**Important:** Variables are resolved when the survey is displayed AND when answers are stored:
+- Display: `{child1name}` appears as "José" to the user
+- Stored answer: Database contains "José", not `{child1name}`
+
+This applies to:
+- Question text (`query`, `text`, `prefixes`)
+- Answer choices (`values`, `options`)
+- Input prefixes (`prefix` field for open questions)
+
 ### Variables Available for ALL Session Types
 
 | Variable | Description | Example |
@@ -52,6 +61,8 @@ Use `{variableName}` in any text field to inject session data. **Available varia
 
 ### 1. open - Single text/number input
 
+**Basic usage:**
+
 ```json
 {
     "question_id": "unique_id",
@@ -61,6 +72,36 @@ Use `{variableName}` in any text field to inject session data. **Available varia
     "required": true
 }
 ```
+
+**Enhanced number input with prefix and decimal control:**
+
+```json
+{
+    "question_id": "price_estimate",
+    "type": "open",
+    "query": "¿Cuánto estaría dispuesto a pagar?",
+    "datatype": "number",
+    "prefix": "$",                    // Optional: Shows prefix before input (e.g., "$", "€", "MXN")
+    "decimal_places": 2,              // Optional: Controls decimal precision (0=integers, 2=currency, etc.)
+    "comma_separated": true,          // Optional: Shows formatted number below input (e.g., "150,000.50")
+    "required": true
+}
+```
+
+**Options for `decimal_places`:**
+- `0` - Integers only (step="1"): allows 0, 1, 100, etc.
+- `1` - One decimal place (step="0.1"): allows 1.5, 2.3, etc.
+- `2` - Two decimal places (step="0.01"): allows 150.50, 99.99 (perfect for currency)
+- `3` - Three decimal places (step="0.001"): allows 3.141, etc.
+- Omit for any number of decimals
+
+**Visual result with all enhancements:**
+```
+Input field shows: $ 150000.50
+Below shows: 150,000.50  (when comma_separated: true)
+```
+
+**Note:** The `prefix` field supports variable substitution (e.g., `"prefix": "{child1name}:"`)
 
 ### 2. multiopen - Multiple inputs with labels
 
@@ -266,18 +307,31 @@ Similar to `grid`, but uses `rows` with `row_id` and `text` fields, and `columns
 - `datatype`: "text" or "number" (for input questions)
 - `required`: true/false (defaults to false)
 - `values`: Array of choices (for select questions)
+  - **Supports variable substitution** - resolved values are stored (e.g., `"{child1name}"` becomes `"José"`)
 - `image`: Single image URL (for singleselect/multiselect; displays image above question with horizontal options)
   - Relative paths (e.g., `"image.png"`) are loaded from the `frontend/surveys/` directory
   - Absolute URLs (e.g., `"https://example.com/image.png"`) are loaded from the specified URL
   - Absolute paths (e.g., `"/images/image.png"`) are loaded from the root of the web server
 - `prefixes`: Array of row labels (for multiopen/grid/mpl/multilikert)
 - `options`: 2D array of choices per row (for grid/mpl)
+  - **Supports variable substitution** - resolved values are stored
 - `rows`: Array of objects with `row_id` and `text` fields (for matrix)
 - `columns`: Array of column header strings (for matrix)
 - `text`: Display content (for plaintext/consent)
 - `min`: Minimum value for scale (for likert/multilikert, defaults to 0)
 - `max`: Maximum value for scale (for likert/multilikert, defaults to 5)
-- `prefix`: Descriptive text for single likert scale (for likert)
+- `prefix`: For likert - descriptive text for single scale; For open - text/symbol shown before input (e.g., "$")
+  - **Supports variable substitution**
+
+**New fields for number inputs (type: "open", datatype: "number"):**
+
+- `decimal_places`: Optional number specifying decimal precision
+  - `0` = integers only, `1` = one decimal, `2` = two decimals (currency), etc.
+  - Controls HTML input `step` attribute for browser validation
+- `comma_separated`: Optional boolean (true/false, defaults to false)
+  - When `true`, displays formatted number below input (e.g., "150,000.50")
+  - Uses Spanish (Mexico) locale formatting
+  - Does not affect stored value (stores plain number without commas)
 
 ## Complete Example Survey (Showcasing All Question Types)
 
@@ -302,13 +356,27 @@ Similar to `grid`, but uses `rows` with `row_id` and `text` fields, and `columns
             "type": "open",
             "query": "What is your age?",
             "datatype": "number",
+            "decimal_places": 0,
             "required": true
         },
         {
-            "question_id": "family_income",
+            "question_id": "annual_income",
             "type": "open",
-            "query": "What is your approximate annual household income?",
-            "datatype": "text",
+            "query": "What is your approximate annual household income (in pesos)?",
+            "datatype": "number",
+            "prefix": "$",
+            "decimal_places": 0,
+            "comma_separated": true,
+            "required": true
+        },
+        {
+            "question_id": "tutoring_budget",
+            "type": "open",
+            "query": "How much would you be willing to spend on tutoring per month?",
+            "datatype": "number",
+            "prefix": "$",
+            "decimal_places": 2,
+            "comma_separated": true,
             "required": true
         },
         {
@@ -411,7 +479,7 @@ The survey system supports **11 different question types**:
 
 1. **consent** - Consent form with detailed text
 2. **plaintext** - Display-only text (instructions, section headers)
-3. **open** - Single text or number input
+3. **open** - Single text or number input (with optional prefix, decimal control, and comma formatting)
 4. **singleselect** - Radio buttons (single choice)
 5. **multiselect** - Checkboxes (multiple choices)
 6. **multiopen** - Multiple labeled inputs
@@ -420,3 +488,63 @@ The survey system supports **11 different question types**:
 9. **matrix** - Table with radio buttons using row_id structure
 10. **likert** - Single Likert scale (1-5, 1-7, 0-10, etc.)
 11. **multilikert** - Multiple items with same Likert scale
+
+## Recent Enhancements
+
+### Variable Substitution in Stored Answers (2025)
+
+Variables in answer choices are now resolved and stored with their actual values:
+
+**Before:** Database stored `"{child1name}"` as the answer
+**After:** Database stores `"José"` as the answer
+
+This applies to all question types that use variables in `values`, `options`, or other answer fields.
+
+### Enhanced Number Inputs for "open" Questions (2025)
+
+Three new optional fields for number inputs:
+
+1. **`prefix`** - Display text/symbol before the input
+   - Example: `"prefix": "$"` shows a dollar sign before the input
+   - Supports variable substitution: `"prefix": "{child1name}:"`
+   - Creates a Bootstrap input-group for professional styling
+
+2. **`decimal_places`** - Control decimal precision
+   - `0` = integers only (age, count, etc.)
+   - `2` = two decimals (currency, prices)
+   - `3` = three decimals (precise measurements)
+   - Controls HTML5 `step` attribute for browser validation
+   - Mobile devices show appropriate numeric keyboard
+
+3. **`comma_separated`** - Display formatted number
+   - When `true`, shows formatted number below input field
+   - Example: User types `150000.50`, display shows `150,000.50`
+   - Uses Spanish (Mexico) locale formatting
+   - Stored value remains unformatted (no commas in database)
+   - Updates in real-time as user types
+
+**Example combining all three:**
+
+```json
+{
+    "question_id": "price",
+    "type": "open",
+    "query": "¿Cuánto estaría dispuesto a pagar?",
+    "datatype": "number",
+    "prefix": "$",
+    "decimal_places": 2,
+    "comma_separated": true,
+    "required": true
+}
+```
+
+**Visual result:**
+```
+Input shows:  $ 150000.50
+Below shows:  150,000.50
+Stored as:    150000.5 (plain number)
+```
+
+### Unicode Support (2025)
+
+Spanish characters (á, é, í, ó, ú, ñ) are now stored correctly in the database instead of as escape sequences like `\u00e1`.

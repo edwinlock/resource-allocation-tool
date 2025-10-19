@@ -29,7 +29,10 @@
                     <div class="mt-4">
                         {% if current_user.has_role('administrator') %}
                             <a href="{{ url_for('session_page') }}" class="btn btn-primary me-2">View All Sessions</a>
-                            <a href="{{ url_for('enumerators_page') }}" class="btn btn-outline-primary">Manage Enumerators</a>
+                            <a href="{{ url_for('users_page') }}" class="btn btn-outline-primary">Manage Users</a>
+                        {% elif current_user.has_role('supervisor') %}
+                            <a href="{{ url_for('session_page') }}" class="btn btn-primary me-2">View All Sessions</a>
+                            <a href="{{ url_for('users_page') }}" class="btn btn-outline-primary">View Users</a>
                         {% elif current_user.has_role('enumerator') %}
                             <a href="{{ url_for('session_page', enumerator_id=current_user.id) }}" class="btn btn-primary">View My Sessions</a>
                         {% endif %}

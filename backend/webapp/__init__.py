@@ -80,6 +80,11 @@ def create_users():
         enum_role = Role(name='enumerator', description='Enumerator role')
         db.session.add(enum_role)
 
+    supervisor_role = Role.query.filter_by(name='supervisor').first()
+    if not supervisor_role:
+        supervisor_role = Role(name='supervisor', description='Supervisor role')
+        db.session.add(supervisor_role)
+
     db.session.commit()
 
     # Create Edwin

@@ -1,7 +1,6 @@
-import { CONFIG, COLORS } from './constants.js';
+import { COLORS } from './constants.js';
+import { SCENARIOS_METADATA } from './scenario-loader.js';
 import { appState } from './app-state.js';
-
-const { ALLOCATABLE_BUDGET } = CONFIG;
 const {
     CHILD1_COLOR, CHILD1_BG_COLOR, CHILD1_DARK_COLOR,
     CHILD2_COLOR, CHILD2_BG_COLOR, CHILD2_DARK_COLOR,
@@ -271,6 +270,7 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
 }
 
 function getLabels(chartType, child1Name = 'Child 1', child2Name = 'Child 2') {
+    const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         return [child1Name, child2Name, 'Combined'];
     }
@@ -283,6 +283,7 @@ function getLabels(chartType, child1Name = 'Child 1', child2Name = 'Child 2') {
 }
 
 function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 1') {
+    const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // For single bar chart, Child1 data is just the current value
         return {
@@ -295,7 +296,7 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
             categoryPercentage: 1
         };
     }
-    
+
     if (chartType === 'line') {
         return {
             label: child1Name,
@@ -311,7 +312,7 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
             pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
         };
     }
-    
+
     if (chartType === 'multiBar') {
         return {
             label: child1Name,
@@ -323,11 +324,12 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
             categoryPercentage: 0.9
         };
     }
-    
+
     return {};
 }
 
 function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 2') {
+    const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // Single bar chart handles all data in one dataset
         return null;
@@ -335,7 +337,7 @@ function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 
 
     if (chartType === 'line') {
         return {
-            label: child2Name, 
+            label: child2Name,
             data: scenarioData.postEarnings2Rounded,
             borderColor: CHILD2_COLOR,
             backgroundColor: CHILD2_BG_COLOR,
@@ -348,7 +350,7 @@ function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 
             pointBorderWidth: Array(ALLOCATABLE_BUDGET + 1).fill(2)
         };
     }
-    
+
     if (chartType === 'multiBar') {
         return {
             label: child2Name,
@@ -360,16 +362,17 @@ function createChild2DisplayConfig(chartType, scenarioData, child2Name = 'Child 
             categoryPercentage: 0.9
         };
     }
-    
+
     return {};
 }
 
 function createCombinedDisplayConfig(chartType, scenarioData) {
+    const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // Single bar chart handles all data in one dataset
         return null;
     }
-    
+
     if (chartType === 'line') {
         return {
             label: 'Combined',
@@ -535,7 +538,7 @@ export class ChartManager {
     updateChartData(appState, CONFIG) {
         const sd = appState.scenarioData;
         const selectedIndex = appState.selectedInvestment;
-        const { ALLOCATABLE_BUDGET } = CONFIG;
+        const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
 
         // Validate input data
         if (!sd || selectedIndex < 0 || !sd.postEarnings1Rounded || !sd.postEarnings2Rounded || !sd.aggrEarningsRounded) {

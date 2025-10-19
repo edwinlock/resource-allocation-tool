@@ -1,9 +1,6 @@
-import { CONFIG } from './constants.js';
 import { SCENARIOS, SCENARIOS_METADATA } from './scenario-loader.js';
 import { getUTCDate, shuffleArray } from './utilities.js';
 import { computeOutcomes } from './economic-engine.js';
-
-const { ALLOCATABLE_BUDGET } = CONFIG;
 
 class AppState {
     constructor() {
@@ -20,21 +17,23 @@ class AppState {
         };
 
         // Economic calculation results
+        // Note: These arrays will be properly initialized when computeScenarioOutcomes is called
+        // after scenarios are loaded. Using empty arrays as placeholders.
         this.scenarioData = {
             // allocation of lessons to children due to performance
             preEarnings1: 0,
             preEarnings2: 0,
             // all the choices that the parents can make for child 1 and 2
-            investments1: Array(ALLOCATABLE_BUDGET+1).fill(0),
-            investments2: Array(ALLOCATABLE_BUDGET+1).fill(0),
+            investments1: [],
+            investments2: [],
             // individual and total allocation of lessons to children for each choice of investment
-            postEarnings1: Array(ALLOCATABLE_BUDGET+1).fill(0),
-            postEarnings2: Array(ALLOCATABLE_BUDGET+1).fill(0),
-            aggrEarnings: Array(ALLOCATABLE_BUDGET+1).fill(0),
+            postEarnings1: [],
+            postEarnings2: [],
+            aggrEarnings: [],
             // rounded versions for charts and display
-            postEarnings1Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
-            postEarnings2Rounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
-            aggrEarningsRounded: Array(ALLOCATABLE_BUDGET+1).fill(0),
+            postEarnings1Rounded: [],
+            postEarnings2Rounded: [],
+            aggrEarningsRounded: [],
             maximumEarnings: 0,  // upper bound on aggregate earnings across all choices
             maximumEarningsRounded: 0,  // upper bound on rounded aggregate earnings
             alpha: 0,
@@ -99,6 +98,9 @@ class AppState {
         if (this.sliderState.currentIndex < this.sliderState.totalScenarios) {
             this.sliderState.currentScenarioNumber = this.sliderState.scenarioOrder[this.sliderState.currentIndex];
         }
+        // Reset slider to leftmost position (0) for new scenario
+        this.selectedInvestment = 0;
+        this.sliderTouched = false;
     }
 
     goToPreviousScenario() {
@@ -118,11 +120,17 @@ class AppState {
         const child2_final_earnings = this.scenarioData.postEarnings2Rounded[child1investment];
         const aggregate_final_earnings = this.scenarioData.aggrEarningsRounded[child1investment];
 
+        const allocatableBudget = SCENARIOS_METADATA.allocatable_budget;
+        const child2investment = allocatableBudget - child1investment;
+
         const response = {
             scenariosId: SCENARIOS_METADATA.scenarios_id,  // Include scenarios_id from metadata
             scenarioNumber: this.sliderState.currentScenarioNumber,
+            scenarioName: currentScenario.name,  // Store scenario name (id) instead of index
             displayOrder: this.getCurrentDisplayOrder(),
             child1investment,
+            child2investment,
+            allocatableBudget,
             completedAt: getUTCDate(),
 
             // Scenario parameters
