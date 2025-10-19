@@ -338,6 +338,3 @@ These colors are specified in the scenarios JSON files and loaded dynamically, a
 Slider responses can be exported from the backend `/data` route as:
 
 - **CSV**: Flat table with one row per scenario response
-- **JSON**: Hierarchical structure preserving all relationships
-
-Both formats include all fields listed in the "Data Stored Per Response" section above.
