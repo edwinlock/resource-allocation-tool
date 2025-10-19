@@ -1,30 +1,17 @@
 {
     "survey_id": "surveyChild",
-    "name": "Encuesta Estudiantes",
+    "name": "Encuesta para Estudiantes",
     "questions": [
         {
             "question_id": "consent_child_survey",
             "type": "consent",
-            "query": "Doy mi consentimiento voluntario para participar en la encuesta.",
-            "text": "<h5>Consentimiento Informado</h5><p><strong>Proyecto de Investigación:</strong>Preferencias parentales, tecnología, y equidad en educación.</p><p><strong>Información:</strong>Como parte de un proyecto de investigación multianual internacional entre la Universidad de Wageningen (Holanda) y en colaboración con Instituto Potosino de Investigación Científica y Tecnológica (IPICYT), queremos invitarte a participar a participar respondiendo a una encuesta. Nos interesa aprender sobre tus circunstancias, aspiraciones, lo que piensas de la tecnología (con énfasis en la Inteligencia Artificial) y, por último, tener una idea sobre tus habilidades en materia de resolución de problemas.</p><p><strong>¿Qué harás?</strong> Responder a una breve encuesta sobre los temas previamente mencionados. La encuesta dura aproximadamente 35 minutos.</p><p><strong>Condifencialidad:</strong> Toda la  información recopilada será anonimizada y  tratada de manera confidencial, es decir que cada participante será identificado con un código único (no con su nombre) en las bases de datos del estudio para que sea anonimizada la información.. Los datos anonimizados serán almacenados de manera segura y solo accesibles al equipo de investigación. No compartiremos información desagregada del proyecto con terceros o personas ajenas al equipo de investigación.</p><p><strong>Voluntary Participación:</strong> Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela.</p>"
+            "query": "Sí, doy mi consentimiento voluntario para participar en el estudio.",
+            "text": "Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela.<br><br>¿Otorgas tu consentimiento voluntario para participar en el estudio?</p>"
         },
         {
             "question_id": "child_prompt1",
             "type": "plaintext",
-            "text": "Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación, tu entorno social y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 35 minutos. Por favor responde honestamente - no hay respuestas correctas o incorrectas, y toda la información que proporciones será confidencial. Significa que no las compartiremos con tus padres, tus maestros, o cualquier otra persona. Como agradecimiento por tu participación, te daremos un obsequio que te haremos llegar al término del periodo de encuestas. Si tienes alguna duda en este (o cualquier) momento, siéntete en confianza para preguntar."
-        },
-        {
-            "question_id": "promt_consent",
-            "type": "plaintext",
-            "text": "Tu participación en este estudio es voluntaria. Puedes retirarte en cualquier momento sin consecuencias para ti, tu familia, o tu escuela."
-        },
-        {
-            "question_id": "consent_q",
-            "type": "singleselect",
-            "query": "¿Otorgas tu consentimiento para participar en el estudio?",
-            "values": ["Sí", "No"],
-            "datatype": "text",
-            "required": true
+            "text": "Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación, tu entorno social y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 35 minutos. Por favor responde honestamente. No hay respuestas correctas o incorrectas, y toda la información que proporciones será confidencial. Significa que no las compartiremos con tus padres, tus maestros, o cualquier otra persona. <br><br>Como agradecimiento por tu participación, te daremos un obsequio que te haremos llegar al término del periodo de encuestas. <br><br>Si tienes alguna duda en este (o en cualquier) momento, siéntete en confianza para preguntar."
         },
         {
             "question_id": "prompt3",
@@ -35,7 +22,7 @@
         {
             "question_id": "age",
             "type": "open",
-            "query": "¿Cuál es tu edad?",
+            "query": "¿Cuántos años tienes?",
             "datatype": "number",
             "required": true
         },
@@ -50,7 +37,7 @@
         {
             "question_id": "class",
             "type": "open",
-            "query": "¿Qué semestre de bachillerato estás cursando en este momento?",
+            "query": "¿Qué semestre de bachillerato estás cursando en este momento? (Por ejemplo, escribe 3 si estás cursando el tercer semestre)",
             "datatype": "text",
             "required": true
         },
@@ -92,7 +79,7 @@
             "question_id": "expectation1",
             "type": "singleselect",
             "query": "Dada tu situación y la de tu familia, ¿cuál es el nivel más alto de educación formal que esperas alcanzar?",
-            "values": ["Secundaria", "Preparatoria (o dejar de estudiar al terminar este ciclo escolar)", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"],
+            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
         },
@@ -196,29 +183,33 @@
         {
             "question_id": "time_study",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela).",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela).",
             "datatype": "number",
+            "decimal_places": 1,
             "required": true
         },
         {
             "question_id": "time_leisure1",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a relajarte, deporte, tiempo con amigos/as, arte, etc.?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a relajarte, deporte, tiempo con amigos/as, arte, etc.?",
             "datatype": "number",
+            "decimal_places": 1,
             "required": true
         },
         {
             "question_id": "time_leisure2",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día a trabajo remunerado y no remunerado (quehaceres domésticos, ayudar en negocio familiar)?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a trabajo remunerado y no remunerado (quehaceres domésticos, ayudar en negocio familiar)?",
             "datatype": "number",
+            "decimal_places": 1,
             "required": true
         },
         {
             "question_id": "time_leisure3",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo dedicas por día al ocio (tiempo con amigos, relajarse...)?",
+            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día al ocio (tiempo con amigos, relajarse...)?",
             "datatype": "number",
+            "decimal_places": 1,
             "required": true
         },
         {
@@ -309,7 +300,7 @@
         {
             "question_id": "ravens_prompt",
             "type": "plaintext",
-            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar el tamaño de tu regalo con el de tu hermano/a u otros estudiantes en tu escuela. Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado:"
+            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar tu regalo con el de tu hermano/a u otros/as estudiantes en tu escuela. Hemos diseñado varios esquemas para calificar el desempeño en los acertijos, y escojeremos uno al azar para calificarte.<br><br>Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado."
         },
         {
             "question_id": "raven_matrix1",
@@ -422,7 +413,7 @@
         {
             "question_id": "family_prompt",
             "type": "plaintext",
-            "text": "Ahora nos gustaría hacerte algunas preguntas sobre la situación de tu familia"
+            "text": "Ahora nos gustaría hacerte algunas preguntas sobre la situación de tu familia."
         },
         {
             "question_id": "family_tablet",
@@ -474,7 +465,7 @@
             "question_id": "family_wealth",
             "type": "singleselect",
             "query": "¿Qué tanta solvencia económica dirías que tiene tu familia, en comparación con las familias de otros estudiantes en tu escuela?",
-            "values": ["Mucho menos dinero", "Algo menos de dinero", "Promedio", "Algo más de dinero", "Mucho más dinero"],
+            "values": ["Mucho menos dinero", "Algo menos de dinero", "Promedio", "Algo más de dinero", "Mucho más dinero", "No sé"],
             "datatype": "text",
             "required": true
         },
@@ -492,6 +483,61 @@
             "query": "¿Podrían tus padres pagar por un bootcamp de programación para ti?",
             "values": ["No", "Sí", "No sé"],
             "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "side_prompt",
+            "type":"plaintext",
+            "text": "Las siguientes preguntas tratan sobre tus experiencias familiares durante el último año. Todas las preguntas se refieren a ti y a tu hermano/a que participa en este estudio contigo.<br><br> Por favor responde con la mayor honestidad posible. No hay respuestas correctas o incorrectas. "
+        },
+        {
+            "question_id": "side_mother",
+            "type": "matrix",
+            "query": "Pensando en el último año, ¿cómo se comportó tu MADRE contigo comparado con tu hermano/a?",
+            "rows": [
+                {"row_id": "side_1strict", "text": "Nuestra madre es estricta con nosotros/as"},
+                {"row_id": "side_2pride", "text": "Nuestra madre está orgullosa de las cosas que hacemos"},
+                {"row_id": "side_3enjoyment", "text": "Nuestra madre disfruta de hacer cosas con nosotros/as"},
+                {"row_id": "side_4sensitivity", "text": "Nuestra madre es sensible a lo que pensamos o sentimos"},
+                {"row_id": "side_5punish", "text": "Nuestra madre nos castiga por nuestro mal comportamiento"},
+                {"row_id": "side_6interest", "text": "Nuestra madre muestra interés en las cosas que nos gusta hacer"},
+                {"row_id": "side_7blame", "text": "Nuestra madre nos culpa por lo que otro miembro de la familia ha hecho"},
+                {"row_id": "side_8favoritism", "text": "Nuestra madre tiende a favorecer a uno/a de nosotros/as"},
+                {"row_id": "side_9discipline", "text": "Nuestra madre nos disciplina"}
+                ],
+            "columns": [
+                "Mucho más con mi hermano(a)",
+                "Un poco más con mi hermano(a)",
+                "Aproximadamente igual",
+                "Un poco más conmigo",
+                "Mucho más conmigo"
+                ],
+            "datatype": "single_per_row",
+            "required": false
+        },
+        {
+            "question_id": "side_father",
+            "type": "matrix",
+            "query": "Pensando en el último año, ¿cómo se comportó tu PADRE contigo comparado con tu hermano/a?",
+            "rows": [
+                {"row_id": "side_1strict", "text": "Nuestro padre es estricto con nosotros/as"},
+                {"row_id": "side_2pride", "text": "Nuestro padre está orgulloso de las cosas que hacemos"},
+                {"row_id": "side_3enjoyment", "text": "Nuestro padre disfruta hacer cosas con nosotros/as"},
+                {"row_id": "side_4sensitivity", "text": "Nuestro padre es sensible a lo que pensamos o sentimos"},
+                {"row_id": "side_5punish", "text": "Nuestro padre nos castiga por nuestro mal comportamiento"},
+                {"row_id": "side_6interest", "text": "Nuestro padre muestra interés en las cosas que nos gusta hacer"},
+                {"row_id": "side_7blame", "text": "Nuestro padre nos culpa por lo que otro miembro de la familia ha hecho"},
+                {"row_id": "side_8favoritism", "text": "Nuestro padre tiende a favorecer a uno/a de nosotros/as"},
+                {"row_id": "side_9discipline", "text": "Nuestro padre nos disciplina"}
+            ],
+            "columns": [
+                "Mucho más con mi hermano(a)",
+                "Un poco más con mi hermano(a)",
+                "Aproximadamente igual",
+                "Un poco más conmigo",
+                "Mucho más conmigo"
+            ],
+            "datatype": "single_per_row",
             "required": true
         },
         {

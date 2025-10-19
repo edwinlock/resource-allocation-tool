@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Survey JSON Format Guide</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="survey_guide_files/libs/clipboard/clipboard.min.js"></script>
+<script src="survey_guide_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="survey_guide_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="survey_guide_files/libs/quarto-html/popper.min.js"></script>
+<script src="survey_guide_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="survey_guide_files/libs/quarto-html/anchor.min.js"></script>
+<link href="survey_guide_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="survey_guide_files/libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="survey_guide_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="survey_guide_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="survey_guide_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Survey JSON Format Guide</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="basic-survey-structure" class="level2">
+<h2 class="anchored" data-anchor-id="basic-survey-structure">Basic Survey Structure</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"survey_id"</span><span class="fu">:</span> <span class="st">"surveyName"</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"Survey Display Title"</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"questions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="er">//</span> <span class="er">Array</span> <span class="er">of</span> <span class="er">question</span> <span class="er">objects</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="variable-substitution" class="level2">
+<h2 class="anchored" data-anchor-id="variable-substitution">Variable Substitution</h2>
+<p>Use <code>{variableName}</code> in any text field to inject session data. <strong>Available variables depend on the session type.</strong></p>
+<p><strong>Important:</strong> Variables are resolved when the survey is displayed AND when answers are stored: - Display: <code>{child1name}</code> appears as “José” to the user - Stored answer: Database contains “José”, not <code>{child1name}</code></p>
+<p>This applies to: - Question text (<code>query</code>, <code>text</code>, <code>prefixes</code>) - Answer choices (<code>values</code>, <code>options</code>) - Input prefixes (<code>prefix</code> field for open questions)</p>
+<section id="variables-available-for-all-session-types" class="level3">
+<h3 class="anchored" data-anchor-id="variables-available-for-all-session-types">Variables Available for ALL Session Types</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>{sessionType}</code></td>
+<td>Session type</td>
+<td>“child” or “parent”</td>
+</tr>
+<tr class="even">
+<td><code>{enumerator}</code></td>
+<td>Enumerator ID</td>
+<td>101</td>
+</tr>
+<tr class="odd">
+<td><code>{familyId}</code></td>
+<td>Family ID</td>
+<td>“FAM001”</td>
+</tr>
+<tr class="even">
+<td><code>{school}</code></td>
+<td>School name</td>
+<td>“Escuela Primaria Benito Juárez”</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="variables-only-for-child-sessions-sessiontype-child" class="level3">
+<h3 class="anchored" data-anchor-id="variables-only-for-child-sessions-sessiontype-child">Variables ONLY for Child Sessions (sessionType = “child”)</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>{childName}</code></td>
+<td>Child’s name</td>
+<td>“María”</td>
+</tr>
+<tr class="even">
+<td><code>{childId}</code></td>
+<td>Child’s ID within family</td>
+<td>“C1” or “C2”</td>
+</tr>
+</tbody>
+</table>
+<p><strong>⚠️ Important:</strong> In child surveys, you <strong>cannot</strong> use <code>{child1name}</code> or <code>{child2name}</code> since the session is for one child only.</p>
+</section>
+<section id="variables-only-for-parent-sessions-sessiontype-parent" class="level3">
+<h3 class="anchored" data-anchor-id="variables-only-for-parent-sessions-sessiontype-parent">Variables ONLY for Parent Sessions (sessionType = “parent”)</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>{child1name}</code></td>
+<td>First child’s name</td>
+<td>“María”</td>
+</tr>
+<tr class="even">
+<td><code>{child2name}</code></td>
+<td>Second child’s name</td>
+<td>“Carlos”</td>
+</tr>
+<tr class="odd">
+<td><code>{preEarnings1}</code></td>
+<td>First child’s pre-earnings</td>
+<td>1, 2, 5, or 6</td>
+</tr>
+<tr class="even">
+<td><code>{preEarnings2}</code></td>
+<td>Second child’s pre-earnings</td>
+<td>1, 2, 5, or 6</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> preEarnings values are always one of four pairs: [1,6], [2,5], [5,2], or [6,1]</p>
+</section>
+</section>
+<section id="question-types" class="level2">
+<h2 class="anchored" data-anchor-id="question-types">Question Types</h2>
+<section id="open---single-textnumber-input" class="level3">
+<h3 class="anchored" data-anchor-id="open---single-textnumber-input">1. open - Single text/number input</h3>
+<p><strong>Basic usage:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"unique_id"</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"What is {child1name}'s favorite subject?"</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span>  <span class="er">//</span> <span class="er">or</span> <span class="dt">"number"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Enhanced number input with prefix and decimal control:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"price_estimate"</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"¿Cuánto estaría dispuesto a pagar?"</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefix"</span><span class="fu">:</span> <span class="st">"$"</span><span class="fu">,</span>                    <span class="er">//</span> <span class="er">Optional</span><span class="fu">:</span> <span class="er">Shows</span> <span class="er">prefix</span> <span class="er">before</span> <span class="er">input</span> <span class="er">(e.g.</span><span class="fu">,</span> <span class="dt">"$"</span><span class="fu">,</span> <span class="dt">"€"</span><span class="fu">,</span> <span class="dt">"MXN"</span><span class="er">)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"decimal_places"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span>              <span class="er">//</span> <span class="er">Optional</span><span class="fu">:</span> <span class="er">Controls</span> <span class="er">decimal</span> <span class="er">precision</span> <span class="er">(</span><span class="dv">0</span><span class="er">=integers</span><span class="fu">,</span> <span class="er">2=currency</span><span class="fu">,</span> <span class="er">etc.)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"comma_separated"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span>          <span class="er">//</span> <span class="er">Optional</span><span class="fu">:</span> <span class="er">Shows</span> <span class="er">formatted</span> <span class="er">number</span> <span class="er">below</span> <span class="er">input</span> <span class="er">(e.g.</span><span class="fu">,</span> <span class="dt">"150,000.50"</span><span class="er">)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Options for <code>decimal_places</code>:</strong> - <code>0</code> - Integers only (step=“1”): allows 0, 1, 100, etc. - <code>1</code> - One decimal place (step=“0.1”): allows 1.5, 2.3, etc. - <code>2</code> - Two decimal places (step=“0.01”): allows 150.50, 99.99 (perfect for currency) - <code>3</code> - Three decimal places (step=“0.001”): allows 3.141, etc. - Omit for any number of decimals</p>
+<p><strong>Visual result with all enhancements:</strong></p>
+<pre><code>Input field shows: $ 150000.50
+Below shows: 150,000.50  (when comma_separated: true)</code></pre>
+<p><strong>Note:</strong> The <code>prefix</code> field supports variable substitution (e.g., <code>"prefix": "{child1name}:"</code>)</p>
+</section>
+<section id="multiopen---multiple-inputs-with-labels" class="level3">
+<h3 class="anchored" data-anchor-id="multiopen---multiple-inputs-with-labels">2. multiopen - Multiple inputs with labels</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"hours_spent"</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multiopen"</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Hours per week spent on:"</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Helping {child1name} at {child1school}"</span><span class="ot">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Helping {child2name} at {child2school}"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note:</strong> For rating/satisfaction questions, consider using <code>multilikert</code> instead of <code>multiopen</code> with numbers.</p>
+</section>
+<section id="singleselect---radio-buttons-one-choice" class="level3">
+<h3 class="anchored" data-anchor-id="singleselect---radio-buttons-one-choice">3. singleselect - Radio buttons (one choice)</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"preference"</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"singleselect"</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Who needs more support?"</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"values"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">,</span> <span class="st">"Both equally"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>With image (displays options horizontally):</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"diagram_question"</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"singleselect"</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Based on the diagram above, which option is correct?"</span><span class="fu">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"image"</span><span class="fu">:</span> <span class="st">"images/diagram.jpg"</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"values"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"Option A"</span><span class="ot">,</span> <span class="st">"Option B"</span><span class="ot">,</span> <span class="st">"Option C"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note:</strong> When <code>image</code> field is provided, a single image displays above the question, and answer options are arranged horizontally. Otherwise, options display vertically without an image.</p>
+</section>
+<section id="multiselect---checkboxes-multiple-choices" class="level3">
+<h3 class="anchored" data-anchor-id="multiselect---checkboxes-multiple-choices">4. multiselect - Checkboxes (multiple choices)</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"factors"</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multiselect"</span><span class="fu">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Which factors matter? (select all)"</span><span class="fu">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"values"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"Ability"</span><span class="ot">,</span> <span class="st">"Effort"</span><span class="ot">,</span> <span class="st">"Interest"</span><span class="ot">,</span> <span class="st">"Future potential"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span>  <span class="er">//</span> <span class="er">Note:</span> <span class="er">multiselect</span> <span class="er">always</span> <span class="er">validates</span> <span class="er">as</span> <span class="kw">true</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>With image (displays options horizontally):</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"identify_items"</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multiselect"</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Based on the image above, which items do you see? (select all that apply)"</span><span class="fu">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"image"</span><span class="fu">:</span> <span class="st">"images/scene.jpg"</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"values"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"Tree"</span><span class="ot">,</span> <span class="st">"House"</span><span class="ot">,</span> <span class="st">"Car"</span><span class="ot">,</span> <span class="st">"Person"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note:</strong> When <code>image</code> field is provided, a single image displays above the question, and answer options are arranged horizontally. Otherwise, options display vertically without an image.</p>
+</section>
+<section id="grid---table-with-radio-buttons-per-row" class="level3">
+<h3 class="anchored" data-anchor-id="grid---table-with-radio-buttons-per-row">5. grid - Table with radio buttons per row</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"scenarios"</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"grid"</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"For each opportunity, who would you choose?"</span><span class="fu">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Extra tutoring"</span><span class="ot">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Summer camp"</span><span class="ot">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Music lessons"</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"options"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">],</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">],</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">]</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="mpl---multiple-price-list-with-automatic-logic" class="level3">
+<h3 class="anchored" data-anchor-id="mpl---multiple-price-list-with-automatic-logic">6. mpl - Multiple Price List (with automatic logic)</h3>
+<p>Same structure as <code>grid</code>, but selecting option in row k automatically:</p>
+<ul>
+<li>Selects first option for rows 1 to k-1</li>
+<li>Selects second option for rows k+1 onwards</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"price_list"</span><span class="fu">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"mpl"</span><span class="fu">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Would you accept each offer?"</span><span class="fu">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"$10"</span><span class="ot">,</span> <span class="st">"$20"</span><span class="ot">,</span> <span class="st">"$30"</span><span class="ot">,</span> <span class="st">"$40"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"options"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"Yes"</span><span class="ot">,</span> <span class="st">"No"</span><span class="ot">],</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"Yes"</span><span class="ot">,</span> <span class="st">"No"</span><span class="ot">],</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"Yes"</span><span class="ot">,</span> <span class="st">"No"</span><span class="ot">],</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="ot">[</span><span class="st">"Yes"</span><span class="ot">,</span> <span class="st">"No"</span><span class="ot">]</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="matrix---table-with-radio-buttons-rows-with-row_id" class="level3">
+<h3 class="anchored" data-anchor-id="matrix---table-with-radio-buttons-rows-with-row_id">7. matrix - Table with radio buttons (rows with row_id)</h3>
+<p>Similar to <code>grid</code>, but uses <code>rows</code> with <code>row_id</code> and <code>text</code> fields, and <code>columns</code> instead of <code>options</code>. Returns object with row_id keys.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"wtp_matrix"</span><span class="fu">,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"matrix"</span><span class="fu">,</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Would you pay each amount for an extra session?"</span><span class="fu">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"rows"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="dt">"row_id"</span><span class="fu">:</span> <span class="st">"100"</span><span class="fu">,</span> <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"Pay 100 pesos"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="dt">"row_id"</span><span class="fu">:</span> <span class="st">"150"</span><span class="fu">,</span> <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"Pay 150 pesos"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="dt">"row_id"</span><span class="fu">:</span> <span class="st">"200"</span><span class="fu">,</span> <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"Pay 200 pesos"</span><span class="fu">}</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"columns"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"Yes"</span><span class="ot">,</span> <span class="st">"No"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"single_per_row"</span><span class="fu">,</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note:</strong> The matrix type includes column headers in the table. Use this when you need structured output with specific row identifiers.</p>
+</section>
+<section id="plaintext---display-text-only-no-input" class="level3">
+<h3 class="anchored" data-anchor-id="plaintext---display-text-only-no-input">8. plaintext - Display text only (no input)</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"instructions"</span><span class="fu">,</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"plaintext"</span><span class="fu">,</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"Next, we'll ask about {child1name} at {child1school}."</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="likert---single-likert-scale" class="level3">
+<h3 class="anchored" data-anchor-id="likert---single-likert-scale">9. likert - Single Likert scale</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"satisfaction"</span><span class="fu">,</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"likert"</span><span class="fu">,</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"How satisfied are you with {child1name}'s school performance?"</span><span class="fu">,</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefix"</span><span class="fu">:</span> <span class="st">"Rate your satisfaction level"</span><span class="fu">,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"min"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"max"</span><span class="fu">:</span> <span class="dv">7</span><span class="fu">,</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="multilikert---multiple-likert-scales-with-same-range" class="level3">
+<h3 class="anchored" data-anchor-id="multilikert---multiple-likert-scales-with-same-range">10. multilikert - Multiple Likert scales with same range</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"child_ratings"</span><span class="fu">,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multilikert"</span><span class="fu">,</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Rate each child on the following aspects:"</span><span class="fu">,</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"{child1name}'s academic performance"</span><span class="ot">,</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"{child1name}'s social skills"</span><span class="ot">,</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"{child2name}'s academic performance"</span><span class="ot">,</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"{child2name}'s social skills"</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"min"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"max"</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="consent---consent-checkbox-with-text" class="level3">
+<h3 class="anchored" data-anchor-id="consent---consent-checkbox-with-text">11. consent - Consent checkbox with text</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"consent_form"</span><span class="fu">,</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"consent"</span><span class="fu">,</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"I agree to participate"</span><span class="fu">,</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"&lt;h5&gt;Study Title&lt;/h5&gt;&lt;p&gt;Detailed consent information...&lt;/p&gt;"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="common-fields" class="level2">
+<h2 class="anchored" data-anchor-id="common-fields">Common Fields</h2>
+<ul>
+<li><code>question_id</code>: Unique identifier (required)</li>
+<li><code>type</code>: Question type (required)</li>
+<li><code>query</code>: Main question text (required for input questions)</li>
+<li><code>datatype</code>: “text” or “number” (for input questions)</li>
+<li><code>required</code>: true/false (defaults to false)</li>
+<li><code>values</code>: Array of choices (for select questions)
+<ul>
+<li><strong>Supports variable substitution</strong> - resolved values are stored (e.g., <code>"{child1name}"</code> becomes <code>"José"</code>)</li>
+</ul></li>
+<li><code>image</code>: Single image URL (for singleselect/multiselect; displays image above question with horizontal options)
+<ul>
+<li>Relative paths (e.g., <code>"image.png"</code>) are loaded from the <code>frontend/surveys/</code> directory</li>
+<li>Absolute URLs (e.g., <code>"https://example.com/image.png"</code>) are loaded from the specified URL</li>
+<li>Absolute paths (e.g., <code>"/images/image.png"</code>) are loaded from the root of the web server</li>
+</ul></li>
+<li><code>prefixes</code>: Array of row labels (for multiopen/grid/mpl/multilikert)</li>
+<li><code>options</code>: 2D array of choices per row (for grid/mpl)
+<ul>
+<li><strong>Supports variable substitution</strong> - resolved values are stored</li>
+</ul></li>
+<li><code>rows</code>: Array of objects with <code>row_id</code> and <code>text</code> fields (for matrix)</li>
+<li><code>columns</code>: Array of column header strings (for matrix)</li>
+<li><code>text</code>: Display content (for plaintext/consent)</li>
+<li><code>min</code>: Minimum value for scale (for likert/multilikert, defaults to 0)</li>
+<li><code>max</code>: Maximum value for scale (for likert/multilikert, defaults to 5)</li>
+<li><code>prefix</code>: For likert - descriptive text for single scale; For open - text/symbol shown before input (e.g., “$”)
+<ul>
+<li><strong>Supports variable substitution</strong></li>
+</ul></li>
+</ul>
+<p><strong>New fields for number inputs (type: “open”, datatype: “number”):</strong></p>
+<ul>
+<li><code>decimal_places</code>: Optional number specifying decimal precision
+<ul>
+<li><code>0</code> = integers only, <code>1</code> = one decimal, <code>2</code> = two decimals (currency), etc.</li>
+<li>Controls HTML input <code>step</code> attribute for browser validation</li>
+</ul></li>
+<li><code>comma_separated</code>: Optional boolean (true/false, defaults to false)
+<ul>
+<li>When <code>true</code>, displays formatted number below input (e.g., “150,000.50”)</li>
+<li>Uses Spanish (Mexico) locale formatting</li>
+<li>Does not affect stored value (stores plain number without commas)</li>
+</ul></li>
+</ul>
+</section>
+<section id="complete-example-survey-showcasing-all-question-types" class="level2">
+<h2 class="anchored" data-anchor-id="complete-example-survey-showcasing-all-question-types">Complete Example Survey (Showcasing All Question Types)</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"survey_id"</span><span class="fu">:</span> <span class="st">"comprehensive_example"</span><span class="fu">,</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"Comprehensive Survey Example"</span><span class="fu">,</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"questions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"consent_example"</span><span class="fu">,</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"consent"</span><span class="fu">,</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"I consent to participate in this research study"</span><span class="fu">,</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"&lt;h5&gt;Research Study Consent&lt;/h5&gt;&lt;p&gt;&lt;strong&gt;Study Title:&lt;/strong&gt; Family Decision-Making Study&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Purpose:&lt;/strong&gt; This survey collects information about family decision-making patterns...&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Confidentiality:&lt;/strong&gt; All responses will be kept confidential...&lt;/p&gt;"</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"intro_section"</span><span class="fu">,</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"plaintext"</span><span class="fu">,</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"text"</span><span class="fu">:</span> <span class="st">"Thank you for agreeing to participate. This survey asks about decisions involving {child1name} and {child2name}."</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"parent_age"</span><span class="fu">,</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"What is your age?"</span><span class="fu">,</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"decimal_places"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"annual_income"</span><span class="fu">,</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"What is your approximate annual household income (in pesos)?"</span><span class="fu">,</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefix"</span><span class="fu">:</span> <span class="st">"$"</span><span class="fu">,</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"decimal_places"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"comma_separated"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"tutoring_budget"</span><span class="fu">,</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"How much would you be willing to spend on tutoring per month?"</span><span class="fu">,</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefix"</span><span class="fu">:</span> <span class="st">"$"</span><span class="fu">,</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"decimal_places"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"comma_separated"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"education_level"</span><span class="fu">,</span></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"singleselect"</span><span class="fu">,</span></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"What is your highest level of education?"</span><span class="fu">,</span></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"values"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"High school"</span><span class="ot">,</span> <span class="st">"Bachelor's degree"</span><span class="ot">,</span> <span class="st">"Master's degree"</span><span class="ot">,</span> <span class="st">"Doctoral degree"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"parenting_concerns"</span><span class="fu">,</span></span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multiselect"</span><span class="fu">,</span></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Which areas are you most concerned about for your children? (Select all that apply)"</span><span class="fu">,</span></span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"values"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"Academic performance"</span><span class="ot">,</span> <span class="st">"Social development"</span><span class="ot">,</span> <span class="st">"Physical health"</span><span class="ot">,</span> <span class="st">"Emotional wellbeing"</span><span class="ot">,</span> <span class="st">"Future career prospects"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"text"</span><span class="fu">,</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"time_spent_weekly"</span><span class="fu">,</span></span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multiopen"</span><span class="fu">,</span></span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Hours per week you spend on the following activities:"</span><span class="fu">,</span></span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Helping {child1name} with homework"</span><span class="ot">,</span></span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Helping {child2name} with homework"</span><span class="ot">,</span></span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Family recreational activities"</span><span class="ot">,</span></span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Individual time with each child"</span></span>
+<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"resource_scenarios"</span><span class="fu">,</span></span>
+<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"grid"</span><span class="fu">,</span></span>
+<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"For each scenario, which child would you prioritize?"</span><span class="fu">,</span></span>
+<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Extra tutoring opportunity"</span><span class="ot">,</span></span>
+<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Summer camp enrollment"</span><span class="ot">,</span></span>
+<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Music lesson investment"</span><span class="ot">,</span></span>
+<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Sports equipment purchase"</span></span>
+<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"options"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">,</span> <span class="st">"Both equally"</span><span class="ot">],</span></span>
+<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">,</span> <span class="st">"Both equally"</span><span class="ot">],</span></span>
+<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">,</span> <span class="st">"Both equally"</span><span class="ot">],</span></span>
+<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"{child1name}"</span><span class="ot">,</span> <span class="st">"{child2name}"</span><span class="ot">,</span> <span class="st">"Both equally"</span><span class="ot">]</span></span>
+<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"investment_priorities"</span><span class="fu">,</span></span>
+<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"mpl"</span><span class="fu">,</span></span>
+<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Would you invest in each opportunity if it cost the following amount?"</span><span class="fu">,</span></span>
+<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>                <span class="st">"$100 tutoring program"</span><span class="ot">,</span></span>
+<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a>                <span class="st">"$200 tutoring program"</span><span class="ot">,</span></span>
+<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a>                <span class="st">"$300 tutoring program"</span><span class="ot">,</span></span>
+<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a>                <span class="st">"$400 tutoring program"</span></span>
+<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"options"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"Yes, invest"</span><span class="ot">,</span> <span class="st">"No, too expensive"</span><span class="ot">],</span></span>
+<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"Yes, invest"</span><span class="ot">,</span> <span class="st">"No, too expensive"</span><span class="ot">],</span></span>
+<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"Yes, invest"</span><span class="ot">,</span> <span class="st">"No, too expensive"</span><span class="ot">],</span></span>
+<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a>                <span class="ot">[</span><span class="st">"Yes, invest"</span><span class="ot">,</span> <span class="st">"No, too expensive"</span><span class="ot">]</span></span>
+<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"satisfaction_single"</span><span class="fu">,</span></span>
+<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"likert"</span><span class="fu">,</span></span>
+<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"How satisfied are you with {child1name}'s current academic progress?"</span><span class="fu">,</span></span>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefix"</span><span class="fu">:</span> <span class="st">"Rate your satisfaction level (1 = Very dissatisfied, 7 = Very satisfied)"</span><span class="fu">,</span></span>
+<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"min"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"max"</span><span class="fu">:</span> <span class="dv">7</span><span class="fu">,</span></span>
+<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb17-118"><a href="#cb17-118" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb17-119"><a href="#cb17-119" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"child_ratings_multi"</span><span class="fu">,</span></span>
+<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"multilikert"</span><span class="fu">,</span></span>
+<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"Rate each child on the following aspects (0 = Poor, 10 = Excellent):"</span><span class="fu">,</span></span>
+<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"prefixes"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a>                <span class="st">"{child1name}'s academic performance"</span><span class="ot">,</span></span>
+<span id="cb17-124"><a href="#cb17-124" aria-hidden="true" tabindex="-1"></a>                <span class="st">"{child1name}'s social skills"</span><span class="ot">,</span></span>
+<span id="cb17-125"><a href="#cb17-125" aria-hidden="true" tabindex="-1"></a>                <span class="st">"{child1name}'s independence level"</span><span class="ot">,</span></span>
+<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a>                <span class="st">"{child2name}'s academic performance"</span><span class="ot">,</span></span>
+<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a>                <span class="st">"{child2name}'s social skills"</span><span class="ot">,</span></span>
+<span id="cb17-128"><a href="#cb17-128" aria-hidden="true" tabindex="-1"></a>                <span class="st">"{child2name}'s independence level"</span></span>
+<span id="cb17-129"><a href="#cb17-129" aria-hidden="true" tabindex="-1"></a>            <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"min"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"max"</span><span class="fu">:</span> <span class="dv">10</span><span class="fu">,</span></span>
+<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="summary-of-all-question-types" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-all-question-types">Summary of All Question Types</h2>
+<p>The survey system supports <strong>11 different question types</strong>:</p>
+<ol type="1">
+<li><strong>consent</strong> - Consent form with detailed text</li>
+<li><strong>plaintext</strong> - Display-only text (instructions, section headers)</li>
+<li><strong>open</strong> - Single text or number input (with optional prefix, decimal control, and comma formatting)</li>
+<li><strong>singleselect</strong> - Radio buttons (single choice)</li>
+<li><strong>multiselect</strong> - Checkboxes (multiple choices)</li>
+<li><strong>multiopen</strong> - Multiple labeled inputs</li>
+<li><strong>grid</strong> - Table with radio buttons per row</li>
+<li><strong>mpl</strong> - Multiple Price List with automatic selection logic</li>
+<li><strong>matrix</strong> - Table with radio buttons using row_id structure</li>
+<li><strong>likert</strong> - Single Likert scale (1-5, 1-7, 0-10, etc.)</li>
+<li><strong>multilikert</strong> - Multiple items with same Likert scale</li>
+</ol>
+</section>
+<section id="recent-enhancements" class="level2">
+<h2 class="anchored" data-anchor-id="recent-enhancements">Recent Enhancements</h2>
+<section id="variable-substitution-in-stored-answers-2025" class="level3">
+<h3 class="anchored" data-anchor-id="variable-substitution-in-stored-answers-2025">Variable Substitution in Stored Answers (2025)</h3>
+<p>Variables in answer choices are now resolved and stored with their actual values:</p>
+<p><strong>Before:</strong> Database stored <code>"{child1name}"</code> as the answer <strong>After:</strong> Database stores <code>"José"</code> as the answer</p>
+<p>This applies to all question types that use variables in <code>values</code>, <code>options</code>, or other answer fields.</p>
+</section>
+<section id="enhanced-number-inputs-for-open-questions-2025" class="level3">
+<h3 class="anchored" data-anchor-id="enhanced-number-inputs-for-open-questions-2025">Enhanced Number Inputs for “open” Questions (2025)</h3>
+<p>Three new optional fields for number inputs:</p>
+<ol type="1">
+<li><strong><code>prefix</code></strong> - Display text/symbol before the input
+<ul>
+<li>Example: <code>"prefix": "$"</code> shows a dollar sign before the input</li>
+<li>Supports variable substitution: <code>"prefix": "{child1name}:"</code></li>
+<li>Creates a Bootstrap input-group for professional styling</li>
+</ul></li>
+<li><strong><code>decimal_places</code></strong> - Control decimal precision
+<ul>
+<li><code>0</code> = integers only (age, count, etc.)</li>
+<li><code>2</code> = two decimals (currency, prices)</li>
+<li><code>3</code> = three decimals (precise measurements)</li>
+<li>Controls HTML5 <code>step</code> attribute for browser validation</li>
+<li>Mobile devices show appropriate numeric keyboard</li>
+</ul></li>
+<li><strong><code>comma_separated</code></strong> - Display formatted number
+<ul>
+<li>When <code>true</code>, shows formatted number below input field</li>
+<li>Example: User types <code>150000.50</code>, display shows <code>150,000.50</code></li>
+<li>Uses Spanish (Mexico) locale formatting</li>
+<li>Stored value remains unformatted (no commas in database)</li>
+<li>Updates in real-time as user types</li>
+</ul></li>
+</ol>
+<p><strong>Example combining all three:</strong></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"question_id"</span><span class="fu">:</span> <span class="st">"price"</span><span class="fu">,</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"open"</span><span class="fu">,</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"query"</span><span class="fu">:</span> <span class="st">"¿Cuánto estaría dispuesto a pagar?"</span><span class="fu">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"datatype"</span><span class="fu">:</span> <span class="st">"number"</span><span class="fu">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prefix"</span><span class="fu">:</span> <span class="st">"$"</span><span class="fu">,</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"decimal_places"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"comma_separated"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"required"</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Visual result:</strong></p>
+<pre><code>Input shows:  $ 150000.50
+Below shows:  150,000.50
+Stored as:    150000.5 (plain number)</code></pre>
+</section>
+<section id="unicode-support-2025" class="level3">
+<h3 class="anchored" data-anchor-id="unicode-support-2025">Unicode Support (2025)</h3>
+<p>Spanish characters (á, é, í, ó, ú, ñ) are now stored correctly in the database instead of as escape sequences like <code>\u00e1</code>.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
