@@ -101,11 +101,51 @@ Always remember:
 
 When updating documentation, verify control group descriptions don't incorrectly include sliders.
 
+### 8. Database Schema Changes (Flask-Migrate)
+**When**: Modifying database models in `backend/webapp/models.py`
+**Action**: Create and apply a migration
+
+#### Steps:
+```bash
+cd backend
+source venv/bin/activate
+export FLASK_APP=webapp
+
+# 1. Make changes to models.py
+
+# 2. Create migration
+flask db migrate -m "Description of schema change"
+
+# 3. Review generated migration in migrations/versions/
+#    - Check for import errors (e.g., missing flask_security imports)
+#    - Verify SQL looks correct
+#    - Edit if needed
+
+# 4. Test locally
+flask db upgrade
+
+# 5. Commit migration file
+git add migrations/versions/*.py
+git commit -m "Add migration for [description]"
+
+# 6. Deploy to server
+git push
+# On server: flask db upgrade
+```
+
+#### Important Notes:
+- **Never** run `flask db init` on server (only once during initial setup)
+- **Always** commit migration files to git
+- **Never** manually edit the database schema - always use migrations
+- If migration has flask_security types, add: `from flask_security.datastore import AsaList`
+- Test migrations locally before deploying to production
+
 ## Pre-Commit Checklist
 
 Before committing changes that affect functionality:
 
 - [ ] Service worker cache version incremented (if frontend changed)
+- [ ] Database migration created and tested (if models.py changed)
 - [ ] All relevant guide files reviewed and updated
 - [ ] `.qmd` files compiled to `.html` (if modified)
 - [ ] Data field changes reflected in all 3 layers (frontend storage, backend storage, backend export)

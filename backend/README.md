@@ -48,9 +48,15 @@ The Learning Experiment Administration Resource Network (LEARN) backend is a Fla
 
    Update `.env` with the generated keys and your email configuration.
 
-5. **Run the development server**:
+5. **Initialize the database**:
    ```bash
-   flask --app webapp run
+   export FLASK_APP=webapp
+   flask db upgrade
+   ```
+
+6. **Run the development server**:
+   ```bash
+   flask run
    ```
 
 The application will be available at `http://localhost:5000`.
@@ -178,7 +184,30 @@ See [DEPLOY.md](DEPLOY.md) for detailed instructions on deploying to PythonAnywh
 
 ### Database Setup
 
-The application automatically creates the SQLite database and admin account on first run. No manual database setup is required.
+The application uses **Flask-Migrate** (Alembic) for database schema management.
+
+#### Initial Setup:
+```bash
+export FLASK_APP=webapp
+flask db upgrade
+```
+
+This creates the SQLite database with all tables and the admin accounts.
+
+#### Schema Changes:
+When modifying models in `webapp/models.py`:
+
+```bash
+# 1. Create a migration
+flask db migrate -m "Description of changes"
+
+# 2. Review the generated migration in migrations/versions/
+
+# 3. Apply the migration
+flask db upgrade
+```
+
+**Important**: Always commit migration files to git and run `flask db upgrade` on the server after deploying.
 
 ## Development
 
@@ -190,6 +219,10 @@ backend/
 ├── README.md          # Documentation
 ├── .env.example       # Environment variables template
 ├── instance/          # Flask instance folder (contains SQLite database)
+├── migrations/        # Flask-Migrate database migrations
+│   ├── versions/      # Migration scripts
+│   ├── env.py         # Alembic environment
+│   └── alembic.ini    # Alembic configuration
 ├── venv/             # Python virtual environment
 └── webapp/           # Main application package
     ├── __init__.py   # Flask app initialization and user creation
@@ -208,10 +241,11 @@ backend/
 
 ### Adding New Features
 
-1. **Models**: Add new SQLAlchemy models to `webapp/models.py`
+1. **Models**: Add new SQLAlchemy models to `webapp/models.py`, then create a migration
 2. **Routes**: Add new endpoints to `webapp/routes.py`
 3. **Templates**: Create new Jinja2 templates in `webapp/templates/`
 4. **Configuration**: Update settings in `webapp/config.py`
+5. **Migrations**: Run `flask db migrate -m "description"` after model changes
 
 ### Testing
 
