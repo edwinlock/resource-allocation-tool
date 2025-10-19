@@ -36,6 +36,20 @@ Link up the final domain name:
 
 
 
+# Changes
 
-IMPORTANT
-* Need to make sure the sw.js is up to date.
+I should have made all the relevant changes we discussed. 
+
+* Updated all the little bits
+* Revamped the whole slider experience
+* Added session fields to the CSV export
+
+Unfortunately I had to reset the database, so all the registered users are gone. Your password is again learn_michelle. If it's crucial, I can try to recover all the users' accounts from the backup but it will cost me about an hour or two, most likely.
+
+You have some jobs:
+* read the updated survey_guide.qmd. There's now a way to specify "decimal_places" and "prefix" (for $), for instance. I couldn't add comma separators to the input fields themselves, so I instead outputted a formatted number below the input field for the participants to see. So you can go through all the different questions and update the open number questions accordingly. Setting decimal_places to 0 is the same as requiring an integer, which is the current default.
+* You need to update the scenarios.json files. There are now THREE of these files you need to update. As you can see, you can specify the colours and names of the high and low child. And you specify the gap (=pre-earnings) for each scenario deterministically. There are additional variables: allocatable budget sets the total number of sessions available, and max_sessions is there to scale / compute the bar chart height properly. I added this because you wanted the dummy slider scenarios to have values different from 15. Please test the slider thoroughly because I had to change quite a bit of code there.
+* I've created a sliders_summary.qmd file in guides/ for you to understand how the slider works. Please review very carefully. 
+* I was not able to reproduce your issue that session IDs get re-generated when you re-download. If you could be more detailed about when this happens, I can try to fix it.
+
+I've tested creating sessions in the front end and uploading them to the back end. It seems to work for me. But please let me know in case of any issues.
