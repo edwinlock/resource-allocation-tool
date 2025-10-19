@@ -11,6 +11,7 @@ Usage:
 
 import sys
 import sqlite3
+from datetime import datetime
 from webapp import app, db, user_datastore
 from webapp.models import User, Role
 
@@ -87,10 +88,28 @@ def import_users_from_backup(backup_db_path):
                 # Create user without roles (we'll add them separately)
                 new_user = User()
 
+                # Datetime columns that need conversion
+                datetime_columns = {
+                    'confirmed_at', 'last_login_at', 'current_login_at',
+                    'create_datetime', 'update_datetime'
+                }
+
                 # Copy all fields from backup user
                 for column in user_columns:
                     if column != 'id' and hasattr(new_user, column):
-                        setattr(new_user, column, user_dict[column])
+                        value = user_dict[column]
+
+                        # Convert string datetime values to datetime objects
+                        if column in datetime_columns and value is not None:
+                            if isinstance(value, str):
+                                try:
+                                    # Parse ISO format datetime strings
+                                    value = datetime.fromisoformat(value.replace('Z', '+00:00'))
+                                except ValueError:
+                                    # If parsing fails, set to None
+                                    value = None
+
+                        setattr(new_user, column, value)
 
                 # Add to session
                 db.session.add(new_user)
