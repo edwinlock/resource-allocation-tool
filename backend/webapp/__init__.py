@@ -3,6 +3,7 @@ from flask import Flask
 from flask_wtf import CSRFProtect
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemyUserDatastore, hash_password
 from flask_security.models import fsqla
 from flask_login.signals import user_logged_in
@@ -31,6 +32,7 @@ app.wsgi_app = ProxyFix(
 csrf = CSRFProtect(app)
 bootstrap = Bootstrap5(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 mail = Mail(app)
 babel = Babel(app)
 
@@ -128,6 +130,11 @@ def user_registered_sighandler(sender, user, **extra):
     user_datastore.add_role_to_user(user, default_role)
     db.session.commit()
 
-with app.app_context():
-    db.create_all()
-    create_users()
+# Initialize default users on first request
+# Note: Database tables are created via flask db upgrade (migrations)
+@app.before_request
+def before_first_request():
+    """Create default users if they don't exist."""
+    if not hasattr(app, '_users_created'):
+        create_users()
+        app._users_created = True
