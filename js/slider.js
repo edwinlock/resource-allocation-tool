@@ -1,4 +1,5 @@
 // Main application entry point - modularized slider application
+import './modules/error-handler.js';
 import { CONFIG } from './modules/constants.js';
 import { SCENARIOS, SCENARIOS_METADATA, loadScenarios } from './modules/scenario-loader.js';
 import { appState } from './modules/app-state.js';

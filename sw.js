@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v46';
+const CACHE_NAME = 'resource-allocation-v47';
 const urlsToCache = [
   './',
   './index.html',
@@ -18,6 +18,7 @@ const urlsToCache = [
   './js/modules/chart-factory.js',
   './js/modules/constants.js',
   './js/modules/economic-engine.js',
+  './js/modules/error-handler.js',
   './js/modules/sessionDB.js',
   './js/modules/sliderResponseDB.js',
   './js/modules/surveyResponseDB.js',

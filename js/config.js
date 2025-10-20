@@ -19,7 +19,7 @@ export const ENV_CONFIG = {
     BACKEND_URL: 'https://learn.education-equity-technology.com',
 
     // API timeout in milliseconds
-    UPLOAD_TIMEOUT: 30000, // 30 seconds
+    UPLOAD_TIMEOUT: 90000, // 90 seconds
 
     // API endpoints (relative to BACKEND_URL)
     ENDPOINTS: {

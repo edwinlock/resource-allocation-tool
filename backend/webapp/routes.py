@@ -704,6 +704,8 @@ def generate_survey_responses_df():
 def generate_child_survey_responses_df():
     """Generate DataFrame containing child survey responses only in long format."""
     df = generate_survey_responses_df()
+    if df.empty:
+        return df
     # Filter for child sessions (where child_id is not null)
     df_filtered = df[df['child_id'].notna()].copy()
     return df_filtered
@@ -712,6 +714,8 @@ def generate_child_survey_responses_df():
 def generate_treatment_survey_responses_df():
     """Generate DataFrame containing treatment parent survey responses only in long format."""
     df = generate_survey_responses_df()
+    if df.empty:
+        return df
     # Filter for treatment group parent sessions
     df_filtered = df[df['group_type'] == 'treatment'].copy()
     return df_filtered
@@ -720,6 +724,8 @@ def generate_treatment_survey_responses_df():
 def generate_control_survey_responses_df():
     """Generate DataFrame containing control parent survey responses only in long format."""
     df = generate_survey_responses_df()
+    if df.empty:
+        return df
     # Filter for control group parent sessions
     df_filtered = df[df['group_type'] == 'control'].copy()
     return df_filtered
