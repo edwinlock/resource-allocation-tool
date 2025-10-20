@@ -228,7 +228,7 @@
         {
             "question_id": "ces10_2",
             "type": "singleselect",
-            "query": "Sentí que no podía poner atención a lo que estaba haciendo.",
+            "query": "Sentí que no podía prestar atención a lo que estaba haciendo.",
             "values": ["Nada", "Un poco", "Algo", "Mucho"],
             "datatype": "text",
             "required": true
@@ -300,7 +300,7 @@
         {
             "question_id": "ravens_prompt",
             "type": "plaintext",
-            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar tu regalo con el de tu hermano/a u otros/as estudiantes en tu escuela. Hemos diseñado varios esquemas para calificar el desempeño en los acertijos, y escojeremos uno al azar para calificarte.<br><br>Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado."
+            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar tu regalo con el de tu hermano/a u otros/as estudiantes en tu escuela. Hemos diseñado varios esquemas para calificar el desempeño en los acertijos, y escogeremos uno al azar para calificarte.<br><br>Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado."
         },
         {
             "question_id": "raven_matrix1",
