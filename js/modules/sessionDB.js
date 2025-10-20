@@ -45,6 +45,20 @@ export class SessionDB {
                     }
                 });
             });
+
+            // Version 6: Add groupType to child sessions
+            this.db.version(6).stores({
+                sessions: 'id, sessionType, enumeratorId, createdAt, uploadStatus, uploadedAt',
+                childSessionDetails: 'id, familyId, childId, name, school, groupType, surveyStatus',
+                parentSessionDetails: 'id, familyId, school, groupType, surveyStatus, sliderStatus, sandwichSurveyStatus',
+            }).upgrade(async tx => {
+                // Migration: Add groupType to existing child sessions (default to 'control')
+                await tx.table('childSessionDetails').toCollection().modify(session => {
+                    if (!session.groupType) {
+                        session.groupType = 'control';
+                    }
+                });
+            });
         } catch (error) {
             console.error('Failed to initialize SessionsDB:', error);
             this.db = null;
@@ -69,7 +83,7 @@ export class SessionDB {
 
     // ===== CHILD SESSION OPERATIONS =====
 
-    async createChildSession(enumeratorId, familyId, childId, name, school) {
+    async createChildSession(enumeratorId, familyId, childId, name, school, groupType) {
         if (!this.db) {
             throw new Error('Database not available');
         }
@@ -97,6 +111,7 @@ export class SessionDB {
                     childId: childId,
                     name: name,
                     school: school,
+                    groupType: groupType,
                     surveyStatus: 'not_started',
                     surveyCompletedAt: null
                 });

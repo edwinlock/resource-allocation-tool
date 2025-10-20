@@ -491,12 +491,13 @@ class IndexUIManager {
             return;
         }
 
-        // Get school name from schools array
+        // Get school details from schools array
         const school = this.schools.find(s => s.school_id === schoolId);
         const schoolName = school ? school.name : schoolId;
+        const groupType = school ? school.type : 'control'; // Default to control if school not found
 
         try {
-            await sessionManager.createChildSession(enumeratorId, familyId, childId, name, schoolName);
+            await sessionManager.createChildSession(enumeratorId, familyId, childId, name, schoolName, groupType);
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Child session created successfully');
 
@@ -572,8 +573,9 @@ class IndexUIManager {
     }
 
     async handleBulkUpload() {
+        const uploadBtn = document.getElementById('uploadCompletedBtn');
+
         try {
-            const uploadBtn = document.getElementById('uploadCompletedBtn');
             if (uploadBtn) {
                 uploadBtn.disabled = true;
                 uploadBtn.textContent = 'Uploading...';
@@ -586,17 +588,36 @@ class IndexUIManager {
                 return;
             }
 
+            const totalCount = uploadableSessions.length;
             let successCount = 0;
             let failureCount = 0;
             const errors = [];
 
-            for (const session of uploadableSessions) {
+            for (let i = 0; i < uploadableSessions.length; i++) {
+                const session = uploadableSessions[i];
+
+                // Update button with progress
+                if (uploadBtn) {
+                    uploadBtn.textContent = `Uploading ${i + 1}/${totalCount}...`;
+                }
+
                 try {
+                    // Check if session is already uploaded or being uploaded
+                    const currentSession = await sessionManager.getSession(session.id);
+                    if (currentSession.uploadStatus === 'uploaded') {
+                        console.log(`Session ${session.id} already uploaded, skipping`);
+                        continue;
+                    }
+                    if (currentSession.uploadStatus === 'uploading') {
+                        console.log(`Session ${session.id} currently uploading, skipping`);
+                        continue;
+                    }
+
                     await sessionManager.uploadSession(session.id);
                     successCount++;
                 } catch (error) {
                     failureCount++;
-                    errors.push(`Session ${session.id}: ${error.message}`);
+                    errors.push(`Session ${session.id.substring(0, 8)}: ${error.message}`);
                 }
             }
 
@@ -614,7 +635,6 @@ class IndexUIManager {
             console.error('Error during bulk upload:', error);
             SessionUIUtils.showError(`Bulk upload failed: ${error.message}`);
         } finally {
-            const uploadBtn = document.getElementById('uploadCompletedBtn');
             if (uploadBtn) {
                 uploadBtn.disabled = false;
                 await this.updateUploadButtonState();

@@ -159,6 +159,20 @@ class SessionDetailUIManager {
 
     async uploadSession(sessionId) {
         try {
+            // Check current session status to prevent duplicate uploads
+            const session = await sessionManager.getSession(sessionId);
+            if (session.uploadStatus === 'uploaded') {
+                SessionUIUtils.showError('Session has already been uploaded');
+                return;
+            }
+            if (session.uploadStatus === 'uploading') {
+                SessionUIUtils.showError('Session is currently being uploaded');
+                return;
+            }
+
+            // Update UI to show uploading state immediately
+            await this.loadSessionDetails();
+
             await sessionManager.uploadSession(sessionId);
             SessionUIUtils.showSuccess('Session uploaded successfully');
 

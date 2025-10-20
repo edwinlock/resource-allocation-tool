@@ -110,29 +110,95 @@
                     </div>
                 </div>
 
-                <!-- Survey Responses Card -->
+                <!-- Child Survey Responses Card -->
                 <div class="col-md-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header bg-success text-white">
-                            <h5 class="mb-0">Survey Responses</h5>
+                            <h5 class="mb-0">Child Survey Responses</h5>
                         </div>
                         <div class="card-body">
                             <p class="card-text">
-                                <strong>Contents:</strong> All survey responses in long format, including child surveys,
-                                parent surveys (treatment/control), and exit surveys.
+                                <strong>Contents:</strong> Child session surveys only.
                             </p>
                             <p class="card-text">
-                                <strong>Format:</strong> One row per question response with columns for session_id, family_id,
-                                survey_id, question_id, answer (JSON arrays/objects are stringified), and completion timestamp.
+                                <strong>Formats:</strong>
                             </p>
-                            <p class="text-muted">
-                                <strong>{{ total_survey_responses }} responses</strong>
-                            </p>
+                            <ul class="small">
+                                <li><strong>Long:</strong> One row per question response</li>
+                                <li><strong>Wide:</strong> One row per session with questions as columns</li>
+                            </ul>
                         </div>
                         <div class="card-footer">
-                            <a href="{{ url_for('download_survey_responses_csv') }}" class="btn btn-success w-100">
-                                <i class="bi bi-download"></i> Download survey_responses.csv
-                            </a>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('download_child_survey_responses_long') }}" class="btn btn-success flex-fill">
+                                    <i class="bi bi-download"></i> Long Format
+                                </a>
+                                <a href="{{ url_for('download_child_survey_responses_wide') }}" class="btn btn-outline-success flex-fill">
+                                    <i class="bi bi-download"></i> Wide Format
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treatment Parent Survey Responses Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Treatment Parent Survey Responses</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> Treatment group parent surveys (Treatment + Sandwich + Exit surveys).
+                            </p>
+                            <p class="card-text">
+                                <strong>Formats:</strong>
+                            </p>
+                            <ul class="small">
+                                <li><strong>Long:</strong> One row per question response</li>
+                                <li><strong>Wide:</strong> One row per session with questions as columns</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('download_treatment_survey_responses_long') }}" class="btn btn-primary flex-fill">
+                                    <i class="bi bi-download"></i> Long Format
+                                </a>
+                                <a href="{{ url_for('download_treatment_survey_responses_wide') }}" class="btn btn-outline-primary flex-fill">
+                                    <i class="bi bi-download"></i> Wide Format
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Parent Survey Responses Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Control Parent Survey Responses</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Contents:</strong> Control group parent surveys (Control survey only).
+                            </p>
+                            <p class="card-text">
+                                <strong>Formats:</strong>
+                            </p>
+                            <ul class="small">
+                                <li><strong>Long:</strong> One row per question response</li>
+                                <li><strong>Wide:</strong> One row per session with questions as columns</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('download_control_survey_responses_long') }}" class="btn btn-secondary flex-fill">
+                                    <i class="bi bi-download"></i> Long Format
+                                </a>
+                                <a href="{{ url_for('download_control_survey_responses_wide') }}" class="btn btn-outline-secondary flex-fill">
+                                    <i class="bi bi-download"></i> Wide Format
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -149,8 +149,8 @@ export class SessionCoordinator {
     // Delegate methods to appropriate DB classes
 
     // Session operations
-    async createChildSession(enumeratorId, familyId, childId, name, school) {
-        return await this.sessionDB.createChildSession(enumeratorId, familyId, childId, name, school);
+    async createChildSession(enumeratorId, familyId, childId, name, school, groupType) {
+        return await this.sessionDB.createChildSession(enumeratorId, familyId, childId, name, school, groupType);
     }
 
     async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType) {
@@ -360,6 +360,7 @@ export class SessionCoordinator {
             if (session.sessionType === 'child') {
                 aggregatedData.sessionMetadata.childId = session.childId;
                 aggregatedData.sessionMetadata.childName = session.name;
+                aggregatedData.sessionMetadata.groupType = session.groupType;
                 aggregatedData.completionTimestamps = {
                     surveyCompleted: session.surveyCompletedAt
                 };
@@ -425,6 +426,10 @@ export class SessionCoordinator {
                 throw new Error('Session has already been uploaded');
             }
 
+            if (session.uploadStatus === 'uploading') {
+                throw new Error('Session is currently being uploaded');
+            }
+
             if (!this.isSessionComplete(session)) {
                 const missing = this.getMissingComponents(session);
                 throw new Error(`Session is not complete. Missing: ${missing.join(', ')}`);
@@ -435,11 +440,24 @@ export class SessionCoordinator {
                 uploadStatus: 'uploading'
             });
 
-            // Aggregate session data
-            const sessionData = await this.aggregateSessionData(sessionId);
+            // Wrap the entire upload process with a timeout to prevent indefinite hangs
+            const uploadPromise = (async () => {
+                // Aggregate session data
+                const sessionData = await this.aggregateSessionData(sessionId);
 
-            // Upload to API
-            const uploadResult = await apiService.uploadSession(sessionData);
+                // Upload to API
+                const uploadResult = await apiService.uploadSession(sessionData);
+
+                return uploadResult;
+            })();
+
+            // Create a timeout promise that rejects after 120 seconds (includes aggregation + upload)
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Upload operation timed out (120s) - please check your connection and try again')), 120000);
+            });
+
+            // Race between upload and timeout
+            const uploadResult = await Promise.race([uploadPromise, timeoutPromise]);
 
             // Mark as uploaded
             await this.sessionDB.updateSessionStatus(sessionId, {
@@ -450,10 +468,14 @@ export class SessionCoordinator {
             return uploadResult;
 
         } catch (error) {
-            // Mark upload as failed
-            await this.sessionDB.updateSessionStatus(sessionId, {
-                uploadStatus: 'upload_failed'
-            });
+            // Mark upload as failed - ensure this happens even if there are errors
+            try {
+                await this.sessionDB.updateSessionStatus(sessionId, {
+                    uploadStatus: 'upload_failed'
+                });
+            } catch (updateError) {
+                console.error('Failed to update session status after upload error:', updateError);
+            }
 
             console.error('Error uploading session:', error);
             throw error;
