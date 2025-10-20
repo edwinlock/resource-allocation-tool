@@ -17,8 +17,14 @@ depends_on = None
 
 
 def upgrade():
-    # Add group_type column to base session table (nullable for backwards compatibility)
-    op.add_column('session', sa.Column('group_type', sa.String(length=50), nullable=True))
+    # Check if group_type column already exists (from a failed migration attempt)
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    columns = [col['name'] for col in inspector.get_columns('session')]
+
+    # Add group_type column to base session table only if it doesn't exist
+    if 'group_type' not in columns:
+        op.add_column('session', sa.Column('group_type', sa.String(length=50), nullable=True))
 
     # Copy group_type values from parent_session to session for existing parent sessions
     op.execute("""
@@ -31,20 +37,31 @@ def upgrade():
         WHERE session.session_type = 'parent'
     """)
 
+    # Check if group_type column still exists in parent_session
+    parent_columns = [col['name'] for col in inspector.get_columns('parent_session')]
+
     # Use batch mode to modify parent_session table (SQLite compatible)
-    with op.batch_alter_table('parent_session', schema=None) as batch_op:
-        # Drop the old constraint from parent_session table
-        batch_op.drop_constraint('check_group_type', type_='check')
-        # Remove group_type column from parent_session (it's now in base session)
-        batch_op.drop_column('group_type')
+    # Only if the column still exists
+    if 'group_type' in parent_columns:
+        with op.batch_alter_table('parent_session', schema=None) as batch_op:
+            # Drop the old constraint from parent_session table
+            batch_op.drop_constraint('check_group_type', type_='check')
+            # Remove group_type column from parent_session (it's now in base session)
+            batch_op.drop_column('group_type')
+
+    # Check if constraint already exists on session table
+    constraints = inspector.get_check_constraints('session')
+    constraint_names = [c['name'] for c in constraints]
 
     # Use batch mode to add constraint to session table (SQLite compatible)
-    with op.batch_alter_table('session', schema=None) as batch_op:
-        # Add new check constraint to session table
-        batch_op.create_check_constraint(
-            'check_group_type',
-            "group_type IN ('treatment', 'control') OR group_type IS NULL"
-        )
+    # Only if it doesn't already exist
+    if 'check_group_type' not in constraint_names:
+        with op.batch_alter_table('session', schema=None) as batch_op:
+            # Add new check constraint to session table
+            batch_op.create_check_constraint(
+                'check_group_type',
+                "group_type IN ('treatment', 'control') OR group_type IS NULL"
+            )
 
 
 def downgrade():
