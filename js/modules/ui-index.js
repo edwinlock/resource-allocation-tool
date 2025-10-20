@@ -491,12 +491,13 @@ class IndexUIManager {
             return;
         }
 
-        // Get school name from schools array
+        // Get school details from schools array
         const school = this.schools.find(s => s.school_id === schoolId);
         const schoolName = school ? school.name : schoolId;
+        const groupType = school ? school.type : 'control'; // Default to control if school not found
 
         try {
-            await sessionManager.createChildSession(enumeratorId, familyId, childId, name, schoolName);
+            await sessionManager.createChildSession(enumeratorId, familyId, childId, name, schoolName, groupType);
             await this.loadAndRenderSessions();
             SessionUIUtils.showSuccess('Child session created successfully');
 

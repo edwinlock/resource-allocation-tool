@@ -20,6 +20,7 @@ class Session(db.Model):
     session_type = db.Column(db.String(50), nullable=False)  # 'child' or 'parent'
     enumerator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    group_type = db.Column(db.String(50), nullable=True)  # 'treatment' or 'control' - nullable for backward compatibility
 
     # Upload tracking
     uploaded_at = db.Column(db.DateTime, nullable=True)
@@ -40,6 +41,7 @@ class Session(db.Model):
     __table_args__ = (
         db.Index('idx_enumerator_id', 'enumerator_id'),
         db.CheckConstraint("session_type IN ('child', 'parent')", name='check_session_type'),
+        db.CheckConstraint("group_type IN ('treatment', 'control') OR group_type IS NULL", name='check_group_type'),
     )
 
     def to_dict(self):
@@ -51,6 +53,7 @@ class Session(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None,
             'upload_status': self.upload_status,
+            'group_type': self.group_type,
         }
         return base_dict
 
@@ -112,7 +115,7 @@ class ParentSession(Session):
     child1_name = db.Column(db.String(255), nullable=False)
     child2_name = db.Column(db.String(255), nullable=False)
     school = db.Column(db.String(255), nullable=False)
-    group_type = db.Column(db.String(50), nullable=False)  # 'treatment' or 'control'
+    # group_type is now inherited from base Session class
 
     # Survey status tracking
     survey_status = db.Column(db.String(50), default='not_started')
@@ -137,7 +140,6 @@ class ParentSession(Session):
     # Constraints
     __table_args__ = (
         db.Index('idx_parent_family', 'family_id'),
-        db.CheckConstraint("group_type IN ('treatment', 'control')", name='check_group_type'),
     )
 
     def is_complete(self):

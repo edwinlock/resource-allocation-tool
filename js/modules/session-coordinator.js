@@ -149,8 +149,8 @@ export class SessionCoordinator {
     // Delegate methods to appropriate DB classes
 
     // Session operations
-    async createChildSession(enumeratorId, familyId, childId, name, school) {
-        return await this.sessionDB.createChildSession(enumeratorId, familyId, childId, name, school);
+    async createChildSession(enumeratorId, familyId, childId, name, school, groupType) {
+        return await this.sessionDB.createChildSession(enumeratorId, familyId, childId, name, school, groupType);
     }
 
     async createParentSession(enumeratorId, familyId, child1Name, child2Name, school, groupType) {
@@ -360,6 +360,7 @@ export class SessionCoordinator {
             if (session.sessionType === 'child') {
                 aggregatedData.sessionMetadata.childId = session.childId;
                 aggregatedData.sessionMetadata.childName = session.name;
+                aggregatedData.sessionMetadata.groupType = session.groupType;
                 aggregatedData.completionTimestamps = {
                     surveyCompleted: session.surveyCompletedAt
                 };

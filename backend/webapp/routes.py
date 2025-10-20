@@ -46,8 +46,8 @@ def parse_session_upload_data(request_data):
 
 def validate_session_metadata(session_metadata):
     """Validate session metadata structure and required fields."""
-    # Common required fields
-    required_common_fields = ['sessionId', 'sessionType', 'enumeratorId', 'createdAt', 'familyId', 'school']
+    # Common required fields (including groupType which applies to all sessions)
+    required_common_fields = ['sessionId', 'sessionType', 'enumeratorId', 'createdAt', 'familyId', 'school', 'groupType']
     missing_common_fields = [field for field in required_common_fields if field not in session_metadata]
     if missing_common_fields:
         return False, {
@@ -68,7 +68,7 @@ def validate_session_metadata(session_metadata):
                 "details": {"missing_fields": missing_child_fields}
             }
     elif session_type == 'parent':
-        required_parent_fields = ['child1Name', 'child2Name', 'groupType']
+        required_parent_fields = ['child1Name', 'child2Name']
         missing_parent_fields = [field for field in required_parent_fields if field not in session_metadata]
         if missing_parent_fields:
             return False, {
@@ -118,6 +118,7 @@ def create_session_object(session_metadata, completion_timestamps):
             id=session_id,
             enumerator_id=session_metadata['enumeratorId'],
             created_at=created_at,
+            group_type=session_metadata['groupType'],
             family_id=session_metadata['familyId'],
             child_id=session_metadata['childId'],
             name=session_metadata['childName'],
@@ -138,11 +139,11 @@ def create_session_object(session_metadata, completion_timestamps):
             id=session_id,
             enumerator_id=session_metadata['enumeratorId'],
             created_at=created_at,
+            group_type=session_metadata['groupType'],
             family_id=session_metadata['familyId'],
             child1_name=session_metadata['child1Name'],
             child2_name=session_metadata['child2Name'],
             school=session_metadata['school'],
-            group_type=session_metadata['groupType'],
             upload_status='uploaded',
             uploaded_at=datetime.utcnow()
         )
