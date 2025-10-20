@@ -641,8 +641,10 @@ def generate_survey_responses_df():
         child_name = None
         child1_name = None
         child2_name = None
-        group_type = None
         school = None
+
+        # Get group_type from base Session model (applies to both child and parent sessions)
+        group_type = session.group_type if session else None
 
         if session and session.session_type == 'child':
             # Import here to avoid circular imports
@@ -659,7 +661,6 @@ def generate_survey_responses_df():
             if parent_session:
                 child1_name = parent_session.child1_name
                 child2_name = parent_session.child2_name
-                group_type = parent_session.group_type
                 school = parent_session.school
 
         # Try to parse JSON answers, fall back to string
