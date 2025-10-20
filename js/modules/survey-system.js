@@ -93,7 +93,7 @@ export class OpenQuestion extends SurveyQuestion {
         }
 
         return `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     ${inputHTML}
@@ -157,7 +157,7 @@ export class MultiOpenQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
         `;
@@ -232,7 +232,7 @@ export class SingleSelectQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
         `;
@@ -317,7 +317,7 @@ export class MultiSelectQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
         `;
@@ -411,7 +411,7 @@ export class GridQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
@@ -484,7 +484,7 @@ export class MatrixQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
@@ -570,7 +570,7 @@ export class MPLQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
@@ -679,7 +679,7 @@ export class PlainTextQuestion extends SurveyQuestion {
     render(variables = {}) {
         const text = this.substituteVariables(this.text, variables);
         return `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <div class="plaintext-display">
                     ${text}
                 </div>
@@ -711,7 +711,7 @@ export class ConsentQuestion extends SurveyQuestion {
         const query = this.substituteVariables(this.query, variables);
 
         return `
-            <div class="mb-4 pb-4" style="border-bottom: 2px solid #dee2e6;">
+            <div class="mb-4 pb-4 notranslate" translate="no" style="border-bottom: 2px solid #dee2e6;">
                 <div class="consent-text" style="border: 1px solid #dee2e6; padding: 1rem; background-color: #f8f9fa;">
                     ${text}
                     <div class="form-check mt-3">
@@ -759,7 +759,7 @@ export class LikertQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     ${prefix ? `<div class="mb-3 text-muted">${prefix}</div>` : ''}
@@ -815,7 +815,7 @@ export class MultiLikertQuestion extends SurveyQuestion {
         const requiredAttr = this.required ? 'required' : '';
 
         let html = `
-            <div class="mb-4">
+            <div class="mb-4 notranslate" translate="no">
                 <fieldset>
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
