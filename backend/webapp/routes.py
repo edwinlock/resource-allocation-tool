@@ -701,6 +701,84 @@ def generate_survey_responses_df():
     return pd.DataFrame(rows)
 
 
+def generate_child_survey_responses_df():
+    """Generate DataFrame containing child survey responses only in long format."""
+    df = generate_survey_responses_df()
+    # Filter for child sessions (where child_id is not null)
+    df_filtered = df[df['child_id'].notna()].copy()
+    return df_filtered
+
+
+def generate_treatment_survey_responses_df():
+    """Generate DataFrame containing treatment parent survey responses only in long format."""
+    df = generate_survey_responses_df()
+    # Filter for treatment group parent sessions
+    df_filtered = df[df['group_type'] == 'treatment'].copy()
+    return df_filtered
+
+
+def generate_control_survey_responses_df():
+    """Generate DataFrame containing control parent survey responses only in long format."""
+    df = generate_survey_responses_df()
+    # Filter for control group parent sessions
+    df_filtered = df[df['group_type'] == 'control'].copy()
+    return df_filtered
+
+
+def convert_survey_responses_to_wide(df_long):
+    """Convert long format survey responses to wide format.
+
+    Args:
+        df_long: DataFrame in long format (one row per question response)
+
+    Returns:
+        DataFrame in wide format (one row per session with questions as columns)
+    """
+    if df_long.empty:
+        return df_long
+
+    # All possible metadata columns
+    all_metadata_cols = ['session_id', 'enumerator_id', 'family_id', 'school',
+                         'session_created_at', 'session_uploaded_at',
+                         'child_id', 'child_name', 'child1_name', 'child2_name',
+                         'group_type']
+
+    # Filter to only columns that exist in the DataFrame
+    metadata_cols = [col for col in all_metadata_cols if col in df_long.columns]
+
+    # Create a copy to avoid modifying the original
+    df_work = df_long.copy()
+
+    # Create unique column names for pivoted question responses
+    df_work['question_col'] = df_work['survey_id'].astype(str) + '_' + df_work['question_id'].astype(str)
+
+    # Get session metadata first (one row per session)
+    # Only include metadata columns that actually exist (excluding session_id since it will be the index)
+    metadata_cols_without_id = [col for col in metadata_cols if col != 'session_id']
+
+    if metadata_cols_without_id:
+        metadata_df = df_work.groupby('session_id')[metadata_cols_without_id].first().reset_index()
+    else:
+        # If no metadata columns besides session_id, just get unique session_ids
+        metadata_df = pd.DataFrame({'session_id': df_work['session_id'].unique()})
+
+    # Use pandas pivot to transform to wide format
+    # Select only the columns needed for pivot
+    df_pivot = df_work[['session_id', 'question_col', 'answer']].copy()
+
+    df_wide = df_pivot.pivot_table(
+        index='session_id',
+        columns='question_col',
+        values='answer',
+        aggfunc='first'  # Take first value if there are duplicates
+    ).reset_index()
+
+    # Merge metadata with pivoted question responses
+    df_wide = metadata_df.merge(df_wide, on='session_id', how='left')
+
+    return df_wide
+
+
 def generate_slider_responses_df():
     """Generate DataFrame containing all slider responses in long format."""
     slider_responses = SliderResponse.query.all()
@@ -875,6 +953,146 @@ def download_survey_responses_csv():
         return jsonify({'error': 'Failed to generate survey responses CSV'}), 500
 
 
+@app.route('/data/child_survey_responses_long')
+@roles_required('administrator')
+def download_child_survey_responses_long():
+    """Download child survey responses in long format."""
+    try:
+        df = generate_child_survey_responses_df()
+
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='child_survey_responses_long.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating child survey responses (long): {str(e)}')
+        return jsonify({'error': 'Failed to generate child survey responses CSV'}), 500
+
+
+@app.route('/data/child_survey_responses_wide')
+@roles_required('administrator')
+def download_child_survey_responses_wide():
+    """Download child survey responses in wide format."""
+    try:
+        df_long = generate_child_survey_responses_df()
+        current_app.logger.info(f'Generated child survey long format: {len(df_long)} rows')
+
+        df_wide = convert_survey_responses_to_wide(df_long)
+        current_app.logger.info(f'Converted to wide format: {len(df_wide)} rows, {len(df_wide.columns)} columns')
+
+        csv_buffer = io.BytesIO()
+        df_wide.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='child_survey_responses_wide.csv'
+        )
+    except Exception as e:
+        import traceback
+        current_app.logger.error(f'Error generating child survey responses (wide): {str(e)}')
+        current_app.logger.error(f'Traceback: {traceback.format_exc()}')
+        return jsonify({'error': 'Failed to generate child survey responses CSV'}), 500
+
+
+@app.route('/data/treatment_survey_responses_long')
+@roles_required('administrator')
+def download_treatment_survey_responses_long():
+    """Download treatment parent survey responses in long format."""
+    try:
+        df = generate_treatment_survey_responses_df()
+
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='treatment_survey_responses_long.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating treatment survey responses (long): {str(e)}')
+        return jsonify({'error': 'Failed to generate treatment survey responses CSV'}), 500
+
+
+@app.route('/data/treatment_survey_responses_wide')
+@roles_required('administrator')
+def download_treatment_survey_responses_wide():
+    """Download treatment parent survey responses in wide format."""
+    try:
+        df_long = generate_treatment_survey_responses_df()
+        df_wide = convert_survey_responses_to_wide(df_long)
+
+        csv_buffer = io.BytesIO()
+        df_wide.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='treatment_survey_responses_wide.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating treatment survey responses (wide): {str(e)}')
+        return jsonify({'error': 'Failed to generate treatment survey responses CSV'}), 500
+
+
+@app.route('/data/control_survey_responses_long')
+@roles_required('administrator')
+def download_control_survey_responses_long():
+    """Download control parent survey responses in long format."""
+    try:
+        df = generate_control_survey_responses_df()
+
+        csv_buffer = io.BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='control_survey_responses_long.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating control survey responses (long): {str(e)}')
+        return jsonify({'error': 'Failed to generate control survey responses CSV'}), 500
+
+
+@app.route('/data/control_survey_responses_wide')
+@roles_required('administrator')
+def download_control_survey_responses_wide():
+    """Download control parent survey responses in wide format."""
+    try:
+        df_long = generate_control_survey_responses_df()
+        df_wide = convert_survey_responses_to_wide(df_long)
+
+        csv_buffer = io.BytesIO()
+        df_wide.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        return send_file(
+            csv_buffer,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='control_survey_responses_wide.csv'
+        )
+    except Exception as e:
+        current_app.logger.error(f'Error generating control survey responses (wide): {str(e)}')
+        return jsonify({'error': 'Failed to generate control survey responses CSV'}), 500
+
+
 @app.route('/data/slider_responses')
 @roles_required('administrator')
 def download_slider_responses_csv():
@@ -933,6 +1151,14 @@ def download_all_data():
         slider_responses_df = generate_slider_responses_df()
         enumerators_df = generate_enumerators_df()
 
+        # Generate separated survey responses
+        child_survey_long_df = generate_child_survey_responses_df()
+        child_survey_wide_df = convert_survey_responses_to_wide(child_survey_long_df)
+        treatment_survey_long_df = generate_treatment_survey_responses_df()
+        treatment_survey_wide_df = convert_survey_responses_to_wide(treatment_survey_long_df)
+        control_survey_long_df = generate_control_survey_responses_df()
+        control_survey_wide_df = convert_survey_responses_to_wide(control_survey_long_df)
+
         # Create ZIP file in memory
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -946,10 +1172,36 @@ def download_all_data():
             parent_sessions_df.to_csv(csv_str, index=False)
             zip_file.writestr('parent_sessions.csv', csv_str.getvalue())
 
-            # Add survey_responses.csv
+            # Add survey_responses.csv (combined for backward compatibility)
             csv_str = io.StringIO()
             survey_responses_df.to_csv(csv_str, index=False)
             zip_file.writestr('survey_responses.csv', csv_str.getvalue())
+
+            # Add separated survey responses (long format)
+            csv_str = io.StringIO()
+            child_survey_long_df.to_csv(csv_str, index=False)
+            zip_file.writestr('child_survey_responses_long.csv', csv_str.getvalue())
+
+            csv_str = io.StringIO()
+            treatment_survey_long_df.to_csv(csv_str, index=False)
+            zip_file.writestr('treatment_survey_responses_long.csv', csv_str.getvalue())
+
+            csv_str = io.StringIO()
+            control_survey_long_df.to_csv(csv_str, index=False)
+            zip_file.writestr('control_survey_responses_long.csv', csv_str.getvalue())
+
+            # Add separated survey responses (wide format)
+            csv_str = io.StringIO()
+            child_survey_wide_df.to_csv(csv_str, index=False)
+            zip_file.writestr('child_survey_responses_wide.csv', csv_str.getvalue())
+
+            csv_str = io.StringIO()
+            treatment_survey_wide_df.to_csv(csv_str, index=False)
+            zip_file.writestr('treatment_survey_responses_wide.csv', csv_str.getvalue())
+
+            csv_str = io.StringIO()
+            control_survey_wide_df.to_csv(csv_str, index=False)
+            zip_file.writestr('control_survey_responses_wide.csv', csv_str.getvalue())
 
             # Add slider_responses.csv
             csv_str = io.StringIO()
