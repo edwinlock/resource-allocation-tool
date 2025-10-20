@@ -517,15 +517,14 @@ def session_page():
         session.created_at_formatted = format_datetime(session.created_at, 'short', locale='en_GB') if session.created_at else 'N/A'
         if session.session_type == 'child':
             session.session_type_badge = '<span class="badge bg-info" style="vertical-align: middle;">Child</span>'
-            session.group_display = '-'
         else:
             session.session_type_badge = '<span class="badge bg-primary" style="vertical-align: middle;">Parent</span>'
-            # Get group_type for parent sessions
-            parent_session = db.session.get(ParentSession, session.id)
-            if parent_session and parent_session.group_type:
-                session.group_display = parent_session.group_type.capitalize()
-            else:
-                session.group_display = '-'
+
+        # Get group_type from base Session model (applies to both child and parent sessions)
+        if session.group_type:
+            session.group_display = session.group_type.capitalize()
+        else:
+            session.group_display = '-'
 
     return render_template('sessions.html', sessions=sessions)
 
@@ -588,6 +587,7 @@ def generate_child_sessions_df():
             'child_id': session.child_id,
             'child_name': session.name,
             'school': session.school,
+            'group_type': session.group_type,
             'survey_status': session.survey_status,
             'survey_completed_at': session.survey_completed_at.isoformat() if session.survey_completed_at else None,
             'created_at': session.created_at.isoformat() if session.created_at else None,
