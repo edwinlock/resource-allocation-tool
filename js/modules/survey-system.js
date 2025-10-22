@@ -955,10 +955,10 @@ export class Survey {
         html += `
                     <div class="d-flex justify-content-between mt-4">
                         <button type="button" class="btn btn-secondary" id="survey-back-btn">
-                            ← Back to Session Manager
+                            ← Regresar
                         </button>
                         <button type="submit" class="btn btn-primary" id="survey-submit-btn">
-                            Save
+                            Guardar
                         </button>
                     </div>
                 </form>

@@ -96,7 +96,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
             },
             y: {
                 ...baseY,
-                title: { display: false, text: 'Earnings' },
+                title: { display: false, text: 'Fichas' },
                 ticks: { display: false },  // Hide Y-axis numbers
                 grid: { display: true, color: '#f0f0f0' }
             }
@@ -112,7 +112,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
             },
             y: {
                 ...baseY,
-                title: { display: false, text: 'Earnings' },
+                title: { display: false, text: 'Fichas' },
                 ticks: { display: false },  // Hide Y-axis numbers
                 grid: { display: false },
                 stacked: true
@@ -304,7 +304,7 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
     if (chartType === 'singleBar') {
         // For single bar chart, Child1 data is just the current value
         return {
-            label: 'Earnings',
+            label: 'Distribución de fichas',
             data: [0, 0, 0], // Will be updated with current values
             backgroundColor: [colors.CHILD1_COLOR, colors.CHILD2_COLOR, colors.COMBINED_COLOR],
             borderColor: [colors.CHILD1_COLOR, colors.CHILD2_COLOR, colors.COMBINED_COLOR],
@@ -394,7 +394,7 @@ function createCombinedDisplayConfig(chartType, scenarioData) {
 
     if (chartType === 'line') {
         return {
-            label: 'Combined',
+            label: 'Total',
             data: scenarioData.aggrEarningsRounded,
             borderColor: colors.COMBINED_COLOR,
             backgroundColor: colors.COMBINED_BG_COLOR,

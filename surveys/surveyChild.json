@@ -36,8 +36,9 @@
         },
         {
             "question_id": "class",
-            "type": "open",
-            "query": "¿Qué semestre de bachillerato estás cursando en este momento? (Por ejemplo, escribe 3 si estás cursando el tercer semestre)",
+            "type": "singleselect",
+            "query": "¿Qué semestre de bachillerato estás cursando en este momento? (Por ejemplo, selecciona 3 si estás cursando el tercer semestre)",
+            "values": ["1", "3", "5"],
             "datatype": "text",
             "required": true
         },

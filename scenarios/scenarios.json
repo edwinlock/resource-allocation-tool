@@ -1,8 +1,8 @@
 {
     "scenarios_id": "main-v1",
     "infotext": "Por favor distribuya las fichas de la manera que mejor represente el resultado que a usted le gustaría ver. Cualquiera que sea su decisión, está bien. Sus hijos/as no sabrán que usted tuvo alguna influencia sobre el número de sesiones que recibirán.",
-    "child_high_name": "Higher Ability Child",
-    "child_low_name": "Lower Ability Child",
+    "child_high_name": "Hijo/a A",
+    "child_low_name": "Hijo/a B",
     "allocatable_budget": 9,
     "max_sessions": 15,
     "child_high_color": "#ff7f0e",

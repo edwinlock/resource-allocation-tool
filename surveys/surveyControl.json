@@ -368,7 +368,7 @@
                 "Escenario 9"
             ],
             "options": [
-                ["10% probabilidad de que el niño gane 25,000 MXN/mes y 90% probabilidad de que el niño gane 18,000 MXN/mes", "10% probabilidad de que el niño gane 35,000 MXN/mes y 90% probabilidad de que el niño gane 8,000 MXN/mes"],
+                ["10% probabilidad de que su hijo/a gane 25,000 MXN/mes y 90% de que gane 18,000 MXN/mes", "10% probabilidad de que el niño gane 35,000 MXN/mes y 90% probabilidad de que el niño gane 8,000 MXN/mes"],
                 ["50% probabilidad de que el niño gane 25,000 MXN/mes y 50% probabilidad de que el niño gane 18,000 MXN/mes", "50% probabilidad de que el niño gane 35,000 MXN/mes y 50% probabilidad de que el niño gane 8,000 MXN/mes"],
                 ["60% probabilidad de que el niño gane 25,000 MXN/mes y 40% probabilidad de que el niño gane 18,000 MXN/mes", "60% probabilidad de que el niño gane 35,000 MXN/mes y 40% probabilidad de que el niño gane 8,000 MXN/mes"],
                 ["20% probabilidad de que el niño gane 25,000 MXN/mes y 80% probabilidad de que el niño gane 18,000 MXN/mes", "20% probabilidad de que el niño gane 35,000 MXN/mes y 80% probabilidad de que el niño gane 8,000 MXN/mes"],

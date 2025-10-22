@@ -32,19 +32,19 @@
         {
             "question_id": "prompt3",
             "type": "plaintext",
-            "text": "Ahora vamos a hacer algunas preguntas sobre el entorno familiar"
+            "text": "Ahora vamos a hacer algunas preguntas sobre el entorno familiar."
         },
         {
             "question_id": "age_mom",
             "type": "open",
-            "query": "¿Cuál es la edad de la madre?",
+            "query": "¿Cuál es la edad de la madre? (En años)",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "age_dad",
             "type": "open",
-            "query": "¿Cuál es la edad del padre?",
+            "query": "¿Cuál es la edad del padre? (En años)",
             "datatype": "number",
             "required": true
         },
@@ -118,7 +118,7 @@
         {
             "question_id": "id_finance",
             "type": "singleselect",
-            "query": "¿Quién toma la mayoría de las decisiones financieras para gastos de los hijos/as de la escuela?",
+            "query": "¿Quién toma la mayoría de las decisiones financieras para los gastos de la escuela de los hijos/as?",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -136,7 +136,10 @@
             "type": "open",
             "query": "¿En cuánto estima su ingreso mensual total del hogar?",
             "datatype": "number",
-            "required": true
+            "prefix": "$",                    
+            "decimal_places": 2,              
+            "comma_separated": true,
+            "required": false
         },
         {
             "question_id": "edu_mom",
@@ -157,21 +160,21 @@
         {
             "question_id": "job_mom1",
             "type": "open",
-            "query": "¿Cuál es la ocupación actual de la madre de familia?",
+            "query": "¿Cuál es la ocupación actual de la madre de familia? (Por ejemplo: Arquitecta para una empresa constructora pequeña que opera en el estado)",
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "job_dad1",
             "type": "open",
-            "query": "¿Cuál es la ocupación del padre de familia?",
+            "query": "¿Cuál es la ocupación del padre de familia? (Por ejemplo: Arquitecto para una empresa constructora pequeña que opera en el estado)",
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "prompt_beliefs",
             "type": "plaintext",
-            "text": "Ahora le preguntaremos sobre sus opiniones con respecto a sus hijos que participan en este estudio. Por favor tome en cuenta que todo lo que diga aquí es altamente confidencial y no será compartido con nadie fuera del equipo de investigación. Ni tampoco con sus hijos, o la escuela de sus hijos."
+            "text": "Ahora le preguntaremos sobre sus opiniones con respecto a sus hijos que participan en este estudio. Por favor tome en cuenta que todo lo que diga aquí es altamente confidencial y no será compartido con nadie fuera del equipo de investigación: ni con su cónyuge, ni con sus hijos, ni con la escuela de sus hijos."
         },
         {
             "question_id": "smart_A",

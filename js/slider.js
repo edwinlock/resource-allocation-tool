@@ -196,7 +196,7 @@ class SliderApp {
                     <p><strong>This slider session has already been completed.</strong></p>
                     <p>You can view the results in the session manager or start a new session.</p>
                     <div class="mt-3">
-                        <a href="index.html" class="btn btn-primary me-2">Return to Session Manager</a>
+                        <a href="index.html" class="btn btn-primary me-2">Regresar</a>
                         <a href="sessiondetail.html?sessionId=${new URLSearchParams(window.location.search).get('sessionId')}" class="btn btn-info">View Session Details</a>
                     </div>
                 `;
@@ -211,7 +211,7 @@ class SliderApp {
                         <li>Ensure the session exists in the database</li>
                         <li>Check that the session has not already been completed</li>
                     </ul>
-                    <a href="index.html" class="btn btn-primary">Return to Session Manager</a>
+                    <a href="index.html" class="btn btn-primary">Rregresar</a>
                 `;
             }
             

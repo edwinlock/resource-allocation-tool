@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Allocation Study</title>
+    <title>Parental Preferences, Technology and Equity in Education.</title>
     
     <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,7 +32,7 @@
         <div class="row app-container mx-0">
             <div class="col-12 px-2 px-lg-3">
                 <div class="intro-text my-3">
-                    <p id="scenarios-infotext">You will be shown <span id="total-scenarios">8</span> different scenarios in which you choose investments into your children.</p>
+                    <p id="scenarios-infotext">Se le mostrarán <span id="total-scenarios">6</span> escenarios distintos.</p>
                 </div>
                 <div class="progress my-2" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar" style="width: 0%">
@@ -43,31 +43,31 @@
                 <div class="settings-area mt-3 mb-0">
                     <div class="row g-3 align-items-center">
                         <div class="col-auto">
-                            <label for="graph-type-select" class="form-label">Graph Type</label>
+                            <label for="graph-type-select" class="form-label">Tipo de Gráfico</label>
                         </div>
                         <div class="col-auto">
                             <select id="graph-type-select" class="form-select">
-                                <option value="multi-bar" selected>Multi Bar Chart</option>
-                                <option value="line">Line Chart</option>
+                                <option value="multi-bar" selected>Gráfico de Barras</option>
+                                <option value="line">Gráfico de Líneas</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 
                 <div class="chart-section">
-                    <h3>Earnings</h3>
+                    <h3>Fichas</h3>
                     <canvas id="multi-bar-chart-canvas" class="chart-canvas"></canvas>
                     <canvas id="line-chart-canvas" class="chart-canvas"></canvas>
                 </div>
             
 
                 <div class="investment-section">
-                    <h3>Choose Investments</h3>
+                    <h3>Escoge la Distribución</h3>
 
                     <div class="child-slider">
                         <div>
-                            <span><span class="child1-name" id="child1-name">Child 1</span>: <span id="child1-display">0</span> lessons</span>
-                            <span><span class="child2-name" id="child2-name">Child 2</span>: <span id="child2-display">9</span> lessons</span>
+                            <span><span class="child1-name" id="child1-name">Hijo/a 1</span>: <span id="child1-display">0</span> fichas</span>
+                            <span><span class="child2-name" id="child2-name">Hijo/a 2</span>: <span id="child2-display">9</span> fichas</span>
                         </div>
                         <input type="range" min="0" max="9" value="0" class="slider" id="investment-slider">
                     </div>
@@ -75,10 +75,10 @@
 
                 <div class="d-flex justify-content-center gap-3 mt-4">
                     <button type="button" class="btn btn-secondary" id="prevButton" style="display: none;">
-                        Previous Scenario
+                        Escenario Previo
                     </button>
                     <button type="button" class="btn btn-primary" id="nextButton">
-                        Next Scenario
+                        Siguiente Escenario
                     </button>
                 </div>
 
