@@ -5,18 +5,18 @@
         {
             "question_id": "wtp_intro",
             "type": "plaintext",
-            "text": "¡Aún tenemos unas preguntas más!<br><br>Nos gustaría que <strong>imaginara</strong> que uno de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para ellos.<br><br> Le presentaremos algunas opciones sobre el costo de una sesión extra. Si usted estuviese dispuesto/a a pagar por esa sesión extra conteste señalando SÍ o NO para cada una de las siguientes opciones."
+            "text": "¡Aún tenemos unas preguntas más!<br><br>Nos gustaría que <strong>imaginara</strong> que uno/a de sus hijos/as terminó con 2, 6, o 10 sesiones, y que a usted se le permite comprar 1 sesión extra para él o ella.<br><br> Le presentaremos algunas opciones sobre el costo de una sesión extra. Si usted estuviese dispuesto/a a pagar por esa sesión extra, conteste señalando SÍ o NO para cada una de las siguientes opciones."
         },
         {
             "question_id": "wtp_list1",
-            "type": "mpl",
-            "query": "Si uno de sus hijos/as terminó con solo 2 sesiones del curso de Inteligencia Artificial... ¿Cuánto estaría dispuesto a pagar por una sesión más? Por favor conteste señalando SÍ o NO para cada una de las siguientes opciones.",
+            "type": "grid",
+            "query": "Si uno/a de sus hijos/as terminó con solo 2 sesiones del curso de Inteligencia Artificial... ¿Cuánto estaría dispuesto a pagar por una sesión más? Por favor conteste señalando SÍ o NO para cada una de las siguientes opciones.",
             "prefixes": [
-                "Pagar 100 pesos",
+                "Pagar 300 pesos",
                 "Pagar 150 pesos",
                 "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
+                "Pagar 450 pesos",
+                "Pagar 100 pesos"
             ],
             "options": [
                 ["Sí", "No"],
@@ -25,19 +25,18 @@
                 ["Sí", "No"],
                 ["Sí", "No"]
             ],
-            "datatype": "single_per_row",
             "required": true
         },
         {
             "question_id": "wtp_list2",
-            "type": "mpl",
+            "type": "grid",
             "query": "Si uno de sus hijos/as terminó con 6 sesiones... ¿Cuánto pagaría por una sesión más?",
             "prefixes": [
-                "Pagar 100 pesos",
+                "Pagar 300 pesos",
                 "Pagar 150 pesos",
                 "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
+                "Pagar 450 pesos",
+                "Pagar 100 pesos"
             ],
             "options": [
                 ["Sí", "No"],
@@ -46,19 +45,18 @@
                 ["Sí", "No"],
                 ["Sí", "No"]
             ],
-            "datatype": "single_per_row",
             "required": true
         },
         {
             "question_id": "wtp_list3",
-            "type": "mpl",
+            "type": "grid",
             "query": "Si uno de sus hijos/as terminó con 10 sesiones... ¿Cuánto pagaría por una sesión más?",
             "prefixes": [
-                "Pagar 100 pesos",
+                "Pagar 300 pesos",
                 "Pagar 150 pesos",
                 "Pagar 200 pesos",
-                "Pagar 300 pesos",
-                "Pagar 450 pesos"
+                "Pagar 450 pesos",
+                "Pagar 100 pesos"
             ],
             "options": [
                 ["Sí", "No"],
@@ -67,7 +65,6 @@
                 ["Sí", "No"],
                 ["Sí", "No"]
             ],
-            "datatype": "single_per_row",
             "required": true
         },
         {
@@ -81,7 +78,7 @@
         {
             "question_id": "child_color",
             "type": "singleselect",
-            "query": "¿Quién cree que era el hijo/a naranja?",
+            "query": "Del ejercicio de redistribución, ¿quién cree que era el hijo/a naranja?",
             "values": ["{child1name}", "{child2name}"],
             "datatype": "text",
             "required": true
@@ -90,15 +87,17 @@
             "question_id": "transfer_skill",
             "type": "singleselect",
             "query": "¿Qué tan difícil cree que sería para sus hijos/as enseñar a sus hermanos/as sobre el contenido del curso?",
-            "values": ["Nada difícil", "Algo difícil", "Algo fácil", "Muy fácil"],
+            "values": ["Muy difícil", "Algo Difícil", "Algo Fácil", "Muy fácil"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "ineq_aver",
-            "type": "open",
+            "type": "likert",
             "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir “no me describe para nada” y 10 significa “me describe perfectamente”.<br><br>Si yo estuviera en una situación en la que tuviera que distribuir recursos con otros, priorizaría la equidad por encima de aumentar mis propios beneficios.",
-            "datatype": "number",
+            "prefix": "Escoja la calificación",
+            "min": 0,
+            "max": 10,
             "required": true
 
         },
