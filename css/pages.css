@@ -1,0 +1,146 @@
+/* Page-specific styles for Resource Allocation Tool */
+
+/* ==========================================
+   INDEX PAGE - Session Manager
+   ========================================== */
+
+.container {
+    max-width: 1200px;
+}
+
+.session-table {
+    font-size: 1rem;
+}
+
+/* Action buttons styling for proper wrapping */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.action-buttons .btn {
+    margin-bottom: 0.5rem;
+}
+
+/* Session card styling */
+.session-card {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 140px;
+}
+
+.session-card:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+.session-card.selected {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.session-card-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.session-card-detail {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+/* Session type row backgrounds */
+.session-row-child {
+    background-color: #e3f2fd !important; /* Light blue */
+}
+
+.session-row-parent {
+    background-color: #e8f5e9 !important; /* Light green */
+}
+
+.session-row-child:hover,
+.session-row-parent:hover {
+    filter: brightness(0.95);
+}
+
+/* ==========================================
+   SESSION DETAIL PAGE
+   ========================================== */
+
+.session-detail-table {
+    font-size: 0.9rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.session-id {
+    font-family: monospace;
+    background-color: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   HELP PAGE
+   ========================================== */
+
+.guide-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.back-button {
+    position: sticky;
+    top: 10px;
+    z-index: 1000;
+    margin-bottom: 1rem;
+}
+
+iframe {
+    width: 100%;
+    border: none;
+    min-height: calc(100vh - 150px);
+}
+
+/* ==========================================
+   SESSION JSON VIEWER
+   ========================================== */
+
+.json-container {
+    white-space: pre-wrap;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 12px;
+    overflow-x: auto;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.copy-btn {
+    margin-bottom: 15px;
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background: #0056b3;
+}

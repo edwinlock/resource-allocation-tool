@@ -188,6 +188,22 @@ export class UIManager {
     }
 
     // Navigation handlers for slider app - UI only
+
+    /**
+     * Checks if the slider allocation is optimal (all budget to high child)
+     * @param {Object} response - Slider response object containing highChild, child1investment, allocatableBudget
+     * @returns {boolean} - True if allocation is optimal
+     */
+    isOptimalAllocation(response) {
+        const { highChild, child1investment, allocatableBudget } = response;
+
+        if (highChild === 1) {
+            return child1investment === allocatableBudget;  // All to child 1
+        } else {
+            return child1investment === 0;  // All to child 2 (0 to child 1)
+        }
+    }
+
     async handleNextButtonClick(sessionManager) {
         try {
             // Use SessionManager for business logic
@@ -199,8 +215,14 @@ export class UIManager {
                 const scenariosId = SCENARIOS_METADATA.scenarios_id;
 
                 if (scenariosId === 'practice-v1') {
-                    // First practice slider complete - go to second dummy slider
-                    window.location.href = `slider.html?sessionId=${sessionId}&dummy=2`;
+                    // First practice slider complete - conditionally skip practice-v2
+                    const lastResponse = appState.sliderState.responses[appState.sliderState.responses.length - 1];
+                    const skipPractice2 = this.isOptimalAllocation(lastResponse);
+
+                    const nextPage = skipPractice2
+                        ? `survey.html?survey_id=Sandwich&session_id=${sessionId}`
+                        : `slider.html?sessionId=${sessionId}&dummy=2`;
+                    window.location.href = nextPage;
                 } else if (scenariosId === 'practice-v2') {
                     // Second practice slider complete - go to sandwich survey
                     window.location.href = `survey.html?survey_id=Sandwich&session_id=${sessionId}`;

@@ -51,6 +51,97 @@ X-label: "Units"
 **Scenarios:** Originally we had 8. Julia indicated that the two scenarios from the Additive Production Function does not help us. So we can kick those two out.
 :::
 
+# Treatment Parent Workflow
+
+For treatment parents, the workflow includes practice sliders before the main slider exercise:
+
+1. **Treatment Survey** - Initial survey
+2. **Practice Slider 1** (practice-v1) - First practice with scenarios-dummy.json
+3. **Practice Slider 2** (practice-v2) - Second practice with scenarios-dummy-2.json *(conditionally shown)*
+4. **Sandwich Survey** - Intermediate survey
+5. **Main Slider** (main-v1) - Actual experiment with scenarios.json
+6. **Exit Survey** - Final survey
+
+## Conditional Skip Logic for Practice Slider 2
+
+Practice Slider 2 is **automatically skipped** if the user allocates optimally in Practice Slider 1.
+
+**Optimal allocation** means giving all `allocatable_budget` vouchers to the high-performing child:
+- If child 1 is high → `child1investment` must equal `allocatable_budget` (all vouchers to child 1)
+- If child 2 is high → `child1investment` must equal 0 (all vouchers to child 2)
+
+When optimal allocation is detected, the system skips Practice Slider 2 and proceeds directly to the Sandwich Survey.
+
+**Implementation:** See `isOptimalAllocation()` method in [js/modules/ui-slider.js](../js/modules/ui-slider.js)
+
+# Randomization Per Scenario
+
+For each scenario shown to the user, the system performs **cryptographically secure randomization** to determine experimental conditions.
+
+## What Gets Randomized
+
+### 1. High/Low Child Assignment (Coin Flip)
+
+**Location:** [js/modules/app-state.js](../js/modules/app-state.js) - `computeScenarioOutcomes()` method
+
+For each NEW scenario, the system flips a cryptographically secure coin to randomly determine which child is "high" (better returns) vs "low" (worse returns):
+
+```javascript
+const randomBuffer = new Uint32Array(1);
+crypto.getRandomValues(randomBuffer);
+high_child = (randomBuffer[0] % 2) + 1;  // Returns 1 or 2
+```
+
+**Result:**
+- `high_child = 1`: Child 1 gets high pre-earnings, Child 2 gets low pre-earnings
+- `high_child = 2`: Child 1 gets low pre-earnings, Child 2 gets high pre-earnings
+
+### 2. Chart Colors & Legend Order
+
+**Location:** [js/modules/chart-factory.js](../js/modules/chart-factory.js) - `getChildColors()` method
+
+Based on the coin flip result, colors are dynamically assigned:
+
+- **If `high_child === 1`:**
+  - Child 1 (left on slider) → Orange color (high performer)
+  - Child 2 (right on slider) → Green color (low performer)
+
+- **If `high_child === 2`:**
+  - Child 1 (left on slider) → Green color (low performer)
+  - Child 2 (right on slider) → Orange color (high performer)
+
+The legend order in charts also adjusts dynamically to reflect which child is high/low.
+
+### 3. Slider Position (NOT Randomized)
+
+**Important:** The slider itself does NOT change physical positions:
+- Child 1 is **always** on the left
+- Child 2 is **always** on the right
+- The slider value always represents investment in Child 1
+
+**What IS randomized** is which child (left or right) is the high performer with better returns.
+
+## Data Export
+
+All randomization results are exported in slider responses:
+
+| Field | Description | Example Values |
+|-------|-------------|----------------|
+| `highChild` | Which child (1 or 2) is the high performer | `1` or `2` |
+| `preEarnings1` | Child 1's initial earnings (randomized) | `5` or `2` |
+| `preEarnings2` | Child 2's initial earnings (randomized) | `2` or `5` |
+| `child1investment` | User's allocation to Child 1 | `0` to `allocatable_budget` |
+| `child2investment` | User's allocation to Child 2 | `0` to `allocatable_budget` |
+
+**Analysis:** The `highChild` field tells you which position (left/right) had the high performer for each scenario, allowing you to analyze whether users favored the high or low child.
+
+## Summary
+
+✅ **Coin flip per scenario** - Determines `high_child` (1 or 2)
+✅ **Legend/color randomization** - Orange goes to high child, green to low child
+✅ **Data export** - `highChild` field captures randomization result
+✅ **Slider position** - Always fixed (Child 1 left, Child 2 right)
+
 # Graph types
 
 Currently, the line chart is the leading man. In the end, the parents should not be able to see the "advanced" part. In the next days we need to know which graph type is preferred (bar charts etc.). I don't want to delete them as of now until we know this. 
