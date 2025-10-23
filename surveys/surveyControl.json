@@ -329,7 +329,7 @@
         {
             "question_id": "sibling_support",
             "type": "singleselect",
-            "query": "Imagine que {child1name} gana más ingresos como adulto/a que {child2name}, ¿cuánto espera que {child1name} apoye a sus hermanos/as?",
+            "query": "Imagine que uno/a de sus hijos/as gana más ingresos como adulto/a que el/la otro/a, ¿cuánto espera que ese/esa hijo/a apoye a sus hermanos/as?",
             "values": ["Nada en absoluto (no se espera que ayude)", "Un poco (apoyo ocasional, por ejemplo en emergencias)", "Moderado (apoyo económico esporádico, en gastos importantes)", "Bastante (apoyo frecuente, en gastos regulares del hogar)", "Mucho y regularmente (responsabilidad continua de apoyo a hermanos)"],
             "datatype": "text",
             "required": true
