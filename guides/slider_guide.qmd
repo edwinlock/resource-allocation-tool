@@ -1,90 +1,87 @@
 ---
-title: "Slider"
+title: "Slider Implementation Guide"
 format: html
 ---
 
-# Input Data
+# Overview
 
-- `{Child1name}` and `{Child2name}` from `{household_x}`
+The slider app is used in the parent treatment sessions to collect resource allocation decisions. Parents use a slider to distribute a fixed budget of resources (lessons) between two children and see the outcomes displayed in interactive charts.
 
-- **Gap size scenario:** For each household, we <b>randomly</b> select whether they will be shown the `large_gap` (1-6) or `medium-gap` (5-2) scenario. The gap size scenario determines the number of initial lesson vouchers each child in a household receives, given their "performance"
+# Slider Configurations
 
-<p style="color:orange;">We may need to pre-randomize each Parent Survey.</p> That is, We know there will be 480 Surveys. Is there a way to guarantee that 240 see the `large_gap` and 240 see `medium_gap`? Ideally, this is stratified by school, such that we don't accidentally end up with all the large gaps in 20 schools out of 80. The number of schools is still being confirmed in the next days (today: 24 Sept.), and with the name of the school, we also get the number of families who are eligible for the experiment. Families cannot be forced to do the survey, it is voluntary, but the higher the number in a school the more families we might convince to join the study. 
+The application uses three different slider configurations:
 
-- **Voucher gaps:** (6-1) and (5-2)
-    
-    - Originally, `{Child1name}` and `{Child2name}` would be assigned a tag of `high` and `low` depending on who received the highest and the lowest grade on the test. 
+## 1. Practice Slider 1 (practice-v1)
 
-    - Given a pre-determined **gap size scenario** (see. bullet point 2), `{Child1name}-high` would either receive 6 vouchers, or 5 vouchers, and `{Child2name}-low` would then get the remainder 1 or 2 vouchers, accordingly.
+**File:** `scenarios/scenarios-dummy.json`
 
-    - <p style="color:orange;"> NOW WE RANDOMIZE WHO GETS THE HIGH/LOW TAG. </p> Instead of determining it with a score. That is, instead of having an field to input the score of each child, we could get a button to randomly give each child the `high` or `low` tag. In an analog world, the enumerator would just randomly input 6 and 1 to any of the kids (if they are in a large gap scenario case), instead of the score that computes the number of initial vouchers. But because we are not in an analog world, we can randomly choose that. However, we do need to associate the initial number of received vouchers with a child name.
+- **Purpose:** First practice to familiarize parents with the slider interface
+- **Context:** Store analogy (Walmart vs Soriana)
+- **Budget:** 9 fichas
+- **Scenarios:** 1 scenario (σ=1, θ=2)
+- **Pre-earnings gap:** [5, 2]
 
-- **Sigma-Theta Scenarios** Randomize the order in which they appear per survey. We need to be able to export the order, though. Something along the lines of:
+## 2. Practice Slider 2 (practice-v2)
 
-| Survey ID | Sigma-Theta | Slider Choice `high`| Slider Choice `low`| Final number of vouchers `high` | Final number of vouchers `low` 
-|-----------|-------------|---------------------|---------------------
-| unique_idx1 | Scenario 1 (cobb-douglas linear) | 0 | 9 | ... | ... |
-| unique_idx1 | Scenario 5 (cobb-douglas linear) | 9 | 0 | ... | ... |
-| unique_idx1 | Scenario 2 (cobb-douglas linear) | 4 | 5 | ... | ... |
-| unique_idx1 | Scenario 4 (cobb-douglas linear) | ... | ... | ... | ... |
-| unique_idx1 | Scenario 3 (cobb-douglas linear) | ... | ... | ... | ... |
-| unique_idx1 | Scenario 6 (cobb-douglas linear) | ... | ... | ... | ... |
+**File:** `scenarios/scenarios-dummy-2.json`
 
-...
+- **Purpose:** Second practice (only shown if user didn't allocate optimally in Practice 1)
+- **Context:** Store analogy (Walmart vs Soriana)
+- **Budget:** 9 fichas
+- **Scenarios:** 1 scenario
+- **Conditional display:** Skipped if user allocated all budget to high child in Practice 1
 
-:::{.callout-note icon="false"}
-# Computing the scenarios
+## 3. Main Slider (main-v1)
 
-After we have chosen the **gap size scenario**, the and which child is `high` and which is `low`, the rest of the slider is computed exactly the same. 
+**File:** `scenarios/scenarios.json`
 
-Y-label: "Total number of units" [We should probably make sure that the displayed scale on the chart is always the same. Some images start at 0 and end at 20, some 0-15 etc. Just for consistency]
-X-label: "Units"
+- **Purpose:** Actual experimental data collection
+- **Context:** Real children (uses actual child names from session)
+- **Budget:** 9 fichas
+- **Scenarios:** 6 different economic scenarios
+- **Pre-earnings gaps:** Varies by scenario ([5,2], [4,3], [6,1])
 
-**Colors**: 
+### Main Slider Scenarios
 
-    - {childOrange} = child-`high`
-    - {childBlue} = child-`low`
-    - Green = Total household vouchers.
-
-**Scenario Names:** A, B, C, D.. etc. is fine
-
-**Scenarios:** Originally we had 8. Julia indicated that the two scenarios from the Additive Production Function does not help us. So we can kick those two out.
-:::
+| Scenario Name | Description | γ (gamma) | σ (sigma) | θ (theta) | Pre-earnings |
+|---------------|-------------|-----------|-----------|-----------|--------------|
+| sigma05_theta1 | σ=0.5, θ=1 | 0.5 | 0.5 | 1 | [5, 2] |
+| sigma05_theta2 | σ=0.5, θ=2 | 0.5 | 0.5 | 2 | [5, 2] |
+| cd_theta1 | Cobb-Douglas, θ=1 | 0.5 | 0 | 1 | [4, 3] |
+| cd_theta2 | Cobb-Douglas, θ=2 | 0.5 | 0 | 2 | [4, 3] |
+| sigma-2_theta1 | σ=-2, θ=1 | 0.5 | -2 | 1 | [6, 1] |
+| sigma-2_theta2 | σ=-2, θ=2 | 0.5 | -2 | 2 | [6, 1] |
 
 # Treatment Parent Workflow
 
-For treatment parents, the workflow includes practice sliders before the main slider exercise:
+The complete workflow for treatment parents:
 
-1. **Treatment Survey** - Initial survey
-2. **Practice Slider 1** (practice-v1) - First practice with scenarios-dummy.json
-3. **Practice Slider 2** (practice-v2) - Second practice with scenarios-dummy-2.json *(conditionally shown)*
-4. **Sandwich Survey** - Intermediate survey
-5. **Main Slider** (main-v1) - Actual experiment with scenarios.json
-6. **Exit Survey** - Final survey
+1. **Treatment Survey** - Initial demographic and attitudinal questions
+2. **Practice Slider 1** (practice-v1) - First practice with store analogy
+3. **Practice Slider 2** (practice-v2) - Second practice *(conditionally shown)*
+4. **Sandwich Survey** - Intermediate survey between practice and real sliders
+5. **Main Slider** (main-v1) - Actual experiment with 6 scenarios
+6. **Exit Survey** - Final questions
 
 ## Conditional Skip Logic for Practice Slider 2
 
 Practice Slider 2 is **automatically skipped** if the user allocates optimally in Practice Slider 1.
 
-**Optimal allocation** means giving all `allocatable_budget` vouchers to the high-performing child:
-- If child 1 is high → `child1investment` must equal `allocatable_budget` (all vouchers to child 1)
-- If child 2 is high → `child1investment` must equal 0 (all vouchers to child 2)
+**Optimal allocation** = All `allocatable_budget` fichas to the high-performing child:
+- If child 1 is high → `child1investment === allocatable_budget` (all 9 fichas to child 1)
+- If child 2 is high → `child1investment === 0` (all 9 fichas to child 2)
 
-When optimal allocation is detected, the system skips Practice Slider 2 and proceeds directly to the Sandwich Survey.
-
-**Implementation:** See `isOptimalAllocation()` method in [js/modules/ui-slider.js](../js/modules/ui-slider.js)
+**Implementation:** `isOptimalAllocation()` method in [js/modules/ui-slider.js](../js/modules/ui-slider.js)
 
 # Randomization Per Scenario
 
-For each scenario shown to the user, the system performs **cryptographically secure randomization** to determine experimental conditions.
+For each scenario, the system performs **cryptographically secure randomization** to ensure unbiased experimental conditions.
 
-## What Gets Randomized
-
-### 1. High/Low Child Assignment (Coin Flip)
+## The Coin Flip
 
 **Location:** [js/modules/app-state.js](../js/modules/app-state.js) - `computeScenarioOutcomes()` method
 
-For each NEW scenario, the system flips a cryptographically secure coin to randomly determine which child is "high" (better returns) vs "low" (worse returns):
+For each NEW scenario, a cryptographically secure random number generator determines which child is "high" vs "low":
 
 ```javascript
 const randomBuffer = new Uint32Array(1);
@@ -92,56 +89,179 @@ crypto.getRandomValues(randomBuffer);
 high_child = (randomBuffer[0] % 2) + 1;  // Returns 1 or 2
 ```
 
-**Result:**
-- `high_child = 1`: Child 1 gets high pre-earnings, Child 2 gets low pre-earnings
-- `high_child = 2`: Child 1 gets low pre-earnings, Child 2 gets high pre-earnings
+## What Gets Randomized
 
-### 2. Chart Colors & Legend Order
+### 1. Which Child is High Performer
+
+The coin flip randomly assigns:
+- **high_child = 1**: Child 1 gets high pre-earnings, better returns
+- **high_child = 2**: Child 2 gets high pre-earnings, better returns
+
+### 2. Pre-Earnings Assignment
+
+Based on the scenario's `pre_earnings` array (e.g., [5, 2]):
+- High child receives first value (5)
+- Low child receives second value (2)
+
+### 3. Chart Colors
 
 **Location:** [js/modules/chart-factory.js](../js/modules/chart-factory.js) - `getChildColors()` method
 
-Based on the coin flip result, colors are dynamically assigned:
+Colors are dynamically assigned based on the coin flip:
 
-- **If `high_child === 1`:**
-  - Child 1 (left on slider) → Orange color (high performer)
-  - Child 2 (right on slider) → Green color (low performer)
+| If high_child = 1 | If high_child = 2 |
+|-------------------|-------------------|
+| Child 1 → Orange (high) | Child 1 → Green (low) |
+| Child 2 → Green (low) | Child 2 → Orange (high) |
 
-- **If `high_child === 2`:**
-  - Child 1 (left on slider) → Green color (low performer)
-  - Child 2 (right on slider) → Orange color (high performer)
+- **Orange (#ff7f0e)**: High performer
+- **Green (#2ca02c)**: Low performer
+- **Blue (#1f77b4)**: Combined/aggregate
 
-The legend order in charts also adjusts dynamically to reflect which child is high/low.
+### 4. Legend Order
 
-### 3. Slider Position (NOT Randomized)
+The legend automatically adjusts to show children in the appropriate order based on which is high/low.
 
-**Important:** The slider itself does NOT change physical positions:
-- Child 1 is **always** on the left
-- Child 2 is **always** on the right
-- The slider value always represents investment in Child 1
+## What Is NOT Randomized
 
-**What IS randomized** is which child (left or right) is the high performer with better returns.
+### Slider Physical Position
 
-## Data Export
+**Important:** The slider positions are fixed:
+- **Left side:** Always Child 1
+- **Right side:** Always Child 2
+- **Slider value:** Always represents investment in Child 1
 
-All randomization results are exported in slider responses:
+The randomization determines **which child (left or right position) is the high performer**, not the physical arrangement of the slider.
 
-| Field | Description | Example Values |
-|-------|-------------|----------------|
-| `highChild` | Which child (1 or 2) is the high performer | `1` or `2` |
-| `preEarnings1` | Child 1's initial earnings (randomized) | `5` or `2` |
-| `preEarnings2` | Child 2's initial earnings (randomized) | `2` or `5` |
-| `child1investment` | User's allocation to Child 1 | `0` to `allocatable_budget` |
-| `child2investment` | User's allocation to Child 2 | `0` to `allocatable_budget` |
+## Scenario Order Randomization
 
-**Analysis:** The `highChild` field tells you which position (left/right) had the high performer for each scenario, allowing you to analyze whether users favored the high or low child.
+**Location:** [js/modules/app-state.js](../js/modules/app-state.js) - Constructor
 
-## Summary
+The order in which scenarios are presented is randomized at the start of each slider session:
 
-✅ **Coin flip per scenario** - Determines `high_child` (1 or 2)
-✅ **Legend/color randomization** - Orange goes to high child, green to low child
-✅ **Data export** - `highChild` field captures randomization result
-✅ **Slider position** - Always fixed (Child 1 left, Child 2 right)
+```javascript
+const scenarioOrder = [...Array(SCENARIOS.length).keys()];
+// Fisher-Yates shuffle
+for (let i = scenarioOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [scenarioOrder[i], scenarioOrder[j]] = [scenarioOrder[j], scenarioOrder[i]];
+}
+```
 
-# Graph types
+# Data Export
 
-Currently, the line chart is the leading man. In the end, the parents should not be able to see the "advanced" part. In the next days we need to know which graph type is preferred (bar charts etc.). I don't want to delete them as of now until we know this. 
+Each slider response includes complete information about the randomization and user's choice.
+
+## Exported Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `scenariosId` | string | Which slider set (practice-v1, practice-v2, main-v1) |
+| `scenarioNumber` | integer | Index of scenario in scenarios.json (0-based) |
+| `scenarioName` | string | Scenario identifier (e.g., "sigma05_theta1") |
+| `displayOrder` | integer | Order shown to user (1-based) |
+| `highChild` | integer | **Which child (1 or 2) was the high performer** |
+| `child1investment` | integer | Fichas allocated to Child 1 |
+| `child2investment` | integer | Fichas allocated to Child 2 |
+| `allocatableBudget` | integer | Total budget (always 9) |
+| `preEarnings1` | number | Child 1's initial earnings |
+| `preEarnings2` | number | Child 2's initial earnings |
+| `scenarioGamma` | number | γ parameter from scenario |
+| `scenarioSigma` | number | σ parameter from scenario |
+| `scenarioTheta` | number | θ parameter from scenario |
+| `scenarioAlpha` | number | Computed α parameter |
+| `child1FinalEarnings` | number | Child 1's final earnings |
+| `child2FinalEarnings` | number | Child 2's final earnings |
+| `aggregateFinalEarnings` | number | Combined household earnings |
+| `completedAt` | timestamp | When response was recorded (UTC) |
+
+## Key Field: `highChild`
+
+The `highChild` field (1 or 2) is critical for analysis:
+- Tells you which child had better returns in that scenario
+- Combined with `child1investment`, reveals if user favored the high or low child
+- Allows you to analyze investment patterns relative to child performance
+
+**Example Analysis:**
+```
+If highChild = 1 and child1investment = 9:
+  → User gave all to high performer
+
+If highChild = 2 and child1investment = 9:
+  → User gave all to low performer
+```
+
+# Economic Model
+
+The slider uses a CES (Constant Elasticity of Substitution) production function to compute outcomes.
+
+## Parameters
+
+- **γ (gamma):** Weight parameter (always 0.5 in current scenarios)
+- **σ (sigma):** Elasticity of substitution
+  - σ = 0: Cobb-Douglas (multiplicative)
+  - σ > 0: Greater substitutability
+  - σ < 0: Complements
+- **θ (theta):** Returns to scale
+  - θ = 1: Constant returns
+  - θ = 2: Increasing returns
+
+## Computation
+
+**Location:** [js/modules/economic-engine.js](../js/modules/economic-engine.js)
+
+For each possible investment allocation (0-9), the system computes:
+1. Child-specific outcomes
+2. Aggregate household outcomes
+3. Displays results in interactive charts
+
+# User Interface
+
+## Slider Component
+
+- **Input:** Range slider (0 to `allocatable_budget`)
+- **Display:** Shows current allocation for both children
+- **Real-time updates:** Charts update as slider moves
+- **Validation:** Must move slider before proceeding (prevents accidental skips)
+
+## Charts
+
+Three chart types available (line charts are primary):
+1. **Line charts:** Show outcomes across all possible allocations
+2. **Bar charts:** Alternative visualization
+3. **Advanced view:** Additional detail (hidden from parents)
+
+## Navigation
+
+- **Previous button:** Go back to previous scenario (preserves previous answer)
+- **Next button:** Confirm allocation and proceed
+- **Progress indicator:** Shows current scenario out of total
+
+# Implementation Files
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| App state | `js/modules/app-state.js` | Manages slider state, randomization |
+| UI controls | `js/modules/ui-slider.js` | Slider interactions, navigation |
+| Economic engine | `js/modules/economic-engine.js` | CES production function |
+| Chart rendering | `js/modules/chart-factory.js` | Creates and updates charts |
+| Scenario loading | `js/modules/scenario-loader.js` | Loads scenario configurations |
+| Data persistence | `js/modules/sliderResponseDB.js` | IndexedDB storage |
+| Session management | `js/modules/session-coordinator.js` | Workflow coordination |
+
+# Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `scenarios/scenarios.json` | Main experimental scenarios (6 scenarios) |
+| `scenarios/scenarios-dummy.json` | Practice slider 1 (1 scenario) |
+| `scenarios/scenarios-dummy-2.json` | Practice slider 2 (1 scenario) |
+
+Each configuration file includes:
+- `scenarios_id`: Unique identifier
+- `infotext`: Instructions shown to user
+- `child_high_name` / `child_low_name`: Display labels
+- `allocatable_budget`: Total fichas to distribute
+- `max_sessions`: Maximum value for charts
+- Color scheme definitions
+- Array of scenarios with economic parameters
