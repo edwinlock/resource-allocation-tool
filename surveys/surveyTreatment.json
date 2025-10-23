@@ -179,7 +179,7 @@
         {
             "question_id": "smart_A",
             "type": "singleselect",
-            "query": "En relación con otros estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child1name}?",
+            "query": "En relación con otros/as estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child1name}?",
             "values": ["Muy por debajo del promedio", "Algo por debajo del promedio", "Promedio", "Algo por encima del promedio", "Muy por encima del promedio"],
             "datatype": "text",
             "required": true
@@ -187,7 +187,7 @@
         {
             "question_id": "smart_B",
             "type": "singleselect",
-            "query": "En relación con otras estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child2name}?",
+            "query": "En relación con otros/as estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child2name}?",
             "values": ["Muy por debajo del promedio", "Algo por debajo del promedio", "Promedio", "Algo por encima del promedio", "Muy por encima del promedio"],
             "datatype": "text",
             "required": true
