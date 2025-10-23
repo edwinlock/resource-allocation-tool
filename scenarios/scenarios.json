@@ -38,7 +38,7 @@
             "gamma": 0.5,
             "sigma": 0,
             "theta": 1,
-            "pre_earnings": [6, 1]
+            "pre_earnings": [4, 3]
         },
         {
             "name": "cd_theta2",
@@ -46,7 +46,7 @@
             "gamma": 0.5,
             "sigma": 0,
             "theta": 2,
-            "pre_earnings": [6, 1]
+            "pre_earnings": [4, 3]
         },
         {
             "name": "sigma-2_theta2",
@@ -54,7 +54,7 @@
             "gamma": 0.5,
             "sigma": -2,
             "theta": 1,
-            "pre_earnings": [4, 3]
+            "pre_earnings": [6, 1]
         },
         {
             "name": "sigma-2_theta2",
@@ -62,7 +62,7 @@
             "gamma": 0.5,
             "sigma": -2,
             "theta": 2,
-            "pre_earnings": [4, 3]
+            "pre_earnings": [6, 1]
         }
     ]
 }
