@@ -145,7 +145,7 @@
             "question_id": "edu_mom",
             "type": "singleselect",
             "query": "¿Hasta qué grado aprobó la madre en la escuela?",
-            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
             "datatype": "text",
             "required": true
         },
@@ -153,7 +153,7 @@
             "question_id": "edu_dad",
             "type": "singleselect",
             "query": "¿Hasta qué grado aprobó el padre en la escuela?",
-            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura o Ingeniería)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
             "datatype": "text",
             "required": true
         },
@@ -167,7 +167,7 @@
         {
             "question_id": "job_dad1",
             "type": "open",
-            "query": "¿Cuál es la ocupación del padre de familia? (Por ejemplo: Arquitecto para una empresa constructora pequeña que opera en el estado)",
+            "query": "¿Cuál es la ocupación actual del padre de familia? (Por ejemplo: Arquitecto para una empresa constructora pequeña que opera en el estado)",
             "datatype": "text",
             "required": true
         },
@@ -197,6 +197,8 @@
             "type": "open",
             "query": "¿Qué promedio de calificaciones espera que {child1name} logre este año en el área de las matemáticas?",
             "datatype": "number",
+            "decimal_places": 2,              
+            "comma_separated": false,
             "required": true
         },
         {
@@ -211,7 +213,9 @@
             "question_id": "subj_grade_B_math",
             "type": "open",
             "query": "¿Qué promedio de calificaciones espera que {child2name} logre este año en el área de las matemáticas?",
-            "datatype": "number",
+            "datatype": "number",                   
+            "decimal_places": 2,              
+            "comma_separated": false,
             "required": true
         },
         {
@@ -227,6 +231,8 @@
             "type": "open",
             "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?",
             "datatype": "number",
+            "decimal_places": 2,              
+            "comma_separated": false,
             "required": true
         },
         {
@@ -243,33 +249,19 @@
                 "Calificación Marcela"
             ],
             "datatype": "number",
+            "decimal_places": 2,
             "required": true
         },
         {
             "question_id": "sigma_comp",
             "type": "multiopen",
-            "query": "Ahora, ¿Cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 0% del dinero a Ana, y 100% a Marcela?",
+            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 0% del dinero a Ana, y 100% a Marcela?",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "required": true
-        },
-        {
-            "question_id": "subj_returnsA",
-            "type": "singleselect",
-            "query": "Si usted invirtiera $1000 pesos MXN más en la educación de {child1name} este año, por ejemplo en asesorías o clases extracurriculares, ¿cuánto cree que mejorarían sus calificaciones?",
-            "values": ["Nada en absoluto", "Un poco", "Algo", "Mucho"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "subj_returnsB",
-            "type": "singleselect",
-            "query": "Si invirtiera $1000 pesos MXN más en la educación de {child2name} este año, por ejemplo en asesorías o clases extracurriculares, ¿cuánto cree que mejorarían sus calificaciones?",
-            "values": ["Nada en absoluto", "Un poco", "Algo", "Mucho"],
-            "datatype": "text",
+            "decimal_places": 2,
             "required": true
         },
         {
@@ -284,26 +276,26 @@
             "question_id": "aspirationsA",
             "type": "singleselect",
             "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child1name} alcance?",
-            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "subjectA",
             "type": "open",
-            "query": "¿Qué programa universitario le gustaría que {child1name} estudie?",
+            "query": "¿Qué programa universitario le gustaría que {child1name} estudie? (Por ejemplo: Administración de Empresas)",
             "datatype": "text",
             "required": false,
             "conditional": {
                 "question_id": "aspirationsA",
-                "values": ["Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)"]
+                "values": ["Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)"]
             }
         },
         {
             "question_id": "expectationsA",
             "type": "singleselect",
             "query": "¿Cuál es el nivel más alto de educación que cree que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
-            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
         },
@@ -311,27 +303,82 @@
             "question_id": "aspirationsB",
             "type": "singleselect",
             "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child2name} alcance?",
-            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "subjectB",
             "type": "open",
-            "query": "¿Qué programa universitario le gustaría que {child2name} estudie?",
+            "query": "¿Qué programa universitario le gustaría que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
             "datatype": "text",
             "required": false,
             "conditional": {
                 "question_id": "aspirationsB",
-                "values": ["Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)"]
+                "values": ["Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)"]
             }
         },
         {
             "question_id": "expectationsB",
             "type": "singleselect",
             "query": "¿Cuál es el nivel más alto de educación que cree {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
-            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
+            "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
+            "required": true
+        },
+        {
+            "question_id": "future_job_prompt",
+            "type": "plaintext",
+            "text": "Imagine que uno/a de sus hijos/as estudiará hasta la preparatoria, o bien hasta la universidad, y luego no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+        },
+        {
+            "question_id": "future_job1",
+            "type": "open",
+            "query": "Si tiene un título de preparatoria, ¿cuánto cree que ganará en un mes típico cuando tenga entre 30 a 40 años?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "future_job2",
+            "type": "open",
+            "query": "Si tiene un título de universidad (licenciatura o ingeniería), ¿cuánto cree que ganará en un mes típico cuando tengan entre 30 a 40 años?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "future_job3",
+            "type": "open",
+            "query": "Si tiene un título de posgrado (maestría o doctorado), ¿cuánto cree que ganará en un mes típico cuando tengan entre 30 a 40 años?",
+            "datatype": "number",
+            "required": true
+        },
+        {
+            "question_id": "phi",
+            "type": "grid",
+            "query": "Imagine que necesita elegir entre dos cursos educativos para el futuro de su hijo/a (piense en el hijo/a que quiera). Ambos requieren la misma inversión de $4,000 MXN anuales durante tres años. Los cursos podrían otorgar diferentes salarios en el futuro. Para cada escenario (cada fila), elija la opción (A o B) que prefiera.",
+            "column_headers": ["Opción A", "Opción B"],
+            "prefixes": [
+                "Escenario 1",
+                "Escenario 2",
+                "Escenario 3",
+                "Escenario 4",
+                "Escenario 5",
+                "Escenario 6",
+                "Escenario 7",
+                "Escenario 8",
+                "Escenario 9"
+            ],
+            "options": [
+                ["10% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 90% de que gane 18,000 MXN/mes", "10% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 90% de que gane 8,000 MXN/mes"],
+                ["50% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 50% de que gane 18,000 MXN/mes", "50% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 50% de que gane 8,000 MXN/mes"],
+                ["60% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 40% de que gane 18,000 MXN/mes", "60% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 40% de que gane 8,000 MXN/mes"],
+                ["20% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 80% de que gane 18,000 MXN/mes", "20% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 80% de que gane 8,000 MXN/mes"],
+                ["90% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 10% de que gane 18,000 MXN/mes", "90% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 10% de que gane 8,000 MXN/mes"],
+                ["40% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 60% de que gane 18,000 MXN/mes", "40% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 60% de que gane 8,000 MXN/mes"],
+                ["70% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 30% de que gane 18,000 MXN/mes", "70% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 30% de que gane 8,000 MXN/mes"],
+                ["30% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 70% de que gane 18,000 MXN/mes", "30% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 70% de que gane 8,000 MXN/mes"],
+                ["80% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 20% de que gane 18,000 MXN/mes", "80% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 20% de que gane 8,000 MXN/mes"]
+            ],
             "required": true
         },
         {

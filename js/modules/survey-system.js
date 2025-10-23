@@ -404,6 +404,7 @@ export class GridQuestion extends SurveyQuestion {
         super(questionData);
         this.options = questionData.options || [];
         this.prefixes = questionData.prefixes || [];
+        this.columnHeaders = questionData.column_headers || null;
     }
 
     render(variables = {}) {
@@ -416,6 +417,26 @@ export class GridQuestion extends SurveyQuestion {
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
                         <table class="table">
+        `;
+
+        // Add column headers if provided
+        if (this.columnHeaders && this.columnHeaders.length > 0) {
+            html += `
+                            <thead>
+                                <tr>
+                                    <th></th>
+            `;
+            this.columnHeaders.forEach(header => {
+                const substitutedHeader = this.substituteVariables(String(header), variables);
+                html += `<th class="text-center">${substitutedHeader}</th>`;
+            });
+            html += `
+                                </tr>
+                            </thead>
+            `;
+        }
+
+        html += `
                             <tbody>
         `;
 
