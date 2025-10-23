@@ -91,7 +91,8 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'line') {
         return {
             x: {
-                title: { display: true, text: `Asignación de Fichas` },
+                title: { display: true, text: `Número de sesiones` },
+                ticks: { display: false },
                 grid: { display: true, color: '#f0f0f0' }
             },
             y: {
@@ -106,7 +107,8 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'multiBar') {
         return {
             x: {
-                title: { display: true, text: `Asignación de Fichas` },
+                title: { display: true, text: `Sesiones` },
+                ticks: { display: false },
                 grid: { display: false },
                 stacked: true
             },
