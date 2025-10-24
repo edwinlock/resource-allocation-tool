@@ -8,6 +8,7 @@ export class SurveyQuestion {
         this.query = questionData.query || '';
         this.datatype = questionData.datatype || 'text';
         this.required = questionData.required || false;
+        this.conditional = questionData.conditional || null;
     }
 
     // Abstract method to be implemented by subclasses
@@ -149,12 +150,24 @@ export class MultiOpenQuestion extends SurveyQuestion {
     constructor(questionData) {
         super(questionData);
         this.prefixes = questionData.prefixes || [];
+        this.decimalPlaces = questionData.decimal_places;
     }
 
     render(variables = {}) {
         const query = this.substituteVariables(this.query, variables);
         const inputType = this.datatype === 'number' ? 'number' : 'text';
         const requiredAttr = this.required ? 'required' : '';
+
+        // Calculate step attribute based on decimal_places
+        let stepAttr = '';
+        if (this.datatype === 'number' && this.decimalPlaces !== undefined) {
+            if (this.decimalPlaces === 0) {
+                stepAttr = 'step="1"';
+            } else {
+                const stepValue = Math.pow(10, -this.decimalPlaces);
+                stepAttr = `step="${stepValue}"`;
+            }
+        }
 
         let html = `
             <div class="mb-4 notranslate" translate="no">
@@ -170,7 +183,7 @@ export class MultiOpenQuestion extends SurveyQuestion {
                         <label for="q_${this.questionId}_${index}" class="form-label">${substitutedPrefix}</label>
                     </div>
                     <div class="col-sm-8">
-                        <input type="${inputType}" class="form-control" id="q_${this.questionId}_${index}"
+                        <input type="${inputType}" ${stepAttr} class="form-control" id="q_${this.questionId}_${index}"
                                data-question-id="${this.questionId}" data-index="${index}" ${requiredAttr}>
                     </div>
                 </div>
@@ -404,6 +417,7 @@ export class GridQuestion extends SurveyQuestion {
         super(questionData);
         this.options = questionData.options || [];
         this.prefixes = questionData.prefixes || [];
+        this.columnHeaders = questionData.column_headers || null;
     }
 
     render(variables = {}) {
@@ -416,6 +430,26 @@ export class GridQuestion extends SurveyQuestion {
                     <legend class="question-query">${query}</legend>
                     <div class="table-responsive">
                         <table class="table">
+        `;
+
+        // Add column headers if provided
+        if (this.columnHeaders && this.columnHeaders.length > 0) {
+            html += `
+                            <thead>
+                                <tr>
+                                    <th></th>
+            `;
+            this.columnHeaders.forEach(header => {
+                const substitutedHeader = this.substituteVariables(String(header), variables);
+                html += `<th class="text-center">${substitutedHeader}</th>`;
+            });
+            html += `
+                                </tr>
+                            </thead>
+            `;
+        }
+
+        html += `
                             <tbody>
         `;
 
@@ -949,7 +983,18 @@ export class Survey {
         `;
 
         this.questions.forEach(question => {
-            html += question.render(variables);
+            // Wrap conditional questions in a container with data attributes
+            if (question.conditional) {
+                html += `<div class="conditional-question"
+                             data-question-id="${question.questionId}"
+                             data-depends-on="${question.conditional.question_id}"
+                             data-required-values='${JSON.stringify(question.conditional.values)}'
+                             style="display: none;">`;
+                html += question.render(variables);
+                html += `</div>`;
+            } else {
+                html += question.render(variables);
+            }
         });
 
         html += `
@@ -965,7 +1010,86 @@ export class Survey {
             </div>
         `;
 
+        // Setup conditional logic after render
+        setTimeout(() => this.setupConditionalLogic(), 0);
+
         return html;
+    }
+
+    // Setup event listeners for conditional question logic
+    setupConditionalLogic() {
+        // Find all conditional questions
+        const conditionalQuestions = document.querySelectorAll('.conditional-question');
+
+        conditionalQuestions.forEach(conditionalDiv => {
+            const dependsOn = conditionalDiv.getAttribute('data-depends-on');
+            const requiredValues = JSON.parse(conditionalDiv.getAttribute('data-required-values'));
+
+            // Find the controlling question (could be radio buttons, checkboxes, or other inputs)
+            const controlInputs = document.querySelectorAll(`[data-question-id="${dependsOn}"]`);
+
+            // Function to check if conditional should be shown
+            const checkConditional = () => {
+                let currentValue = null;
+
+                // For radio buttons (singleselect)
+                const selectedRadio = document.querySelector(`input[name="q_${dependsOn}"]:checked`);
+                if (selectedRadio) {
+                    currentValue = selectedRadio.value;
+                }
+                // For select dropdowns
+                else {
+                    const selectInput = document.getElementById(`q_${dependsOn}`);
+                    if (selectInput && selectInput.value) {
+                        currentValue = selectInput.value;
+                    }
+                }
+
+                // Show/hide based on whether current value matches required values
+                if (currentValue && requiredValues.includes(currentValue)) {
+                    conditionalDiv.style.display = 'block';
+                } else {
+                    conditionalDiv.style.display = 'none';
+                    // Clear the conditional question's value when hidden
+                    this.clearQuestionValue(conditionalDiv);
+                }
+            };
+
+            // Add event listeners to all controlling inputs
+            controlInputs.forEach(input => {
+                input.addEventListener('change', checkConditional);
+            });
+
+            // Check initial state
+            checkConditional();
+        });
+    }
+
+    // Helper method to clear a question's value when it's hidden
+    clearQuestionValue(conditionalDiv) {
+        // Clear text/number inputs
+        const textInputs = conditionalDiv.querySelectorAll('input[type="text"], input[type="number"]');
+        textInputs.forEach(input => {
+            input.value = '';
+        });
+
+        // Clear radio buttons
+        const radioInputs = conditionalDiv.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(input => {
+            input.checked = false;
+        });
+
+        // Clear checkboxes
+        const checkboxInputs = conditionalDiv.querySelectorAll('input[type="checkbox"]');
+        checkboxInputs.forEach(input => {
+            input.checked = false;
+        });
+
+        // Clear selects
+        const selectInputs = conditionalDiv.querySelectorAll('select');
+        selectInputs.forEach(select => {
+            select.selectedIndex = 0;
+        });
     }
 
     // Collect all responses from the form
