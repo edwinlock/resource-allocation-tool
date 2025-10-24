@@ -80,7 +80,7 @@
             "question_id": "expectation1",
             "type": "singleselect",
             "query": "Dada tu situación y la de tu familia, ¿cuál es el nivel más alto de educación formal que esperas alcanzar?",
-            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"],
+            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura o Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
         },
@@ -95,7 +95,7 @@
         {
             "question_id": "job_asp",
             "type": "open",
-            "query": "Cuando tengas aproximadamente 30 años, ¿qué trabajo te gustaría estar haciendo? (Por ejemplo, ser ingeniero en sistemas trabajando para una empresa nacional, o abrir mi priopio restaurante)",
+            "query": "Cuando tengas aproximadamente 30 años, ¿qué trabajo te gustaría estar haciendo? (Por ejemplo, ser ingeniero en sistemas trabajando para una empresa nacional, o abrir mi propio restaurante)",
             "datatype": "text",
             "required": true
         },
@@ -519,7 +519,7 @@
                 "Mucho más conmigo"
             ],
             "datatype": "single_per_row",
-            "required": true
+            "required": false
         },
         {
             "question_id": "end",
