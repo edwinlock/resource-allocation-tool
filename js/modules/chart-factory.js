@@ -77,7 +77,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
         return {
             x: {
                 grid: { display: false },
-                ticks: { display: true },
+                ticks: { display: false },
                 border: { display: false }
             },
             y: {
@@ -107,7 +107,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'multiBar') {
         return {
             x: {
-                title: { display: true, text: `Asignación de Fichas` },
+                title: { display: true, text: SCENARIOS_METADATA.allocation_label || 'Asignación de Fichas' },
                 grid: { display: false },
                 stacked: true
             },
