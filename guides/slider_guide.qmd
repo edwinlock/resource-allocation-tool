@@ -259,9 +259,52 @@ Three chart types available (line charts are primary):
 
 Each configuration file includes:
 - `scenarios_id`: Unique identifier
-- `infotext`: Instructions shown to user
-- `child_high_name` / `child_low_name`: Display labels
+- `infotext`: Instructions shown to user (supports HTML)
+- `child_high_name` / `child_low_name`: Display labels for children/options
+- `resource_plural`: Plural form of resource being allocated (e.g., "sesiones", "fichas")
+- `allocation_label`: Label for chart x-axis (e.g., "Asignación de Sesiones")
+- `outcome_chart_title`: Title for the chart section (e.g., "Número de Sesiones")
+- `distribution_prompt`: Title for the slider section (e.g., "Escoge la Distribución")
 - `allocatable_budget`: Total fichas to distribute
 - `max_sessions`: Maximum value for charts
 - Color scheme definitions
 - Array of scenarios with economic parameters
+
+## Label Fields (New in v53)
+
+These fields make the slider interface generic and scenario-specific:
+
+| Field | Required | Default if Missing | Description |
+|-------|----------|-------------------|-------------|
+| `resource_plural` | No | "fichas" | Plural form of resource (e.g., "sesiones", "fichas") |
+| `allocation_label` | No | "Asignación de Fichas" | X-axis label on line/bar charts |
+| `outcome_chart_title` | No | "Número de Sesiones" | Chart section header |
+| `distribution_prompt` | No | "Escoge la Distribución" | Slider section header |
+
+**Example configuration for real scenarios:**
+```json
+{
+  "scenarios_id": "main-v1",
+  "child_high_name": "Hijo/a Naranja",
+  "child_low_name": "Hijo/a Verde",
+  "resource_plural": "sesiones",
+  "allocation_label": "Asignación de Sesiones",
+  "outcome_chart_title": "Número de Sesiones",
+  "distribution_prompt": "Escoge la Distribución"
+}
+```
+
+**Example configuration for practice scenarios (Walmart/Soriana):**
+```json
+{
+  "scenarios_id": "practice-v1",
+  "child_high_name": "Soriana",
+  "child_low_name": "Walmart",
+  "resource_plural": "fichas",
+  "allocation_label": "Asignación de Fichas",
+  "outcome_chart_title": "Número de Artículos de Despensa",
+  "distribution_prompt": "Escoge la Distribución"
+}
+```
+
+This allows dummy scenarios to use different terminology than real scenarios throughout the entire interface.
