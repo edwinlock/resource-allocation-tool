@@ -108,6 +108,7 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
         return {
             x: {
                 title: { display: true, text: SCENARIOS_METADATA.allocation_label || 'Asignación de Fichas' },
+                ticks: { display: false },
                 grid: { display: false },
                 stacked: true
             },
@@ -304,8 +305,11 @@ function createChild1DisplayConfig(chartType, scenarioData, child1Name = 'Child 
     const ALLOCATABLE_BUDGET = SCENARIOS_METADATA.allocatable_budget;
     if (chartType === 'singleBar') {
         // For single bar chart, Child1 data is just the current value
+        const distributionLabel = SCENARIOS_METADATA.resource_plural
+            ? `Distribución de ${SCENARIOS_METADATA.resource_plural}`
+            : 'Distribución de fichas';
         return {
-            label: 'Distribución de fichas',
+            label: distributionLabel,
             data: [0, 0, 0], // Will be updated with current values
             backgroundColor: [colors.CHILD1_COLOR, colors.CHILD2_COLOR, colors.COMBINED_COLOR],
             borderColor: [colors.CHILD1_COLOR, colors.CHILD2_COLOR, colors.COMBINED_COLOR],
