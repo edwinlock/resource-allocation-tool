@@ -94,6 +94,26 @@ class SliderApp {
                 infotextElement.innerHTML = SCENARIOS_METADATA.infotext;
             }
 
+            // Update dynamic labels from scenarios metadata
+            const outcomeChartTitle = document.getElementById('outcome-chart-title');
+            if (outcomeChartTitle && SCENARIOS_METADATA.outcome_chart_title) {
+                outcomeChartTitle.textContent = SCENARIOS_METADATA.outcome_chart_title;
+            }
+
+            const distributionPrompt = document.getElementById('distribution-prompt');
+            if (distributionPrompt && SCENARIOS_METADATA.distribution_prompt) {
+                distributionPrompt.textContent = SCENARIOS_METADATA.distribution_prompt;
+            }
+
+            const resourceLabel1 = document.getElementById('resource-label-1');
+            const resourceLabel2 = document.getElementById('resource-label-2');
+            if (resourceLabel1 && SCENARIOS_METADATA.resource_plural) {
+                resourceLabel1.textContent = SCENARIOS_METADATA.resource_plural;
+            }
+            if (resourceLabel2 && SCENARIOS_METADATA.resource_plural) {
+                resourceLabel2.textContent = SCENARIOS_METADATA.resource_plural;
+            }
+
             // Note: Child names will be set dynamically based on high_child after scenario loads
             // This happens in updateChildLabels() function called after computeScenarioOutcomes()
 

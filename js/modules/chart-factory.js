@@ -91,12 +91,12 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'line') {
         return {
             x: {
-                title: { display: true, text: `Asignación de Fichas` },
+                title: { display: true, text: SCENARIOS_METADATA.allocation_label || 'Asignación de Fichas' },
                 grid: { display: true, color: '#f0f0f0' }
             },
             y: {
                 ...baseY,
-                title: { display: false, text: 'Fichas' },
+                title: { display: false, text: SCENARIOS_METADATA.resource_plural || 'Fichas' },
                 ticks: { display: false },  // Hide Y-axis numbers
                 grid: { display: true, color: '#f0f0f0' }
             }
@@ -106,13 +106,13 @@ function getScalesConfig(chartType, scenarioData, child1Name = 'Child 1') {
     if (chartType === 'multiBar') {
         return {
             x: {
-                title: { display: true, text: `Asignación de Fichas` },
+                title: { display: true, text: SCENARIOS_METADATA.allocation_label || 'Asignación de Fichas' },
                 grid: { display: false },
                 stacked: true
             },
             y: {
                 ...baseY,
-                title: { display: false, text: 'Fichas' },
+                title: { display: false, text: SCENARIOS_METADATA.resource_plural || 'Fichas' },
                 ticks: { display: false },  // Hide Y-axis numbers
                 grid: { display: false },
                 stacked: true
