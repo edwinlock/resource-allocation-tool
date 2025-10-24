@@ -11,7 +11,7 @@
         {
             "question_id": "child_prompt1",
             "type": "plaintext",
-            "text": "Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación, tu entorno social y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 35 minutos. Por favor responde honestamente. No hay respuestas correctas o incorrectas, y toda la información que proporciones será confidencial. Significa que no las compartiremos con tus padres, tus maestros, o cualquier otra persona. <br><br>Como agradecimiento por tu participación, te daremos un obsequio que te haremos llegar al término del periodo de encuestas. <br><br>Si tienes alguna duda en este (o en cualquier) momento, siéntete en confianza para preguntar."
+            "text": "Gracias por aceptar participar en nuestro estudio. El siguiente cuestionario nos ayudará a entender tus perspectivas sobre la educación, tu entorno social y tus experiencias académicas. Responder a esta encuesta debería tomar alrededor de 35 minutos. Por favor responde honestamente. No hay respuestas correctas o incorrectas, y toda la información que proporciones será confidencial. Significa que no la compartiremos con tus padres, tus maestros, o cualquier otra persona. <br><br>Como agradecimiento por tu participación, te daremos un obsequio que te haremos llegar al término del periodo de encuestas. <br><br>Si tienes alguna duda en este, o en cualquier momento, siéntete en confianza para preguntar."
         },
         {
             "question_id": "prompt3",
@@ -53,7 +53,7 @@
             "question_id": "aspiration",
             "type": "singleselect",
             "query": "¿Cuál es el nivel más alto de educación formal que te gustaría alcanzar?",
-            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"],
+            "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura o Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
         },
@@ -68,12 +68,12 @@
         {
             "question_id": "educ_specializ",
             "type": "open",
-            "query": "¿Qué especialización te gustaría estudiar?",
+            "query": "¿Qué especialización te gustaría estudiar? (Por ejemplo, Derecho, Economía, Ingeniería en Sistemas, Gerencia de Recursos Humanos, etc.)",
             "datatype": "text",
             "required": true,
             "conditional": {
                 "question_id": "aspiration",
-                "values": ["Universidad, Licenciatura", "Universidad, Maestría", "Universidad, Doctorado"]
+                "values": ["Universidad, Licenciatura o Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"]
             }
         },
         {
@@ -95,7 +95,7 @@
         {
             "question_id": "job_asp",
             "type": "open",
-            "query": "Cuando tengas aproximadamente 25 años, ¿qué trabajo te gustaría estar haciendo?",
+            "query": "Cuando tengas aproximadamente 30 años, ¿qué trabajo te gustaría estar haciendo? (Por ejemplo, ser ingeniero en sistemas trabajando para una empresa nacional, o abrir mi priopio restaurante)",
             "datatype": "text",
             "required": true
         },
@@ -108,15 +108,33 @@
             "required": true
         },
         {
+            "question_id": "inc_asp",
+            "type":"open",
+            "query": "Cuando tengas aproximadamente 30 años, ¿cuánto dinero aspiras a ganar por mes?",
+            "datatype": "number",
+            "prefix": "$",                    
+            "decimal_places": 2,              
+            "comma_separated": true,
+            "required": false
+        },
+        {
+            "question_id": "inc_prob",
+            "type":"likert",
+            "query": "Dada tu situación actual, ¿qué tan probable consideras recibir ese salario mensual? Responde del 0 al 10, donde 0 es no muy probable y 10 es muy probable.",
+            "min": 0,
+            "max": 10,
+            "required": true
+        },
+        {
             "question_id": "ai_q0",
             "type": "plaintext",
-            "text": "Estamos interesados en tus opiniones sobre la Inteligencia Artificial. Por favor califica la relevancia de la IA para diferentes aspectos de la vida. Para todas las declaraciones indica si crees que es \"Nada relevante\", \"Algo irrelevante\", \"Algo relevante\", \"Muy relevante\"."
+            "text": "Estamos interesados en tus opiniones sobre la Inteligencia Artificial. Por favor califica la relevancia de la IA para diferentes aspectos de la vida. Para todas las declaraciones indica si crees que es \"Muy irrelevante\", \"Poco irrelevante\", \"Algo relevante\", o \"Muy relevante\"."
         },
         {
             "question_id": "ai_q1",
             "type": "singleselect",
-            "query": "Para apoyar estudios en general; es decir, tareas y preparación de exámenes",
-            "values": ["Nada relevante", "Algo irrelevante", "Algo relevante", "Muy relevante"],
+            "query": "Para apoyar estudios en general; es decir, tareas y preparación de exámenes.",
+            "values": ["Muy irrelevante", "Poco irrelevante", "Algo relevante", "Muy relevante"],
             "datatype": "text",
             "required": true
         },
@@ -124,7 +142,7 @@
             "question_id": "ai_q2",
             "type": "singleselect",
             "query": "Para simplificar la vida profesional; es decir, simplificación de tareas, automatización, comunicación.",
-            "values": ["Nada relevante", "Algo irrelevante", "Algo relevante", "Muy relevante"],
+            "values": ["Muy irrelevante", "Poco irrelevante", "Algo relevante", "Muy relevante"],
             "datatype": "text",
             "required": true
         },
@@ -132,7 +150,7 @@
             "question_id": "ai_q3",
             "type": "singleselect",
             "query": "En crear nuevas oportunidades de trabajo; es decir, poder acceder a una amplia gamma de actividades profesionales o técnicas remuneradas.",
-            "values": ["Nada relevante", "Algo irrelevante", "Algo relevante", "Muy relevante"],
+            "values": ["Muy irrelevante", "Poco irrelevante", "Algo relevante", "Muy relevante"],
             "datatype": "text",
             "required": true
         },
@@ -184,7 +202,7 @@
         {
             "question_id": "time_study",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela).",
+            "query": "Piensa en un día típico entre semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela)",
             "datatype": "number",
             "decimal_places": 1,
             "required": true
@@ -192,7 +210,7 @@
         {
             "question_id": "time_leisure1",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a relajarte, deporte, tiempo con amigos/as, arte, etc.?",
+            "query": "Piensa en un día típico entre semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a actividades extracurriculares? (Por ejemplo, cursos de inglés)",
             "datatype": "number",
             "decimal_places": 1,
             "required": true
@@ -200,7 +218,7 @@
         {
             "question_id": "time_leisure2",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a trabajo remunerado y no remunerado (quehaceres domésticos, ayudar en negocio familiar)?",
+            "query": "Piensa en un día típico entre semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a trabajo remunerado y no remunerado (quehaceres domésticos, ayudar en negocio familiar, trabajo de medio tiempo)?",
             "datatype": "number",
             "decimal_places": 1,
             "required": true
@@ -208,7 +226,7 @@
         {
             "question_id": "time_leisure3",
             "type": "open",
-            "query": "Piensa en un día típico de semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día al ocio (tiempo con amigos, relajarse...)?",
+            "query": "Piensa en un día típico entre semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día al ocio (tiempo con amigos, relajarse...)?",
             "datatype": "number",
             "decimal_places": 1,
             "required": true
@@ -301,7 +319,7 @@
         {
             "question_id": "ravens_prompt",
             "type": "plaintext",
-            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar tu regalo con el de tu hermano/a u otros/as estudiantes en tu escuela. Hemos diseñado varios esquemas para calificar el desempeño en los acertijos, y escogeremos uno al azar para calificarte.<br><br>Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado."
+            "text": "Ahora nos gustaría pedirte que resuelvas una serie de acertijos para nosotros. Usaremos tu rendimiento en este \"mini-examen\" para determinar tu obsequio por participar en este estudio. Pero también habrá algún elemento de suerte involucrado (una lotería), así que no tiene sentido comparar tu regalo con el de tu hermano/a u otros/as estudiantes en tu escuela. Hemos diseñado varios esquemas para calificar el desempeño en los acertijos, y escogeremos uno al azar para calificarte.<br><br>Esta NO es una prueba escolar, ni tendrá ninguna influencia en tus calificaciones escolares.<br><br>Por favor, piensa cuidadosamente tus respuestas. Tendrás 25 minutos para completar todos los acertijos.<br><br>Para cada una de las siguientes (12) imágenes, por favor elige el elemento que mejor coincida con el patrón mostrado."
         },
         {
             "question_id": "raven_matrix1",
@@ -417,49 +435,11 @@
             "text": "Ahora nos gustaría hacerte algunas preguntas sobre la situación de tu familia."
         },
         {
-            "question_id": "family_tablet",
-            "type": "singleselect",
-            "query": "¿Tienes una tablet o laptop?",
-            "values": ["No", "Sí"],
-            "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_internet",
-            "type": "singleselect",
-            "query": "¿Tu familia tiene internet en casa?",
-            "values": ["No", "Sí"],
-            "datatype": "text",
-            "required": true
-        },
-        {
             "question_id": "family_ownroom",
             "type": "singleselect",
             "query": "¿Tienes tu propio cuarto en tu casa?",
             "values": ["No", "Sí"],
             "datatype": "text",
-            "required": true
-        },
-        {
-            "question_id": "family_house",
-            "type": "grid",
-            "query": "Por favor, indica si tu hogar cuenta con lo siguiente. Marca Sí o No para cada caso.",
-            "prefixes": [
-                "Regadera con agua caliente para bañarse",
-                "Cocina separada del área de dormitorios",
-                "Paredes de tabique, block, ladrillo, piedra o concreto (no de materiales de desecho)",
-                "Techo de losa de concreto o material resistente (no de lámina de cartón o desecho)",
-                "Tinaco, cisterna o depósito de agua",
-                "Calentador de agua (solar o de gas)"
-            ],
-            "options": [
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"],
-                ["Sí", "No"]
-            ],
             "required": true
         },
         {
@@ -481,7 +461,7 @@
         {
             "question_id": "family_bootcamp",
             "type": "singleselect",
-            "query": "¿Podrían tus padres pagar por un bootcamp de programación para ti?",
+            "query": "¿Podrían tus padres pagar por un bootcamp de programación para ti? (En México, un bootcamp en programació cuesta alrededor de $30,000 MXN pesos)",
             "values": ["No", "Sí", "No sé"],
             "datatype": "text",
             "required": true
