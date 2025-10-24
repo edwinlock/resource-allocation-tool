@@ -274,7 +274,7 @@ function getDataLabelsConfig(chartType, selectedIndex = 0, scenarioData) {
                 return context.datasetIndex === 0 ? 'bottom' : 'top';
             },
             offset: 8,
-            font: { weight: 'bold', size: 11 },
+            font: { weight: 'bold', size: 14 },
             color: function(context) {
                 return context.datasetIndex === 0 ? colors.CHILD1_DARK_COLOR : colors.CHILD2_DARK_COLOR;
             },
