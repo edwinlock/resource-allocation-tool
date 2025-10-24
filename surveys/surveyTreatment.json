@@ -167,7 +167,7 @@
         {
             "question_id": "job_dad1",
             "type": "open",
-            "query": "¿Cuál es la ocupación actual del padre de familia? (Por ejemplo: Arquitecto para una empresa constructora pequeña que opera en el estado)",
+            "query": "¿Cuál es la ocupación actual del padre de familia? (Por ejemplo: Cocinero en un restaurante de Comida Oriental)",
             "datatype": "text",
             "required": true
         },
@@ -204,7 +204,7 @@
         {
             "question_id": "conf_assess_A",
             "type": "singleselect",
-            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child1name})?",
+            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child1name})",
             "values": ["No seguro", "Algo seguro", "Muy seguro"],
             "datatype": "text",
             "required": true
@@ -221,7 +221,7 @@
         {
             "question_id": "conf_assess_B",
             "type": "singleselect",
-            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child2name})?",
+            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child2name})",
             "values": ["No seguro", "Algo seguro", "Muy seguro"],
             "datatype": "text",
             "required": true
