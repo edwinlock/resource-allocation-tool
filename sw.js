@@ -54,6 +54,9 @@ const urlsToCache = [
   './scenarios/scenarios.json',
   './scenarios/scenarios-dummy.json',
   './scenarios/scenarios-dummy-2.json',
+  // Video files for instructions (add video files here as needed)
+  // './videos/instructions.mp4',
+  // './videos/practice-instructions.mp4',
   './guides/enumerator_guide.html',
   './guides/enumerator_guide_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css',
   './guides/enumerator_guide_files/libs/bootstrap/bootstrap-icons.css',
