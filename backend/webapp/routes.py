@@ -713,23 +713,23 @@ def generate_child_survey_responses_df():
     return df_filtered
 
 
-def generate_treatment_survey_responses_df():
-    """Generate DataFrame containing treatment parent survey responses only in long format."""
+def generate_parent_treatment_survey_responses_df():
+    """Generate DataFrame containing treatment parent survey responses only (excludes child surveys)."""
     df = generate_survey_responses_df()
     if df.empty:
         return df
-    # Filter for treatment group parent sessions
-    df_filtered = df[df['group_type'] == 'treatment'].copy()
+    # Filter for treatment group parent sessions only (exclude child sessions)
+    df_filtered = df[(df['group_type'] == 'treatment') & (df['child1_name'].notna())].copy()
     return df_filtered
 
 
-def generate_control_survey_responses_df():
-    """Generate DataFrame containing control parent survey responses only in long format."""
+def generate_parent_control_survey_responses_df():
+    """Generate DataFrame containing control parent survey responses only (excludes child surveys)."""
     df = generate_survey_responses_df()
     if df.empty:
         return df
-    # Filter for control group parent sessions
-    df_filtered = df[df['group_type'] == 'control'].copy()
+    # Filter for control group parent sessions only (exclude child sessions)
+    df_filtered = df[(df['group_type'] == 'control') & (df['child1_name'].notna())].copy()
     return df_filtered
 
 
@@ -1016,7 +1016,7 @@ def download_child_survey_responses_wide():
 def download_treatment_survey_responses_long():
     """Download treatment parent survey responses in long format."""
     try:
-        df = generate_treatment_survey_responses_df()
+        df = generate_parent_treatment_survey_responses_df()
 
         csv_buffer = io.BytesIO()
         df.to_csv(csv_buffer, index=False)
@@ -1038,7 +1038,7 @@ def download_treatment_survey_responses_long():
 def download_treatment_survey_responses_wide():
     """Download treatment parent survey responses in wide format."""
     try:
-        df_long = generate_treatment_survey_responses_df()
+        df_long = generate_parent_treatment_survey_responses_df()
         df_wide = convert_survey_responses_to_wide(df_long)
 
         csv_buffer = io.BytesIO()
@@ -1061,7 +1061,7 @@ def download_treatment_survey_responses_wide():
 def download_control_survey_responses_long():
     """Download control parent survey responses in long format."""
     try:
-        df = generate_control_survey_responses_df()
+        df = generate_parent_control_survey_responses_df()
 
         csv_buffer = io.BytesIO()
         df.to_csv(csv_buffer, index=False)
@@ -1083,7 +1083,7 @@ def download_control_survey_responses_long():
 def download_control_survey_responses_wide():
     """Download control parent survey responses in wide format."""
     try:
-        df_long = generate_control_survey_responses_df()
+        df_long = generate_parent_control_survey_responses_df()
         df_wide = convert_survey_responses_to_wide(df_long)
 
         csv_buffer = io.BytesIO()
@@ -1162,9 +1162,9 @@ def download_all_data():
         # Generate separated survey responses
         child_survey_long_df = generate_child_survey_responses_df()
         child_survey_wide_df = convert_survey_responses_to_wide(child_survey_long_df)
-        treatment_survey_long_df = generate_treatment_survey_responses_df()
+        treatment_survey_long_df = generate_parent_treatment_survey_responses_df()
         treatment_survey_wide_df = convert_survey_responses_to_wide(treatment_survey_long_df)
-        control_survey_long_df = generate_control_survey_responses_df()
+        control_survey_long_df = generate_parent_control_survey_responses_df()
         control_survey_wide_df = convert_survey_responses_to_wide(control_survey_long_df)
 
         # Create ZIP file in memory
