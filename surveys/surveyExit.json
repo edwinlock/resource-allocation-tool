@@ -102,6 +102,35 @@
 
         },
         {
+            "question_id": "phi",
+            "type": "grid",
+            "query": "Imagine que necesita elegir entre dos cursos educativos para el futuro de su hijo/a (piense en el hijo/a que quiera). Ambos requieren la misma inversión de $4,000 MXN anuales durante tres años. Los cursos podrían otorgar diferentes salarios en el futuro. Para cada escenario (cada fila), elija la opción (A o B) que prefiera.",
+            "column_headers": ["Opción A", "Opción B"],
+            "prefixes": [
+                "Escenario 1",
+                "Escenario 2",
+                "Escenario 3",
+                "Escenario 4",
+                "Escenario 5",
+                "Escenario 6",
+                "Escenario 7",
+                "Escenario 8",
+                "Escenario 9"
+            ],
+            "options": [
+                ["10% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 90% de que gane 18,000 MXN/mes", "10% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 90% de que gane 8,000 MXN/mes"],
+                ["50% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 50% de que gane 18,000 MXN/mes", "50% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 50% de que gane 8,000 MXN/mes"],
+                ["60% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 40% de que gane 18,000 MXN/mes", "60% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 40% de que gane 8,000 MXN/mes"],
+                ["20% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 80% de que gane 18,000 MXN/mes", "20% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 80% de que gane 8,000 MXN/mes"],
+                ["90% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 10% de que gane 18,000 MXN/mes", "90% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 10% de que gane 8,000 MXN/mes"],
+                ["40% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 60% de que gane 18,000 MXN/mes", "40% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 60% de que gane 8,000 MXN/mes"],
+                ["70% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 30% de que gane 18,000 MXN/mes", "70% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 30% de que gane 8,000 MXN/mes"],
+                ["30% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 70% de que gane 18,000 MXN/mes", "30% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 70% de que gane 8,000 MXN/mes"],
+                ["80% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 20% de que gane 18,000 MXN/mes", "80% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 20% de que gane 8,000 MXN/mes"]
+            ],
+            "required": true
+        },
+        {
             "question_id": "prompt_end",
             "type": "plaintext",
             "text": "Le agradecemos por participar en este estudio. Las respuestas que dio son muy valiosas para nuestro proyecto de investigación.<br><br> Nos pondremos en contacto con usted para informarle sobre el número de cursos al que sus hijos/as tendrán acceso, las fechas, y el proceso de inscripción gratuito y voluntario."
