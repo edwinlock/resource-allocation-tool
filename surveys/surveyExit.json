@@ -94,7 +94,7 @@
         {
             "question_id": "ineq_aver",
             "type": "likert",
-            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir “no me describe para nada” y 10 significa “me describe perfectamente”.<br><br>Si yo estuviera en una situación en la que tuviera que distribuir recursos con otros, priorizaría la equidad por encima de aumentar mis propios beneficios.",
+            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir “no me describe para nada” y 10 significa “me describe perfectamente”.<br><br>Si yo estuviera en una situación en la que tuviera que distribuir recursos con otros (es decir, con cualquier otra persona, <strong>NO</strong> con mis hijos/as), priorizaría la equidad por encima de aumentar mis propios beneficios.",
             "prefix": "Escoja la calificación",
             "min": 0,
             "max": 10,

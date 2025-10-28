@@ -1,10 +1,10 @@
 {
     "scenarios_id": "practice-v1",
-    "infotext": "Imagine que usted cuenta con 9 fichas que puede distribuir de manera flexible entre dos tiendas: Walmart y Soriana. <br><br> Al asignar fichas a una tienda u otra, recibiría una tarjeta de regalo de una o ambas tiendas. Dependiendo de cómo distribuya las fichas, la tarjeta de regalo que recibiría de cada tienda sería más chica o más grande, y esto afectará cuántos artículos de despensa puede comprar al final en una o en ambas tiendas. <br><br> Utilizando el deslizador, por favor distribuya esas 9 fichas entre las dos tiendas de tal manera que resulte favorable para usted.",
+    "infotext": "Imagine que necesita comprar 15 productos de la canasta básica. Puede hacerlo en Soriana o en Walmart. <br><br>Se le darán 9 vales de despensa con diferentes valores que puede usar en una o ambas tiendas como prefiera. <br><br>Usando el deslizador, verá diferentes formas de repartir sus vales entre las tiendas y cuántos productos puede comprar con cada distribución.<br><br>Por ejemplo: si usa todos los vales en Soriana, comprará los 15 productos. Si los usa todos en Walmart, solo comprará 9 productos en esa tienda, pero le sobrará dinero para 2 productos en Soriana (11 productos en total).<br>Mueva el deslizador para encontrar la distribución más favorable para usted.",
     "child_high_name": "Soriana",
     "child_low_name": "Walmart",
-    "resource_plural": "fichas",
-    "allocation_label": "Asignación de Fichas",
+    "resource_plural": "vales",
+    "allocation_label": "Asignación de Vales",
     "outcome_chart_title": "Número de Artículos de Despensa",
     "distribution_prompt": "Escoge la Distribución",
     "allocatable_budget": 9,

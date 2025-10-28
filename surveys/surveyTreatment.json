@@ -32,7 +32,7 @@
         {
             "question_id": "prompt3",
             "type": "plaintext",
-            "text": "Ahora vamos a hacer algunas preguntas sobre el entorno familiar."
+            "text": "Ahora vamos a hacer algunas preguntas sobre su entorno familiar."
         },
         {
             "question_id": "age_mom",
@@ -134,7 +134,7 @@
         {
             "question_id": "enoe_inc",
             "type": "open",
-            "query": "¿En cuánto estima su ingreso mensual total del hogar?",
+            "query": "¿En cuánto estima su ingreso mensual total del hogar? (Por ejemplo, si en su hogar se gana 8 mil pesos, escriba <strong>8000</strong>)",
             "datatype": "number",
             "prefix": "$",                    
             "decimal_places": 2,              
@@ -236,32 +236,32 @@
             "required": true
         },
         {
-            "question_id": "sigma_promt",
+            "question_id": "sigma_prompt",
             "type": "plaintext",
-            "text": "Imagine que una familia similar a la suya tiene dos hijas, Ana y Marcela. Ambas asisten a preparatoria. Ana es mejor en la escuela que Marcela. Si sus padres invirtieran en la compra de cursos extracurriculares, podrían influir en el rendimiento académico de sus hijas.\n\nAdemás, si sus padres dividen sus recursos económicos por igual (y cada hija recibe una clase extracurricular por semana), la calificación final de Ana sería 8.5, y la calificación final de Marcela sería 6."
+            "text": "Imagine una familia con dos hijas en preparatoria: Ana y Marcela. Ana tiene mejor desempeño escolar que Marcela. Los padres pueden comprar cursos extracurriculares para mejorar las calificaciones de sus hijas. Si los padres dividen sus recursos en partes iguales, Ana obtendría una calificación final de 85 y Marcela de 60."
         },
         {
             "question_id": "sigma_reinf",
             "type": "multiopen",
-            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del dinero a Ana, y 0% a Marcela?",
+            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del apoyo a Ana, y 0% a Marcela? (Por favor utilice una escala del 0 al 100. Por ejemplo, si Fulanita tiene 8.5, entonces escriba 85).",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "decimal_places": 2,
+            "decimal_places": 0,
             "required": true
         },
         {
             "question_id": "sigma_comp",
             "type": "multiopen",
-            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 0% del dinero a Ana, y 100% a Marcela?",
+            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos, si los padres realizan la inversión al contrario y asignan el 0% del apoyo a Ana, y 100% a Marcela? (Por favor utilice una escala del 0 al 100. Por ejemplo, si Fulanita tiene 8.5, entonces escriba 85)",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "decimal_places": 2,
+            "decimal_places": 0,
             "required": true
         },
         {
@@ -275,7 +275,7 @@
         {
             "question_id": "aspirationsA",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child1name} alcance?",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría a usted que {child1name} alcance?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -294,7 +294,7 @@
         {
             "question_id": "expectationsA",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que cree que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "query": "¿Cuál es el nivel más alto de educación que cree usted que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -302,7 +302,7 @@
         {
             "question_id": "aspirationsB",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child2name} alcance?",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría a usted que {child2name} alcance?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -310,7 +310,7 @@
         {
             "question_id": "subjectB",
             "type": "open",
-            "query": "¿Qué programa universitario le gustaría que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
+            "query": "¿Qué programa universitario le gustaría a usted que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
             "datatype": "text",
             "required": false,
             "conditional": {
@@ -321,7 +321,7 @@
         {
             "question_id": "expectationsB",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que cree {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "query": "¿Cuál es el nivel más alto de educación que cree usted que {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -329,7 +329,14 @@
         {
             "question_id": "future_job_prompt",
             "type": "plaintext",
-            "text": "Imagine que uno/a de sus hijos/as estudiará hasta la preparatoria, o bien hasta la universidad, y luego no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+            "text": "Imagine que un/una estudiante de su colonia estudiará hasta la secundaria, o hasta la preparatoria, o bien hasta la universidad, y luego ya no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+        },
+        {
+            "question_id": "future_job0",
+            "type": "open",
+            "query": "Si tiene un título de secundaria, ¿cuánto cree que ganará en un mes típico cuando tenga entre 30 a 40 años?",
+            "datatype": "number",
+            "required": true
         },
         {
             "question_id": "future_job1",

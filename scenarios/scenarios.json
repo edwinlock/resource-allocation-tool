@@ -1,6 +1,6 @@
 {
     "scenarios_id": "main-v1",
-    "infotext": "Por favor distribuya las fichas de la manera que mejor represente el resultado que a usted le gustaría ver. Cualquiera que sea su decisión, está bien. Sus hijos/as no sabrán que usted tuvo alguna influencia sobre el número de sesiones que recibirán.",
+    "infotext": "Ahora pasaremos al ejercicio de distribución entre sus hijos/as, y las sesiones de IA que podrían obtener.<br><br>Por favor distribuya las fichas de la manera que mejor represente el resultado que a usted le gustaría ver. Cualquiera que sea su decisión, está bien. Sus hijos/as no sabrán que usted tuvo alguna influencia sobre el número de sesiones que recibirán.",
     "child_high_name": "Hijo/a Naranja",
     "child_low_name": "Hijo/a Verde",
     "resource_plural": "sesiones",

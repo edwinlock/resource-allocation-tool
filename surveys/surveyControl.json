@@ -37,14 +37,14 @@
         {
             "question_id": "age_mom",
             "type": "open",
-            "query": "¿Cuál es la edad de la madre?",
+            "query": "¿Cuál es la edad de la madre? (En años)",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "age_dad",
             "type": "open",
-            "query": "¿Cuál es la edad del padre?",
+            "query": "¿Cuál es la edad del padre? (En años)",
             "datatype": "number",
             "required": true
         },
@@ -60,7 +60,7 @@
             "question_id": "residence_childA",
             "type": "singleselect",
             "query": "¿Dónde vive usualmente {child1name}?",
-            "values": ["Con madre y padre", "Solo con madre", "Solo con padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con un amigo/a de la familia", "Solo"],
+            "values": ["Con madre y padre", "Solo con la madre", "Solo con el padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con algún amigo/a de la familia", "Solo"],
             "datatype": "text",
             "required": true
         },
@@ -68,7 +68,7 @@
             "question_id": "residence_childB",
             "type": "singleselect",
             "query": "¿Dónde vive usualmente {child2name}?",
-            "values": ["Con madre y padre", "Solo con madre", "Solo con padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con un amigo/a de la familia", "Solo"],
+            "values": ["Con madre y padre", "Solo con la madre", "Solo con el padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con algún amigo/a de la familia", "Solo"],
             "datatype": "text",
             "required": true
         },
@@ -110,7 +110,7 @@
         {
             "question_id": "id_spendtime",
             "type": "singleselect",
-            "query": "¿Quién pasa más tiempo ayudando a los hijos/as con sus tarea?",
+            "query": "¿Quién pasa más tiempo ayudando a los hijos/as con sus tareas?",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -118,7 +118,7 @@
         {
             "question_id": "id_finance",
             "type": "singleselect",
-            "query": "¿Quién toma la mayoría de las decisiones financieras para gastos de los hijos/as de la escuela?",
+            "query": "¿Quién toma la mayoría de las decisiones financieras para los gastos de la escuela de los hijos/as?",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -126,7 +126,7 @@
         {
             "question_id": "enoe_cat",
             "type": "singleselect",
-            "query": "Actualmente, el salario mínimo en San Luis Potosí es de $8,364 pesos MXN por mes y por persona. En relación con esa cifra, su ingreso mensual por su trabajo es…",
+            "query": "Actualmente, el salario mínimo en San Luis Potosí es de $8,364 pesos MXN por mes y por persona. En relación con esa cifra, su ingreso mensual por su trabajo es...",
             "values": ["Menor a esta cantidad", "Similar a esta cantidad", "Más de 1 salario mínimo y hasta 2", "Más de 2 salarios mínimos y hasta 3", "Más de 3 salarios mínimos y hasta 5", "Más de 5 salarios mínimos y hasta 10", "Más de 10 salarios mínimos", "Prefiero no responder"],
             "datatype": "text",
             "required": true
@@ -134,11 +134,11 @@
         {
             "question_id": "enoe_inc",
             "type": "open",
-            "query": "¿En cuánto estima el ingreso mensual total de su hogar?",
+            "query": "¿En cuánto estima su ingreso mensual total del hogar? (Por ejemplo, si en su hogar se gana 8 mil pesos, escriba <strong>8000</strong>)",
             "datatype": "number",
-            "decimal_places": 2,
+            "prefix": "$",                    
+            "decimal_places": 2,              
             "comma_separated": true,
-            "prefix": "$",
             "required": false
         },
         {
@@ -153,7 +153,7 @@
             "question_id": "edu_dad",
             "type": "singleselect",
             "query": "¿Hasta qué grado aprobó el padre en la escuela?",
-            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura o Ingeniería)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
             "datatype": "text",
             "required": true
         },
@@ -236,46 +236,46 @@
             "required": true
         },
         {
-            "question_id": "sigma_promt",
+            "question_id": "sigma_prompt",
             "type": "plaintext",
-            "text": "Imagine que una familia similar a la suya tiene dos hijas, Ana y Marcela. Ambas asisten a preparatoria. Ana es mejor en la escuela que Marcela. Si sus padres invirtieran en la compra de cursos extracurriculares, podrían influir en el rendimiento académico de sus hijas. Además, si sus padres dividen sus recursos económicos por igual (y cada hija recibe una clase extracurricular por semana), la calificación final de Ana sería 8.5, y la calificación final de Marcela sería 6."
+            "text": "Imagine una familia con dos hijas en preparatoria: Ana y Marcela. Ana tiene mejor desempeño escolar que Marcela. Los padres pueden comprar cursos extracurriculares para mejorar las calificaciones de sus hijas. Si los padres dividen sus recursos en partes iguales, Ana obtendría una calificación final de 85 y Marcela de 60."
         },
         {
             "question_id": "sigma_reinf",
             "type": "multiopen",
-            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del dinero a Ana, y 0% a Marcela?",
+            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del apoyo a Ana, y 0% a Marcela? (Por favor utilice una escala del 0 al 100. Por ejemplo, si Fulanita tiene 8.5, entonces escriba 85).",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "decimal_places": 2,
+            "decimal_places": 0,
             "required": true
         },
         {
             "question_id": "sigma_comp",
             "type": "multiopen",
-            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 0% del dinero a Ana, y 100% a Marcela?",
+            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos, si los padres realizan la inversión al contrario y asignan el 0% del apoyo a Ana, y 100% a Marcela? (Por favor utilice una escala del 0 al 100. Por ejemplo, si Fulanita tiene 8.5, entonces escriba 85)",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "decimal_places": 2,
+            "decimal_places": 0,
             "required": true
         },
         {
             "question_id": "future_success",
             "type": "singleselect",
-            "query": "¿Cuál de las siguientes opciones cree que es más importante para el éxito futuro de sus hijos/as?",
-            "values": ["Ayudar con la tarea", "Leer juntos", "Actividades educativas después de la escuela (tutoría u otras clases)", "Deportes o Música", "Actividades de ocio", "Asistir a la escuela correcta", "Viajes"],
+            "query": "¿Cuál de las siguientes opciones cree que es más importante para el éxito de sus hijos/as?",
+            "values": ["Ayudar con la tarea", "Leer juntos", "Actividades educativas además de la escuela (tutorías u otras clases)", "Deportes o Música", "Actividades de ocio", "Asistir a la escuela correcta", "Viajes"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "aspirationsA",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child1name} alcance?",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría a usted que {child1name} alcance?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -294,7 +294,7 @@
         {
             "question_id": "expectationsA",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que cree que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "query": "¿Cuál es el nivel más alto de educación que cree usted que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -302,7 +302,7 @@
         {
             "question_id": "aspirationsB",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child2name} alcance?",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría a usted que {child2name} alcance?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -310,7 +310,7 @@
         {
             "question_id": "subjectB",
             "type": "open",
-            "query": "¿Qué programa universitario le gustaría que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
+            "query": "¿Qué programa universitario le gustaría a usted que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
             "datatype": "text",
             "required": false,
             "conditional": {
@@ -321,7 +321,7 @@
         {
             "question_id": "expectationsB",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que cree que {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "query": "¿Cuál es el nivel más alto de educación que cree usted que {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -337,7 +337,14 @@
         {
             "question_id": "future_job_prompt",
             "type": "plaintext",
-            "text": "Imagine que uno/a de sus hijos/as estudiará hasta la preparatoria, o bien hasta la universidad, y luego no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+            "text": "Imagine que un/una estudiante de su colonia estudiará hasta la secundaria, o hasta la preparatoria, o bien hasta la universidad, y luego ya no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+        },
+        {
+            "question_id": "future_job0",
+            "type": "open",
+            "query": "Si tiene un título de secundaria, ¿cuánto cree que ganará en un mes típico cuando tenga entre 30 a 40 años?",
+            "datatype": "number",
+            "required": true
         },
         {
             "question_id": "future_job1",
@@ -356,7 +363,7 @@
         {
             "question_id": "future_job3",
             "type": "open",
-            "query": "Si tienen un título de posgrado (maestría o doctorado), ¿cuánto cree que ganará en un mes típico cuando tengan entre 30 a 40 años?",
+            "query": "Si tiene un título de posgrado (maestría o doctorado), ¿cuánto cree que ganará en un mes típico cuando tengan entre 30 a 40 años?",
             "datatype": "number",
             "required": true
         },

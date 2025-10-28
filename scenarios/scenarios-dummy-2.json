@@ -1,10 +1,10 @@
 {
     "scenarios_id": "practice-v2",
-    "infotext": "Por favor repita el ejercicio. <br><br>Recuerde distribuir las fichas de tal manera que sea favorable para usted.",
+    "infotext": "Por favor repita el ejercicio. <br><br>Recuerde distribuir los vales de tal manera que sea favorable para usted.",
     "child_high_name": "Soriana",
     "child_low_name": "Walmart",
-    "resource_plural": "fichas",
-    "allocation_label": "Asignación de Fichas",
+    "resource_plural": "vales",
+    "allocation_label": "Asignación de Vales",
     "outcome_chart_title": "Número de Artículos de Despensa",
     "distribution_prompt": "Escoge la Distribución",
     "allocatable_budget": 9,
