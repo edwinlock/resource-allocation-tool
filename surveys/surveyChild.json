@@ -44,7 +44,7 @@
         },
         {"question_id": "track",
             "type": "singleselect",
-            "query": "¿Cuál es tu área de estudio en la prepa?",
+            "query": "¿Cuál es tu área de estudio en la prepa?<br><span style='color: red; font-size: 15px;'>Usualmente cada bachilleratos tiene una oferta de especialidades. Si el/la estudiante aún no escoge, pregúntele cuál le interesa más en ese momento. </span>",
             "values": ["Ciencias Físico Matemáticas e Ingenierías", "Ciencias Biológicas y de la Salud", "Ciencias Sociales y Negocios", "Humanidades y Artes", "Bachillerato Tecnológico: Computación, Electrónica, Informática Administrativa", "Bachillerato Tecnológico: Procesos de Manufacturas Metálicas o Dietética", "Idiomas"],
             "datatype": "text",
             "required": true
@@ -52,7 +52,7 @@
         {
             "question_id": "aspiration",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación formal que te gustaría alcanzar?",
+            "query": "¿Cuál es el nivel más alto de educación formal que te gustaría alcanzar? <br><span style='color: red; font-size: 15px;'>Coméntale al estudiante que no debe pensar si esto es posible, que simplemente piense en lo que le gustaría (hasta qué nivel le gustaría llegar).</span>",
             "values": ["Preparatoria incompleta", "Preparatoria completa", "Capacitación Vocacional (por ejemplo, mecánico, técnica/o en uñas, etc.)", "Universidad, Licenciatura o Ingeniería", "Universidad, Maestría", "Universidad, Doctorado"],
             "datatype": "text",
             "required": true
@@ -68,7 +68,7 @@
         {
             "question_id": "educ_specializ",
             "type": "open",
-            "query": "¿Qué especialización te gustaría estudiar? (Por ejemplo, Derecho, Economía, Ingeniería en Sistemas, Gerencia de Recursos Humanos, etc.)",
+            "query": "¿Qué especialización te gustaría estudiar? (Por ejemplo, Derecho, Economía, Ingeniería en Sistemas, Gerencia de Recursos Humanos, etc.) <br><span style='color: red; font-size: 15px;'>NO LE PERMITA RESPONDER “LICENCIATURA” O “MAESTRÍA”. TIENE QUE SER EL TEMA.</span>",
             "datatype": "text",
             "required": true,
             "conditional": {
@@ -95,7 +95,7 @@
         {
             "question_id": "job_asp",
             "type": "open",
-            "query": "Cuando tengas aproximadamente 30 años, ¿qué trabajo te gustaría estar haciendo? (Por ejemplo, ser ingeniero en sistemas trabajando para una empresa nacional, o abrir mi propio restaurante)",
+            "query": "Cuando tengas aproximadamente 30 años, ¿qué trabajo te gustaría estar haciendo? (Por ejemplo, ser ingeniero en sistemas trabajando para una empresa nacional, o abrir mi propio restaurante)<br><span style='color: red; font-size: 15px;'>Intente ayudar al/la estudiante a ser preciso. Si quiere ser maestro/a, pregúntele (y escriba si asiente) ¿de primaria, o secundaria...?</span>",
             "datatype": "text",
             "required": true
         },
@@ -110,7 +110,7 @@
         {
             "question_id": "inc_asp",
             "type":"open",
-            "query": "Cuando tengas aproximadamente 30 años, ¿cuánto dinero aspiras a ganar por mes?",
+            "query": "Cuando tengas aproximadamente 30 años, ¿cuánto dinero aspiras a ganar por mes?<br><span style='color: red; font-size: 15px;'>Por favor lea el número que ha escrito y pregúntele si es el número que realmente desea. Por ejemplo, 1000000, sería (1,000,000) un millón.</span>",
             "datatype": "number",
             "prefix": "$",                    
             "decimal_places": 2,              
@@ -202,7 +202,7 @@
         {
             "question_id": "time_study",
             "type": "open",
-            "query": "Piensa en un día típico entre semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela)",
+            "query": "Piensa en un día típico entre semana (lunes-viernes). En promedio, ¿cuánto tiempo, en horas, dedicas por día a estudiar? (Sin contar las horas que pasas en la escuela) <br><span style='color: red; font-size: 15px;'>Si indican más de 10 horas, por favor recuérdeles que es POR DÍA y sólo hay  24h al día.</span>",
             "datatype": "number",
             "decimal_places": 1,
             "required": true
@@ -469,7 +469,7 @@
         {
             "question_id": "side_prompt",
             "type":"plaintext",
-            "text": "Las siguientes preguntas tratan sobre tus experiencias familiares durante el último año. Todas las preguntas se refieren a ti y a tu hermano/a que participa en este estudio contigo.<br><br> Por favor responde con la mayor honestidad posible. No hay respuestas correctas o incorrectas. "
+            "text": "Las siguientes preguntas tratan sobre tus experiencias familiares durante el último año. Todas las preguntas se refieren a ti y a tu hermano/a que participa en este estudio contigo.<br><br> Por favor responde con la mayor honestidad posible. No hay respuestas correctas o incorrectas.<br><span style='color: red; font-size: 15px;'>El/la estudiante debe compararse con su hermano/a que está en el estudio, no con otros hermanos/as. Si el estudiante pregunta ¿y si no tengo padre/madre?: Pueden dejar en blanco.</span>"
         },
         {
             "question_id": "side_mother",
