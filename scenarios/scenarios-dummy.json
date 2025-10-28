@@ -1,6 +1,6 @@
 {
     "scenarios_id": "practice-v1",
-    "infotext": "Imagine que necesita comprar 15 productos de la canasta básica. Puede hacerlo en Soriana o en Walmart. <br><br>Se le darán 9 vales de despensa con diferentes valores que puede usar en una o ambas tiendas como prefiera. <br><br>Usando el deslizador, verá diferentes formas de repartir sus vales entre las tiendas y cuántos productos puede comprar con cada distribución.<br><br>Por ejemplo: si usa todos los vales en Soriana, comprará los 15 productos. Si los usa todos en Walmart, solo comprará 9 productos en esa tienda, pero le sobrará dinero para 2 productos en Soriana (11 productos en total).<br>Mueva el deslizador para encontrar la distribución más favorable para usted.",
+    "infotext": "<strong>¡Empecemos el ejemplo!</strong><br><br>Imagine que necesita comprar 15 productos de la canasta básica. Puede hacerlo en Soriana o en Walmart. Se le darán 9 vales de despensa con diferentes valores que puede usar en una o ambas tiendas como prefiera. <br><br>Usando el deslizador, verá diferentes formas de repartir sus vales entre las tiendas y cuántos productos puede comprar con cada distribución.<br><br>Por ejemplo: si usa todos los vales en Soriana, comprará los 15 productos. Si los usa todos en Walmart, solo comprará 9 productos en esa tienda, pero le sobrará dinero para 2 productos en Soriana (11 productos en total).<br><br>Mueva el deslizador para encontrar la distribución más favorable para usted.",
     "child_high_name": "Soriana",
     "child_low_name": "Walmart",
     "resource_plural": "vales",

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v54';
+const CACHE_NAME = 'resource-allocation-v56';
 const urlsToCache = [
   './',
   './index.html',
@@ -39,6 +39,7 @@ const urlsToCache = [
   './surveys/surveyControl.json',
   './surveys/surveyExit.json',
   './surveys/surveySandwich.json',
+  './surveys/AI_course_seekable.mp4',
   './surveys/raven/mat1.png',
   './surveys/raven/mat2.png',
   './surveys/raven/mat3.png',
