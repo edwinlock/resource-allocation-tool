@@ -4,7 +4,7 @@
     "child_high_name": "Soriana",
     "child_low_name": "Walmart",
     "resource_plural": "fichas",
-    "allocation_label": "Asignación de Fichas",
+    "allocation_label": " ",
     "outcome_chart_title": "Número de Artículos de Despensa por Tienda",
     "distribution_prompt": "Escoge la Distribución",
     "allocatable_budget": 9,
