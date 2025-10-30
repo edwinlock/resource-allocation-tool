@@ -229,7 +229,7 @@
         {
             "question_id": "time_alloc",
             "type": "open",
-            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?<br><span style='color: red; font-size: 15px;'> Si le preguntan, si es posible ingresar 0 horas. Si no tiene una idea clara, pida que piense en un día típico de semana, en uno de fin de semana, y ayúdele a contar las horas.</span>",
+            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?<br><span style='color: red; font-size: 15px;'> Esta pregunta se refiere a los/las hijos/as de este estudio. Si le preguntan, si es posible ingresar 0 horas. Si no tiene una idea clara, pida que piense en un día típico de semana, en uno de fin de semana, y ayúdele a contar las horas.</span>",
             "datatype": "number",
             "decimal_places": 2,              
             "comma_separated": false,
@@ -384,15 +384,15 @@
                 "Escenario 9"
             ],
             "options": [
-                ["10% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 90% de que gane 18,000 MXN/mes", "10% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 90% de que gane 8,000 MXN/mes"],
-                ["50% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 50% de que gane 18,000 MXN/mes", "50% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 50% de que gane 8,000 MXN/mes"],
-                ["60% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 40% de que gane 18,000 MXN/mes", "60% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 40% de que gane 8,000 MXN/mes"],
-                ["20% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 80% de que gane 18,000 MXN/mes", "20% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 80% de que gane 8,000 MXN/mes"],
-                ["90% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 10% de que gane 18,000 MXN/mes", "90% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 10% de que gane 8,000 MXN/mes"],
-                ["40% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 60% de que gane 18,000 MXN/mes", "40% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 60% de que gane 8,000 MXN/mes"],
-                ["70% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 30% de que gane 18,000 MXN/mes", "70% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 30% de que gane 8,000 MXN/mes"],
-                ["30% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 70% de que gane 18,000 MXN/mes", "30% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 70% de que gane 8,000 MXN/mes"],
-                ["80% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 20% de que gane 18,000 MXN/mes", "80% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 20% de que gane 8,000 MXN/mes"]
+                ["<strong>10%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>90%</strong> de que gane 18,000 MXN/mes", "<strong>10%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>90%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>50%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>50%</strong> de que gane 18,000 MXN/mes", "<strong>50%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>50%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>60%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>40%</strong> de que gane 18,000 MXN/mes", "<strong>60%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>40%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>20%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>80%</strong> de que gane 18,000 MXN/mes", "<strong>20%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>80%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>90%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>10%</strong> de que gane 18,000 MXN/mes", "<strong>90%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>10%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>40%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>60%</strong> de que gane 18,000 MXN/mes", "<strong>40%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>60%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>70%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>30%</strong> de que gane 18,000 MXN/mes", "<strong>70%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>30%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>30%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>70%</strong> de que gane 18,000 MXN/mes", "<strong>30%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>70%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>80%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>20%</strong> de que gane 18,000 MXN/mes", "<strong>80%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>20%</strong> de que gane 8,000 MXN/mes"]
             ],
             "required": true
         },

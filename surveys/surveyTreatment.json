@@ -229,7 +229,7 @@
         {
             "question_id": "time_alloc",
             "type": "open",
-            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?<br><span style='color: red; font-size: 15px;'>Si le preguntan, sí es posible ingresar 0 horas. Si no tiene una idea clara, pida que piensen en un día típico de semana, en uno de fin de semana, y ayúdele a contar las horas.</span>",
+            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?<br><span style='color: red; font-size: 15px;'>Esta pregunta se refiere a los/las hijos/as de este estudio. Si le preguntan, sí es posible ingresar 0 horas. Si no tiene una idea clara, pida que piensen en un día típico de semana, en uno de fin de semana, y ayúdele a contar las horas.</span>",
             "datatype": "number",
             "decimal_places": 2,              
             "comma_separated": false,
