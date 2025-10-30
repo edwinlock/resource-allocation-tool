@@ -16,7 +16,7 @@
         {
             "question_id": "verify_child",
             "type": "singleselect",
-            "query": "¿Puede confirmar que {child1name} y {child2name} son ambos sus hijos?",
+            "query": "¿Puede confirmar que {child1name} y {child2name} son ambos sus hijos/as?<br><span style='color: red; font-size: 15px;'> Corrobore, con la hoja de cálculo con identificadores únicos, que los nombres de los/las hijas y el indicador de familia sean el mismo.",
             "values": ["Sí", "No"],
             "datatype": "text",
             "required": true
@@ -24,7 +24,7 @@
         {
             "question_id": "id_surveyed",
             "type": "singleselect",
-            "query": "¿Quién está respondiendo la encuesta?",
+            "query": "¿Quién está respondiendo la encuesta?<br><span style='color: red; font-size: 15px;'> Si ambos padres están presentes, por favor anime al que toma las decisiones financieras para los/las estudiantes a responder la encuesta.</span>",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -37,14 +37,14 @@
         {
             "question_id": "age_mom",
             "type": "open",
-            "query": "¿Cuál es la edad de la madre?",
+            "query": "¿Cuál es la edad de la madre? (En años)",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "age_dad",
             "type": "open",
-            "query": "¿Cuál es la edad del padre?",
+            "query": "¿Cuál es la edad del padre? (En años)",
             "datatype": "number",
             "required": true
         },
@@ -60,7 +60,7 @@
             "question_id": "residence_childA",
             "type": "singleselect",
             "query": "¿Dónde vive usualmente {child1name}?",
-            "values": ["Con madre y padre", "Solo con madre", "Solo con padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con un amigo/a de la familia", "Solo"],
+            "values": ["Con madre y padre", "Solo con la madre", "Solo con el padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con algún amigo/a de la familia", "Solo"],
             "datatype": "text",
             "required": true
         },
@@ -68,14 +68,14 @@
             "question_id": "residence_childB",
             "type": "singleselect",
             "query": "¿Dónde vive usualmente {child2name}?",
-            "values": ["Con madre y padre", "Solo con madre", "Solo con padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con un amigo/a de la familia", "Solo"],
+            "values": ["Con madre y padre", "Solo con la madre", "Solo con el padre", "Con otro pariente (tía, tío, abuelos, etc.)", "Con algún amigo/a de la familia", "Solo"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "soc_econ_sons",
             "type": "open",
-            "query": "¿Cuántos hijos varones tiene la familia?",
+            "query": "¿Cuántos hijos varones tiene la familia?<br><span style='color: red; font-size: 15px;'> Solo considere a los/las hijos/as de {child1name} y {child2name} tienen juntos.</span>",
             "datatype": "number",
             "required": true
         },
@@ -89,14 +89,14 @@
         {
             "question_id": "household_size",
             "type": "open",
-            "query": "¿Cuántas personas viven actualmente en su hogar?",
+            "query": "¿Cuántas personas viven actualmente en su hogar?<br><span style='color: red; font-size: 15px;'> Recuérdele incluir niños, bebés, ancianos y empleados residentes.</span>",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "birth_orderA",
             "type": "open",
-            "query": "¿Cuál es el orden de nacimiento de {child1name}?",
+            "query": "¿Cuál es el orden de nacimiento de {child1name}?<br><span style='color: red; font-size: 15px;'> Nuevamente de los hijos que los dos padres tienen juntos (ignore medios hermanos). Donde 1 es el primogénito, 2 es el segundo mayor, etc.</span>",
             "datatype": "number",
             "required": true
         },
@@ -110,7 +110,7 @@
         {
             "question_id": "id_spendtime",
             "type": "singleselect",
-            "query": "¿Quién pasa más tiempo ayudando a los hijos/as con sus tarea?",
+            "query": "¿Quién pasa más tiempo ayudando a los hijos/as con sus tareas?",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -118,7 +118,7 @@
         {
             "question_id": "id_finance",
             "type": "singleselect",
-            "query": "¿Quién toma la mayoría de las decisiones financieras para gastos de los hijos/as de la escuela?",
+            "query": "¿Quién toma la mayoría de las decisiones financieras para los gastos de la escuela de los hijos/as?<br><span style='color: red; font-size: 15px;'> Si no entienden la pregunta, puede incluir ejemplos como: Cuánto gastar en una laptop para la escuela; si deberían invertir en un viaje escolar; o cuánto gastar en ropa.</span>",
             "values": ["Madre", "Padre", "Ambos"],
             "datatype": "text",
             "required": true
@@ -126,7 +126,7 @@
         {
             "question_id": "enoe_cat",
             "type": "singleselect",
-            "query": "Actualmente, el salario mínimo en San Luis Potosí es de $8,364 pesos MXN por mes y por persona. En relación con esa cifra, su ingreso mensual por su trabajo es…",
+            "query": "Actualmente, el salario mínimo en San Luis Potosí es de $8,364 pesos MXN por mes y por persona. En relación con esa cifra, su ingreso mensual por su trabajo es...",
             "values": ["Menor a esta cantidad", "Similar a esta cantidad", "Más de 1 salario mínimo y hasta 2", "Más de 2 salarios mínimos y hasta 3", "Más de 3 salarios mínimos y hasta 5", "Más de 5 salarios mínimos y hasta 10", "Más de 10 salarios mínimos", "Prefiero no responder"],
             "datatype": "text",
             "required": true
@@ -134,11 +134,11 @@
         {
             "question_id": "enoe_inc",
             "type": "open",
-            "query": "¿En cuánto estima el ingreso mensual total de su hogar?",
+            "query": "¿En cuánto estima su ingreso mensual total del hogar? (Por ejemplo, si en su hogar se gana 8 mil pesos, escriba <strong>8000</strong>)<br><span style='color: red; font-size: 15px;'>Esto debe ser la suma de todos los que generan ingreso en el hogar. Espere 5 segundos. Si titubean o parece que no quiere responder, puede sugerirle saltar esta pregunta. Si se salta la pregunta, o no quiere responder, escriba usted -99. Si responde 'No Sé' o similar, escriba usted -77.</span>",
             "datatype": "number",
-            "decimal_places": 2,
+            "prefix": "$",                    
+            "decimal_places": 2,              
             "comma_separated": true,
-            "prefix": "$",
             "required": false
         },
         {
@@ -153,14 +153,14 @@
             "question_id": "edu_dad",
             "type": "singleselect",
             "query": "¿Hasta qué grado aprobó el padre en la escuela?",
-            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
+            "values": ["Sin educación formal", "Primaria", "Secundaria", "Preparatoria", "Título técnico u Oficio", "Título Universitario (Licenciatura o Ingeniería)", "Título de Posgrado (Maestría)", "Título de Posgrado (Doctorado)"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "job_mom1",
             "type": "open",
-            "query": "¿Cuál es la ocupación actual de la madre de familia? (Por ejemplo: Arquitecta para una empresa constructora pequeña que opera en el estado)",
+            "query": "¿Cuál es la ocupación actual de la madre de familia? (Por ejemplo: Arquitecta para una empresa constructora pequeña que opera en el estado)<br><span style='color: red; font-size: 15px;'> Indague la descripción de la ocupación así como el sector de la empresa (si se conoce). Si no sabe, pregunte ¿Cuáles son las tareas o funciones principales que la madre desempeña en su trabajo? Investigue si es autoempleada, ama de casa o desempleada (es decir, que busca trabajo).</span>",
             "datatype": "text",
             "required": true
         },
@@ -174,12 +174,12 @@
         {
             "question_id": "prompt_beliefs",
             "type": "plaintext",
-            "text": "Ahora le preguntaremos sobre sus opiniones con respecto a sus hijos que participan en este estudio. Por favor tome en cuenta que todo lo que diga aquí es altamente confidencial y no será compartido con nadie fuera del equipo de investigación: ni con su cónyuge, ni con sus hijos, ni con la escuela de sus hijos."
+            "text": "Ahora le preguntaremos sobre sus opiniones con respecto a sus hijos/as que participan en este estudio. Por favor tome en cuenta que todo lo que diga aquí es altamente confidencial y no será compartido con nadie fuera del equipo de investigación: ni con su cónyuge, ni con sus hijos, ni con la escuela de sus hijos."
         },
         {
             "question_id": "smart_A",
             "type": "singleselect",
-            "query": "En relación con otros/as estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child1name}?",
+            "query": "En relación con otros/as estudiantes de la edad, ¿en qué lugar de la lista ubicaría las habilidades de aprendizaje de su hijo/a {child1name}?<br><span style='color: red; font-size: 15px;'> El grupo de referencia debe ser otros/as estudiantes de la misma edad en México en general.</span>",
             "values": ["Muy por debajo del promedio", "Algo por debajo del promedio", "Promedio", "Algo por encima del promedio", "Muy por encima del promedio"],
             "datatype": "text",
             "required": true
@@ -195,16 +195,16 @@
         {
             "question_id": "subj_grade_A_math",
             "type": "open",
-            "query": "¿Qué promedio de calificaciones espera que {child1name} logre este año en el área de las matemáticas?",
+            "query": "¿Qué promedio de calificaciones espera que {child1name} logre este año en el área de las matemáticas? (Utilice una escala del 0 al 100)",
             "datatype": "number",
-            "decimal_places": 2,              
+            "decimal_places": 0,              
             "comma_separated": false,
             "required": true
         },
         {
             "question_id": "conf_assess_A",
             "type": "singleselect",
-            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child1name})",
+            "query": "¿Qué tan seguro/a está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child1name})",
             "values": ["No seguro", "Algo seguro", "Muy seguro"],
             "datatype": "text",
             "required": true
@@ -212,16 +212,16 @@
         {
             "question_id": "subj_grade_B_math",
             "type": "open",
-            "query": "¿Qué promedio de calificaciones espera que {child2name} logre este año en el área de las matemáticas?",
+            "query": "¿Qué promedio de calificaciones espera que {child2name} logre este año en el área de las matemáticas? (Utilice una escala del 0 al 100)",
             "datatype": "number",                   
-            "decimal_places": 2,              
+            "decimal_places": 0,              
             "comma_separated": false,
             "required": true
         },
         {
             "question_id": "conf_assess_B",
             "type": "singleselect",
-            "query": "¿Qué tan seguro está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child2name})",
+            "query": "¿Qué tan seguro/a está de su afirmación anterior? (sobre el promedio de calificaciones que obtendrá {child2name})",
             "values": ["No seguro", "Algo seguro", "Muy seguro"],
             "datatype": "text",
             "required": true
@@ -229,53 +229,53 @@
         {
             "question_id": "time_alloc",
             "type": "open",
-            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?",
+            "query": "¿Cuántas horas por semana suele pasar ayudando a sus hijos/as con el trabajo escolar?<br><span style='color: red; font-size: 15px;'> Esta pregunta se refiere a los/las hijos/as de este estudio. Si le preguntan, si es posible ingresar 0 horas. Si no tiene una idea clara, pida que piense en un día típico de semana, en uno de fin de semana, y ayúdele a contar las horas.</span>",
             "datatype": "number",
             "decimal_places": 2,              
             "comma_separated": false,
             "required": true
         },
         {
-            "question_id": "sigma_promt",
+            "question_id": "sigma_prompt",
             "type": "plaintext",
-            "text": "Imagine que una familia similar a la suya tiene dos hijas, Ana y Marcela. Ambas asisten a preparatoria. Ana es mejor en la escuela que Marcela. Si sus padres invirtieran en la compra de cursos extracurriculares, podrían influir en el rendimiento académico de sus hijas. Además, si sus padres dividen sus recursos económicos por igual (y cada hija recibe una clase extracurricular por semana), la calificación final de Ana sería 8.5, y la calificación final de Marcela sería 6."
+            "text": "Imagine una familia con dos hijas en preparatoria: Ana y Marcela. Ana tiene mejor desempeño escolar que Marcela. Los padres pueden comprar cursos extracurriculares para mejorar las calificaciones de sus hijas. Si los padres dividen sus recursos en partes iguales, Ana obtendría una calificación final de 85 y Marcela de 60."
         },
         {
             "question_id": "sigma_reinf",
             "type": "multiopen",
-            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del dinero a Ana, y 0% a Marcela?",
+            "query": "¿Cuál cree usted que serían las calificaciones finales de las dos si los padres asignaran 100% del apoyo a Ana, y 0% a Marcela? (Por favor utilice una escala del 0 al 100. Por ejemplo, si Fulanita tiene 8.5, entonces escriba 85).",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "decimal_places": 2,
+            "decimal_places": 0,
             "required": true
         },
         {
             "question_id": "sigma_comp",
             "type": "multiopen",
-            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos si los padres realizan la inversión al contrario y asignan el 0% del dinero a Ana, y 100% a Marcela?",
+            "query": "Ahora, ¿cuál cree usted que serían las calificaciones finales de las dos, si los padres realizan la inversión al contrario y asignan el 0% del apoyo a Ana, y 100% a Marcela? (Por favor utilice una escala del 0 al 100. Por ejemplo, si Fulanita tiene 8.5, entonces escriba 85)<br><span style='color: red; font-size: 15px;'> Puede ayudarle con la pregunta diciendo: ¿Y si fuera al revés?.</span>",
             "prefixes": [
                 "Calificación Ana",
                 "Calificación Marcela"
             ],
             "datatype": "number",
-            "decimal_places": 2,
+            "decimal_places": 0,
             "required": true
         },
         {
             "question_id": "future_success",
             "type": "singleselect",
-            "query": "¿Cuál de las siguientes opciones cree que es más importante para el éxito futuro de sus hijos/as?",
-            "values": ["Ayudar con la tarea", "Leer juntos", "Actividades educativas después de la escuela (tutoría u otras clases)", "Deportes o Música", "Actividades de ocio", "Asistir a la escuela correcta", "Viajes"],
+            "query": "¿Cuál de las siguientes opciones cree que es más importante para el éxito de sus hijos/as?",
+            "values": ["Ayudar con la tarea", "Leer juntos", "Actividades educativas además de la escuela (tutorías u otras clases)", "Deportes o Música", "Actividades de ocio", "Asistir a la escuela correcta", "Viajes"],
             "datatype": "text",
             "required": true
         },
         {
             "question_id": "aspirationsA",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child1name} alcance?",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría a usted que {child1name} alcance?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -294,7 +294,7 @@
         {
             "question_id": "expectationsA",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que cree que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "query": "¿Cuál es el nivel más alto de educación que cree usted que {child1name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -302,7 +302,7 @@
         {
             "question_id": "aspirationsB",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que le gustaría que {child2name} alcance?",
+            "query": "¿Cuál es el nivel más alto de educación que le gustaría a usted que {child2name} alcance?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -310,7 +310,7 @@
         {
             "question_id": "subjectB",
             "type": "open",
-            "query": "¿Qué programa universitario le gustaría que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
+            "query": "¿Qué programa universitario le gustaría a usted que {child2name} estudie? (Por ejemplo, Licenciatura en Artes Escénicas)",
             "datatype": "text",
             "required": false,
             "conditional": {
@@ -321,7 +321,7 @@
         {
             "question_id": "expectationsB",
             "type": "singleselect",
-            "query": "¿Cuál es el nivel más alto de educación que cree que {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
+            "query": "¿Cuál es el nivel más alto de educación que cree usted que {child2name} puede alcanzar dadas sus habilidades y las circunstancias económicas de su familia?",
             "values": ["Preparatoria", "Título técnico / Oficio", "Título universitario (Licenciatura o Ingeniería)", "Título de posgrado (Maestría)", "Título de posgrado (Doctorado)", "No sé"],
             "datatype": "text",
             "required": true
@@ -329,7 +329,7 @@
         {
             "question_id": "sibling_support",
             "type": "singleselect",
-            "query": "Imagine que uno/a de sus hijos/as gana más ingresos como adulto/a que el/la otro/a, ¿cuánto espera que ese/esa hijo/a apoye a sus hermanos/as?",
+            "query": "Imagine que uno/a de sus hijos/as gana más ingresos como adulto/a que el/la otro/a, ¿cuánto espera que ese/esa hijo/a apoye a sus hermanos/as?<br><span style='color: red; font-size: 15px;'> Recuérdele que es lo que creen que pasará en verdad, no lo que desearían que hiciera su hijo/a.</span>",
             "values": ["Nada en absoluto (no se espera que ayude)", "Un poco (apoyo ocasional, por ejemplo en emergencias)", "Moderado (apoyo económico esporádico, en gastos importantes)", "Bastante (apoyo frecuente, en gastos regulares del hogar)", "Mucho y regularmente (responsabilidad continua de apoyo a hermanos)"],
             "datatype": "text",
             "required": true
@@ -337,12 +337,19 @@
         {
             "question_id": "future_job_prompt",
             "type": "plaintext",
-            "text": "Imagine que uno/a de sus hijos/as estudiará hasta la preparatoria, o bien hasta la universidad, y luego no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+            "text": "Imagine que un/una estudiante de su colonia estudiará hasta la secundaria, o hasta la preparatoria, o bien hasta la universidad, y luego ya no estudiará más. Piense en los tipos de trabajos en los que podría desempeñarse."
+        },
+        {
+            "question_id": "future_job0",
+            "type": "open",
+            "query": "Si tiene un título de secundaria, ¿cuánto cree que ganará en un mes típico cuando tenga entre 30 a 40 años?<br><span style='color: red; font-size: 15px;'> Estamos especialmente interesados/as en las diferencias de nivel. Así que si no sabe la cantidad exacta, sugiera $8,000 pesos MXN, y pregunte si es aproximadamente lo que esperan.</span>",
+            "datatype": "number",
+            "required": true
         },
         {
             "question_id": "future_job1",
             "type": "open",
-            "query": "Si tiene un título de preparatoria, ¿cuánto cree que ganará en un mes típico cuando tenga entre 30 a 40 años?",
+            "query": "Si tiene un título de preparatoria, ¿cuánto cree que ganará en un mes típico cuando tenga entre 30 a 40 años?<br><span style='color: red; font-size: 15px;'> Recúerdele la cifra anterior y, si no sabe qué responder, sugiérale una nueva cifra con un aumento relativo.</span>",
             "datatype": "number",
             "required": true
         },
@@ -356,14 +363,14 @@
         {
             "question_id": "future_job3",
             "type": "open",
-            "query": "Si tienen un título de posgrado (maestría o doctorado), ¿cuánto cree que ganará en un mes típico cuando tengan entre 30 a 40 años?",
+            "query": "Si tiene un título de posgrado (maestría o doctorado), ¿cuánto cree que ganará en un mes típico cuando tengan entre 30 a 40 años?",
             "datatype": "number",
             "required": true
         },
         {
             "question_id": "phi",
             "type": "grid",
-            "query": "Imagine que necesita elegir entre dos cursos educativos para el futuro de su hijo/a (piense en el hijo/a que quiera). Ambos requieren la misma inversión de $4,000 MXN anuales durante tres años. Los cursos podrían otorgar diferentes salarios en el futuro. Para cada escenario (cada fila), elija la opción (A o B) que prefiera.",
+            "query": "Imagine que necesita elegir entre dos cursos educativos para el futuro de su hijo/a (piense en el hijo/a que quiera). Ambos requieren la misma inversión de $4,000 MXN anuales durante tres años. Los cursos podrían otorgar diferentes salarios en el futuro. Para cada escenario (cada fila), elija la opción (A o B) que prefiera.<br><span style='color: red; font-size: 15px;'> Si necesita ayudarle con los porcentajes, recuerde que la columna A siempre presenta la opción menos riesgosa, y la columna B la opción más riesgosa (pero con la que puede ganar más)</span>",
             "column_headers": ["Opción A", "Opción B"],
             "prefixes": [
                 "Escenario 1",
@@ -377,22 +384,22 @@
                 "Escenario 9"
             ],
             "options": [
-                ["10% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 90% de que gane 18,000 MXN/mes", "10% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 90% de que gane 8,000 MXN/mes"],
-                ["50% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 50% de que gane 18,000 MXN/mes", "50% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 50% de que gane 8,000 MXN/mes"],
-                ["60% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 40% de que gane 18,000 MXN/mes", "60% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 40% de que gane 8,000 MXN/mes"],
-                ["20% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 80% de que gane 18,000 MXN/mes", "20% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 80% de que gane 8,000 MXN/mes"],
-                ["90% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 10% de que gane 18,000 MXN/mes", "90% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 10% de que gane 8,000 MXN/mes"],
-                ["40% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 60% de que gane 18,000 MXN/mes", "40% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 60% de que gane 8,000 MXN/mes"],
-                ["70% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 30% de que gane 18,000 MXN/mes", "70% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 30% de que gane 8,000 MXN/mes"],
-                ["30% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 70% de que gane 18,000 MXN/mes", "30% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 70% de que gane 8,000 MXN/mes"],
-                ["80% de probabilidad de que su hijo/a gane 25,000 MXN/mes y 20% de que gane 18,000 MXN/mes", "80% de probabilidad de que su hijo/a gane 35,000 MXN/mes y 20% de que gane 8,000 MXN/mes"]
+                ["<strong>10%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>90%</strong> de que gane 18,000 MXN/mes", "<strong>10%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>90%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>50%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>50%</strong> de que gane 18,000 MXN/mes", "<strong>50%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>50%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>60%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>40%</strong> de que gane 18,000 MXN/mes", "<strong>60%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>40%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>20%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>80%</strong> de que gane 18,000 MXN/mes", "<strong>20%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>80%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>90%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>10%</strong> de que gane 18,000 MXN/mes", "<strong>90%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>10%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>40%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>60%</strong> de que gane 18,000 MXN/mes", "<strong>40%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>60%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>70%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>30%</strong> de que gane 18,000 MXN/mes", "<strong>70%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>30%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>30%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>70%</strong> de que gane 18,000 MXN/mes", "<strong>30%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>70%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>80%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>20%</strong> de que gane 18,000 MXN/mes", "<strong>80%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>20%</strong> de que gane 8,000 MXN/mes"]
             ],
             "required": true
         },
         {
             "question_id": "ineq_aver",
             "type": "likert",
-            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir \"no me describe para nada\" y 10 significa \"me describe perfectamente\".\n\nSi yo estuviera en una situación en la que tuviera que distribuir recursos con otros, priorizaría la equidad por encima de aumentar mis propios beneficios.",
+            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir \"no me describe para nada\" y 10 significa \"me describe perfectamente\".\n\nSi yo estuviera en una situación en la que tuviera que distribuir recursos con otros (es decir, otras personas y usted, <strong>NO</strong> estamos hablando más de los hijos/as), priorizaría la equidad por encima de aumentar mis propios beneficios.",
             "prefix": "Escoja la calificación.",
             "min": 0,
             "max": 10,

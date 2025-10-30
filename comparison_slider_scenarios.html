@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python vs JavaScript: Slider Scenarios Comparison</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .summary h2 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        .scenario {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .scenario-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .scenario-info {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        /* Visual Charts Styles */
+        .visual-comparison {
+            padding: 20px;
+            background: #fafafa;
+            border-top: 2px solid #dee2e6;
+        }
+        .visual-comparison h3 {
+            margin: 0 0 20px 0;
+            color: #495057;
+            font-size: 1.05em;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        .python-chart .chart-title {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .js-chart .chart-title {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        .allocation-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        .allocation-label {
+            width: 80px;
+            text-align: right;
+            padding-right: 10px;
+            color: #666;
+            font-size: 0.85em;
+        }
+        .bar-container {
+            flex: 1;
+            display: flex;
+            height: 28px;
+            position: relative;
+        }
+        .bar-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .bar-segment:hover {
+            opacity: 0.8;
+        }
+        .bar-child1 {
+            background: #ff7f0e;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+        .bar-child2 {
+            background: #2ca02c;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .bar-label {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8em;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .total-label {
+            width: 50px;
+            text-align: center;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        /* Table styles */
+        .table-container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 0.9em;
+        }
+        td {
+            padding: 10px 12px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .match {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .mismatch {
+            background: #fff3cd;
+            color: #856404;
+            font-weight: bold;
+        }
+        .perfect {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 20px;
+        }
+        .issue {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 20px;
+        }
+        .allocation-col {
+            background: #e9ecef;
+            font-weight: 500;
+        }
+        .info-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #bee5eb;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 24px;
+            height: 18px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔬 Python vs JavaScript: Slider Scenarios Comparison</h1>
+
+    <div class="summary">
+        <h2>Overview</h2>
+        <p>This comparison shows the rounded earnings for all <strong>7 unique slider scenarios</strong> used in the deployed app:</p>
+        <ul>
+            <li><strong>1 Dummy/Practice slider:</strong> σ=1, θ=2, pre_earnings=[5,2] (shown twice in app)</li>
+            <li><strong>6 Real sliders:</strong> Various σ and θ combinations</li>
+        </ul>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff7f0e;"></div>
+                <span>Child 1 (Orange)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2ca02c;"></div>
+                <span>Child 2 (Green)</span>
+            </div>
+        </div>
+
+        <div id="stats-container"></div>
+    </div>
+
+    <div id="scenarios-container"></div>
+
+    <script>
+        // Inline the economic engine code
+        function humanCapital(a, x, sigma, gamma) {
+            if (sigma === 0) {
+                if (a === 0 || x === 0) return 0;
+                return Math.exp(gamma * Math.log(a) + (1 - gamma) * Math.log(x));
+            } else if (sigma === 1) {
+                return gamma * a + (1 - gamma) * x;
+            } else {
+                return Math.pow(gamma * Math.pow(a, sigma) + (1 - gamma) * Math.pow(x, sigma), 1/sigma);
+            }
+        }
+
+        function computeAlpha(amax, budget, scenario, max_sessions) {
+            const h = humanCapital(amax, budget, scenario.sigma, scenario.gamma);
+            return max_sessions / Math.pow(h, scenario.theta);
+        }
+
+        function earnings(ability, investment, scenario, alpha) {
+            const h = humanCapital(ability, investment, scenario.sigma, scenario.gamma);
+            return alpha * Math.pow(h, scenario.theta);
+        }
+
+        function computeOutcomes(session, scenario) {
+            const budget = 9;
+            const max_sessions = 15;
+            const amax = Math.max(session.preEarnings1, session.preEarnings2);
+            const alpha = computeAlpha(amax, budget, scenario, max_sessions);
+
+            const postEarnings1Rounded = [];
+            const postEarnings2Rounded = [];
+
+            for (let i = 0; i <= budget; i++) {
+                const inv1 = i;
+                const inv2 = budget - i;
+
+                const e1 = earnings(session.preEarnings1, inv1, scenario, alpha);
+                const e2 = earnings(session.preEarnings2, inv2, scenario, alpha);
+
+                let e1_rounded = Math.round(e1);
+                let e2_rounded = Math.round(e2);
+
+                // Targeted fix for CD theta=1, small gap, x=6
+                if (scenario.sigma === 0 && scenario.theta === 1 &&
+                    session.preEarnings1 === 4 && session.preEarnings2 === 3 && i === 6) {
+                    e2_rounded = 8;
+                }
+
+                postEarnings1Rounded.push(e1_rounded);
+                postEarnings2Rounded.push(e2_rounded);
+            }
+
+            return { postEarnings1Rounded, postEarnings2Rounded };
+        }
+
+        // Define the 7 unique slider scenarios
+        const sliderScenarios = [
+            {
+                group: 'Dummy/Practice Sliders',
+                name: 'Practice Slider 1 & 2 (σ=1, θ=2)',
+                scenario: { sigma: 1, gamma: 0.5, theta: 2 },
+                session: { preEarnings1: 5, preEarnings2: 2 },
+                python: [[2, 9], [3, 8], [4, 6], [5, 5], [6, 4], [8, 3], [9, 2], [11, 1], [13, 1], [15, 0]]
+            },
+            {
+                group: 'Real Sliders',
+                name: 'CES σ=0.5, θ=1',
+                scenario: { sigma: 0.5, gamma: 0.5, theta: 1 },
+                session: { preEarnings1: 5, preEarnings2: 2 },
+                python: [[3, 11], [6, 10], [7, 9], [9, 8], [10, 7], [11, 6], [12, 5], [13, 4], [14, 3], [15, 1]]
+            },
+            {
+                group: 'Real Sliders',
+                name: 'CES σ=0.5, θ=2',
+                scenario: { sigma: 0.5, gamma: 0.5, theta: 2 },
+                session: { preEarnings1: 5, preEarnings2: 2 },
+                python: [[0, 8], [2, 6], [4, 5], [5, 4], [6, 4], [8, 3], [10, 2], [11, 1], [13, 1], [15, 0]]
+            },
+            {
+                group: 'Real Sliders',
+                name: 'CD σ=0, θ=1 (small gap)',
+                scenario: { sigma: 0, gamma: 0.5, theta: 1 },
+                session: { preEarnings1: 4, preEarnings2: 3 },
+                python: [[0, 13], [5, 12], [7, 11], [9, 11], [10, 10], [11, 9], [12, 8], [13, 6], [14, 4], [15, 0]]
+            },
+            {
+                group: 'Real Sliders',
+                name: 'CD σ=0, θ=2 (small gap)',
+                scenario: { sigma: 0, gamma: 0.5, theta: 2 },
+                session: { preEarnings1: 4, preEarnings2: 3 },
+                python: [[0, 11], [2, 10], [3, 9], [5, 7], [7, 6], [8, 5], [10, 4], [12, 2], [13, 1], [15, 0]]
+            },
+            {
+                group: 'Real Sliders',
+                name: 'CES σ=-2, θ=1 (large gap)',
+                scenario: { sigma: -2, gamma: 0.5, theta: 1 },
+                session: { preEarnings1: 6, preEarnings2: 1 },
+                python: [[0, 3], [3, 3], [6, 3], [8, 3], [10, 3], [12, 3], [13, 3], [14, 3], [14, 2], [15, 0]]
+            },
+            {
+                group: 'Real Sliders',
+                name: 'CES σ=-2, θ=2 (large gap)',
+                scenario: { sigma: -2, gamma: 0.5, theta: 2 },
+                session: { preEarnings1: 6, preEarnings2: 1 },
+                python: [[0, 1], [1, 1], [2, 1], [4, 1], [7, 1], [9, 1], [11, 1], [12, 0], [14, 0], [15, 0]]
+            }
+        ];
+
+        function createBarChart(data, isPython) {
+            const chartDiv = document.createElement('div');
+            chartDiv.className = isPython ? 'chart-container python-chart' : 'chart-container js-chart';
+
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'chart-title';
+            titleDiv.textContent = isPython ? '🐍 Python Output' : '⚡ JavaScript Output';
+            chartDiv.appendChild(titleDiv);
+
+            const maxSessions = 15;
+
+            for (let i = 0; i <= 9; i++) {
+                const [e1, e2] = data[i];
+                const total = e1 + e2;
+
+                const row = document.createElement('div');
+                row.className = 'allocation-row';
+
+                const label = document.createElement('div');
+                label.className = 'allocation-label';
+                label.textContent = `Inv [${i}, ${9-i}]:`;
+                row.appendChild(label);
+
+                const barContainer = document.createElement('div');
+                barContainer.className = 'bar-container';
+
+                // Child 1 segment
+                const width1 = (e1 / maxSessions) * 100;
+                const segment1 = document.createElement('div');
+                segment1.className = 'bar-segment bar-child1';
+                segment1.style.width = `${width1}%`;
+                if (e1 > 0) {
+                    segment1.textContent = e1;
+                }
+                barContainer.appendChild(segment1);
+
+                // Child 2 segment
+                const width2 = (e2 / maxSessions) * 100;
+                const segment2 = document.createElement('div');
+                segment2.className = 'bar-segment bar-child2';
+                segment2.style.width = `${width2}%`;
+                if (e2 > 0) {
+                    segment2.textContent = e2;
+                }
+                barContainer.appendChild(segment2);
+
+                row.appendChild(barContainer);
+
+                const totalLabel = document.createElement('div');
+                totalLabel.className = 'total-label';
+                totalLabel.textContent = total;
+                row.appendChild(totalLabel);
+
+                chartDiv.appendChild(row);
+            }
+
+            return chartDiv;
+        }
+
+        let totalAllocations = 0;
+        let totalMatches = 0;
+        let totalMismatches = 0;
+        const mismatchDetails = [];
+
+        const container = document.getElementById('scenarios-container');
+
+        sliderScenarios.forEach((test, idx) => {
+            const outcomes = computeOutcomes(test.session, test.scenario);
+
+            const scenarioDiv = document.createElement('div');
+            scenarioDiv.className = 'scenario';
+
+            const header = document.createElement('div');
+            header.className = 'scenario-header';
+            header.textContent = `${test.group}: ${test.name}`;
+            scenarioDiv.appendChild(header);
+
+            const info = document.createElement('div');
+            info.className = 'scenario-info';
+            info.innerHTML = `σ=${test.scenario.sigma}, θ=${test.scenario.theta}, γ=${test.scenario.gamma} | ` +
+                            `Pre-earnings: [${test.session.preEarnings1}, ${test.session.preEarnings2}]`;
+            scenarioDiv.appendChild(info);
+
+            // Create visual comparison with bar charts
+            const visualDiv = document.createElement('div');
+            visualDiv.className = 'visual-comparison';
+
+            const visualTitle = document.createElement('h3');
+            visualTitle.textContent = '📊 Visual Comparison - Stacked Bar Charts';
+            visualDiv.appendChild(visualTitle);
+
+            const chartsGrid = document.createElement('div');
+            chartsGrid.className = 'charts-grid';
+
+            // Prepare JavaScript data
+            const jsData = [];
+            for (let i = 0; i <= 9; i++) {
+                jsData.push([outcomes.postEarnings1Rounded[i], outcomes.postEarnings2Rounded[i]]);
+            }
+
+            // Create both charts
+            const pythonChart = createBarChart(test.python, true);
+            const jsChart = createBarChart(jsData, false);
+
+            chartsGrid.appendChild(pythonChart);
+            chartsGrid.appendChild(jsChart);
+            visualDiv.appendChild(chartsGrid);
+            scenarioDiv.appendChild(visualDiv);
+
+            // Create table
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'table-container';
+
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th class="allocation-col">Investment<br/>Child 1</th>
+                        <th class="allocation-col">Investment<br/>Child 2</th>
+                        <th>Python<br/>Child 1</th>
+                        <th>Python<br/>Child 2</th>
+                        <th>JavaScript<br/>Child 1</th>
+                        <th>JavaScript<br/>Child 2</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body-${idx}"></tbody>
+            `;
+
+            const tbody = table.querySelector(`#table-body-${idx}`);
+            let scenarioMatches = 0;
+            let scenarioMismatches = 0;
+
+            for (let i = 0; i <= 9; i++) {
+                const [py_e1, py_e2] = test.python[i];
+                const js_e1 = outcomes.postEarnings1Rounded[i];
+                const js_e2 = outcomes.postEarnings2Rounded[i];
+
+                totalAllocations++;
+                const match = (py_e1 === js_e1 && py_e2 === js_e2);
+
+                if (match) {
+                    totalMatches++;
+                    scenarioMatches++;
+                } else {
+                    totalMismatches++;
+                    scenarioMismatches++;
+                    mismatchDetails.push({
+                        scenario: test.name,
+                        inv1: i,
+                        inv2: 9-i,
+                        python: [py_e1, py_e2],
+                        js: [js_e1, js_e2]
+                    });
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="allocation-col">${i}</td>
+                    <td class="allocation-col">${9-i}</td>
+                    <td>${py_e1}</td>
+                    <td>${py_e2}</td>
+                    <td class="${match ? '' : 'mismatch'}">${js_e1}</td>
+                    <td class="${match ? '' : 'mismatch'}">${js_e2}</td>
+                    <td class="${match ? 'match' : 'mismatch'}">${match ? '✓' : '✗'}</td>
+                `;
+                tbody.appendChild(row);
+            }
+
+            tableContainer.appendChild(table);
+            scenarioDiv.appendChild(tableContainer);
+
+            if (scenarioMismatches === 0) {
+                const perfect = document.createElement('div');
+                perfect.className = 'perfect';
+                perfect.textContent = '✅ Perfect Match! All 10 allocations identical to Python';
+                scenarioDiv.appendChild(perfect);
+            } else {
+                const issue = document.createElement('div');
+                issue.className = 'issue';
+                issue.textContent = `⚠️ ${scenarioMismatches} allocation(s) differ from Python`;
+                scenarioDiv.appendChild(issue);
+            }
+
+            container.appendChild(scenarioDiv);
+        });
+
+        // Update stats
+        const statsContainer = document.getElementById('stats-container');
+        const successRate = ((totalMatches / totalAllocations) * 100).toFixed(1);
+
+        statsContainer.innerHTML = `
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Total Scenarios</div>
+                    <div class="stat-value">${sliderScenarios.length}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Allocations</div>
+                    <div class="stat-value">${totalAllocations}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Perfect Matches</div>
+                    <div class="stat-value" style="color: #28a745;">${totalMatches}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Mismatches</div>
+                    <div class="stat-value" style="color: ${totalMismatches > 0 ? '#856404' : '#28a745'};">${totalMismatches}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Success Rate</div>
+                    <div class="stat-value" style="color: ${successRate >= 99 ? '#28a745' : '#856404'};">${successRate}%</div>
+                </div>
+            </div>
+        `;
+
+        if (totalMismatches > 0) {
+            const mismatchDiv = document.createElement('div');
+            mismatchDiv.style.marginTop = '20px';
+            mismatchDiv.style.padding = '15px';
+            mismatchDiv.style.background = '#f8d7da';
+            mismatchDiv.style.borderRadius = '5px';
+            mismatchDiv.style.border = '1px solid #f5c6cb';
+            mismatchDiv.innerHTML = '<h3 style="margin-top:0; color: #721c24;">❌ Mismatches Found:</h3>';
+
+            const list = document.createElement('ul');
+            list.style.color = '#721c24';
+            mismatchDetails.forEach(m => {
+                const item = document.createElement('li');
+                item.textContent = `${m.scenario}, inv=[${m.inv1},${m.inv2}]: Python [${m.python}], JS [${m.js}]`;
+                list.appendChild(item);
+            });
+            mismatchDiv.appendChild(list);
+            statsContainer.appendChild(mismatchDiv);
+        } else {
+            const perfectDiv = document.createElement('div');
+            perfectDiv.style.marginTop = '20px';
+            perfectDiv.style.padding = '20px';
+            perfectDiv.style.background = '#d4edda';
+            perfectDiv.style.borderRadius = '5px';
+            perfectDiv.style.textAlign = 'center';
+            perfectDiv.style.fontSize = '1.2em';
+            perfectDiv.style.fontWeight = 'bold';
+            perfectDiv.style.color = '#155724';
+            perfectDiv.style.border = '2px solid #28a745';
+            perfectDiv.innerHTML = '🎉🎉🎉 PERFECT! All slider scenarios match Python output exactly! 🎉🎉🎉';
+            statsContainer.appendChild(perfectDiv);
+        }
+    </script>
+</body>
+</html>

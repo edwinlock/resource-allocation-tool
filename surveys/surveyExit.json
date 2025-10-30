@@ -28,9 +28,9 @@
             "required": true
         },
         {
-            "question_id": "wtp_list2",
+            "question_id": "wtp_list3",
             "type": "grid",
-            "query": "Si uno de sus hijos/as terminó con 6 sesiones... ¿Cuánto pagaría por una sesión más?",
+            "query": "Si uno de sus hijos/as terminó con 10 sesiones... ¿Cuánto pagaría por una sesión más?",
             "prefixes": [
                 "Pagar 300 pesos",
                 "Pagar 150 pesos",
@@ -48,9 +48,9 @@
             "required": true
         },
         {
-            "question_id": "wtp_list3",
+            "question_id": "wtp_list2",
             "type": "grid",
-            "query": "Si uno de sus hijos/as terminó con 10 sesiones... ¿Cuánto pagaría por una sesión más?",
+            "query": "Si uno de sus hijos/as terminó con 6 sesiones... ¿Cuánto pagaría por una sesión más?",
             "prefixes": [
                 "Pagar 300 pesos",
                 "Pagar 150 pesos",
@@ -78,7 +78,7 @@
         {
             "question_id": "child_color",
             "type": "singleselect",
-            "query": "Del ejercicio de redistribución, ¿quién cree que era el hijo/a naranja?",
+            "query": "Del ejercicio de redistribución, ¿quién cree que era el hijo/a naranja?<br><span style='color: red; font-size: 15px;'> Si llegase a preguntar, asegúrele que no estamos preguntando sobre un/una favorita. </span>",
             "values": ["{child1name}", "{child2name}"],
             "datatype": "text",
             "required": true
@@ -94,12 +94,41 @@
         {
             "question_id": "ineq_aver",
             "type": "likert",
-            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir “no me describe para nada” y 10 significa “me describe perfectamente”.<br><br>Si yo estuviera en una situación en la que tuviera que distribuir recursos con otros, priorizaría la equidad por encima de aumentar mis propios beneficios.",
+            "query": "Por favor califique la siguiente oración del 0 al 10, donde 0 quiere decir “no me describe para nada” y 10 significa “me describe perfectamente”.<br><br>Si yo estuviera en una situación en la que tuviera que distribuir recursos con otros (es decir, otras personas y usted, <strong>NO</strong> estamos hablando más de los hijos/as), priorizaría la equidad por encima de aumentar mis propios beneficios.",
             "prefix": "Escoja la calificación",
             "min": 0,
             "max": 10,
             "required": true
 
+        },
+        {
+            "question_id": "phi",
+            "type": "grid",
+            "query": "Imagine que necesita elegir entre dos cursos educativos para el futuro de su hijo/a (piense en el hijo/a que quiera). Ambos requieren la misma inversión de $4,000 MXN anuales durante tres años. Los cursos podrían otorgar diferentes salarios en el futuro. Para cada escenario (cada fila), elija la opción (A o B) que prefiera. <br><span style='color: red; font-size: 15px;'> Si necesita ayudarle con los porcentajes, recuerde que la columna A siempre presenta la opción menos riesgosa, y la columna B la opción más riesgosa (pero con la que se puede ganar más)</span>",
+            "column_headers": ["Opción A", "Opción B"],
+            "prefixes": [
+                "Escenario 1",
+                "Escenario 2",
+                "Escenario 3",
+                "Escenario 4",
+                "Escenario 5",
+                "Escenario 6",
+                "Escenario 7",
+                "Escenario 8",
+                "Escenario 9"
+            ],
+            "options": [
+                ["<strong>10%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>90%</strong> de que gane 18,000 MXN/mes", "<strong>10%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>90%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>50%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>50%</strong> de que gane 18,000 MXN/mes", "<strong>50%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>50%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>60%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>40%</strong> de que gane 18,000 MXN/mes", "<strong>60%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>40%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>20%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>80%</strong> de que gane 18,000 MXN/mes", "<strong>20%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>80%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>90%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>10%</strong> de que gane 18,000 MXN/mes", "<strong>90%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>10%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>40%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>60%</strong> de que gane 18,000 MXN/mes", "<strong>40%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>60%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>70%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>30%</strong> de que gane 18,000 MXN/mes", "<strong>70%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>30%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>30%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>70%</strong> de que gane 18,000 MXN/mes", "<strong>30%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>70%</strong> de que gane 8,000 MXN/mes"],
+                ["<strong>80%</strong> de probabilidad de que su hijo/a gane 25,000 MXN/mes y <strong>20%</strong> de que gane 18,000 MXN/mes", "<strong>80%</strong> de probabilidad de que su hijo/a gane 35,000 MXN/mes y <strong>20%</strong> de que gane 8,000 MXN/mes"]
+            ],
+            "required": true
         },
         {
             "question_id": "prompt_end",
