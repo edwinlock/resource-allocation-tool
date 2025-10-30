@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resource-allocation-v61';
+const CACHE_NAME = 'resource-allocation-v62';
 const urlsToCache = [
   './',
   './index.html',
@@ -106,6 +106,56 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
+// Helper function to handle Range requests for video files
+async function handleRangeRequest(request, cachedResponse) {
+  const rangeHeader = request.headers.get('Range');
+
+  if (!rangeHeader) {
+    // No range request, return full cached response
+    return cachedResponse;
+  }
+
+  // Parse the range header (e.g., "bytes=0-1023")
+  const rangeMatch = rangeHeader.match(/bytes=(\d+)-(\d*)/);
+  if (!rangeMatch) {
+    return cachedResponse;
+  }
+
+  const start = parseInt(rangeMatch[1], 10);
+  const cachedBlob = await cachedResponse.blob();
+  const totalSize = cachedBlob.size;
+
+  // If end is not specified, use the total size
+  const end = rangeMatch[2] ? parseInt(rangeMatch[2], 10) : totalSize - 1;
+
+  // Validate range
+  if (start >= totalSize || end >= totalSize || start > end) {
+    return new Response(null, {
+      status: 416,
+      statusText: 'Range Not Satisfiable',
+      headers: {
+        'Content-Range': `bytes */${totalSize}`
+      }
+    });
+  }
+
+  // Slice the blob to get the requested range
+  const slicedBlob = cachedBlob.slice(start, end + 1);
+  const contentLength = end - start + 1;
+
+  // Return 206 Partial Content response
+  return new Response(slicedBlob, {
+    status: 206,
+    statusText: 'Partial Content',
+    headers: {
+      'Content-Type': cachedResponse.headers.get('Content-Type') || 'video/mp4',
+      'Content-Length': contentLength.toString(),
+      'Content-Range': `bytes ${start}-${end}/${totalSize}`,
+      'Accept-Ranges': 'bytes'
+    }
+  });
+}
+
 self.addEventListener('fetch', event => {
   // Skip cross-origin requests and chrome-extension requests
   if (!event.request.url.startsWith(self.location.origin) &&
@@ -114,37 +164,52 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Check if this is a request for a video file
+  const isVideoRequest = event.request.url.endsWith('.mp4') ||
+                         event.request.url.endsWith('.webm') ||
+                         event.request.url.endsWith('.ogg');
+
   event.respondWith(
-    // Cache-first strategy for all resources (offline-first)
-    // For all requests, ignore query parameters when matching (important for PWA navigation)
-    caches.match(event.request, { ignoreSearch: true }).then(response => {
-      if (response) {
+    (async () => {
+      // Cache-first strategy for all resources (offline-first)
+      // For all requests, ignore query parameters when matching (important for PWA navigation)
+      const cachedResponse = await caches.match(event.request, { ignoreSearch: true });
+
+      if (cachedResponse) {
+        // For video files, handle Range requests
+        if (isVideoRequest && event.request.headers.has('Range')) {
+          return handleRangeRequest(event.request, cachedResponse);
+        }
         // Return cached version immediately
-        return response;
+        return cachedResponse;
       }
 
       // Not in cache, try exact match (for URLs with query params that were cached with params)
-      return caches.match(event.request).then(exactResponse => {
-        if (exactResponse) {
-          return exactResponse;
+      const exactResponse = await caches.match(event.request);
+      if (exactResponse) {
+        if (isVideoRequest && event.request.headers.has('Range')) {
+          return handleRangeRequest(event.request, exactResponse);
         }
+        return exactResponse;
+      }
 
-        // Not in cache at all, fetch from network
-        return fetch(event.request).then(fetchResponse => {
-          // Cache the new response for future use
+      // Not in cache at all, fetch from network
+      try {
+        const fetchResponse = await fetch(event.request);
+        // Cache the new response for future use (only if successful)
+        if (fetchResponse.ok) {
           const responseClone = fetchResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
-          return fetchResponse;
-        }).catch(() => {
-          return new Response('Resource not available', {
-            status: 503,
-            statusText: 'Service Unavailable'
-          });
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(event.request, responseClone);
+        }
+        return fetchResponse;
+      } catch (error) {
+        return new Response('Resource not available', {
+          status: 503,
+          statusText: 'Service Unavailable'
         });
-      });
-    })
+      }
+    })()
   );
 });
 
