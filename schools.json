@@ -1,12 +1,292 @@
 [
   {
-    "school_id": "SCH001",
-    "name": "Escuela T",
+    "school_id": "e1",
+    "name": "Colegio Minerva",
+    "type": "control"
+  },
+  {
+    "school_id": "e2",
+    "name": "Plantel Ing. Manuel Moreno Torres (043)",
+    "type": "control"
+  },
+    {
+    "school_id": "e3",
+    "name": "Plantel Ing. José Antonio Padilla Segura (205)",
+    "type": "control"
+  },
+  {
+    "school_id": "e4",
+    "name": "Plantel Villa de Reyes (176)",
+    "type": "control"
+  },
+    {
+    "school_id": "e5",
+    "name": "Plantel Ciudad Valles (044)",
     "type": "treatment"
   },
   {
-    "school_id": "SCH002",
-    "name": "Escuela C",
+    "school_id": "e6",
+    "name": "Plantel Matehuala (094)",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e7",
+    "name": "Preparatoria No. 5 'Graciano Sanchez Romo'",
     "type": "control"
+  },
+  {
+    "school_id": "e8",
+    "name": "CBTA 196",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e9",
+    "name": "PLANTEL 01 Soledad",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e10",
+    "name": "PLANTEL 17 San Luis I",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e11",
+    "name": "PLANTEL 18 Mexquitic de Carmona",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e12",
+    "name": "PLANTEL 19 San Luis II",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e13",
+    "name": "PLANTEL 25 San Luis III",
+    "type": "control"
+  },
+  {
+    "school_id": "e14",
+    "name": "PLANTEL 26 San Luis IV",
+    "type": "control"
+  },
+    {
+    "school_id": "e15",
+    "name": "PLANTEL 28 San Luis V",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e16",
+    "name": "PLANTEL 07 Ahualulco",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e17",
+    "name": "PLANTEL 10 Moctezuma",
+    "type": "control"
+  },
+  {
+    "school_id": "e18",
+    "name": "PLANTEL 29 Villa De Zaragoza",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e19",
+    "name": "PLANTEL 32 Villa De Arriaga",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e20",
+    "name": "CENTRO EMSAD 09 Guadalcazar",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e21",
+    "name": "CENTRO EMSAD 31 Villa De Reyes",
+    "type": "control"
+  },
+  {
+    "school_id": "e22",
+    "name": "Colegio Sagrado Corazón",
+    "type": "control"
+  },
+    {
+    "school_id": "e23",
+    "name": "Preparatoria Antonio Tristan Alvarez",
+    "type": "control"
+  },
+  {
+    "school_id": "e24",
+    "name": "Preparatoria Municipal - Ponciano Arriaga",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e25",
+    "name": "Preparatoria Municipal - Nueva Generacion",
+    "type": "control"
+  },
+  {
+    "school_id": "e26",
+    "name": "Preparatoria Municipal - El Saucito",
+    "type": "control"
+  },
+    {
+    "school_id": "e27",
+    "name": "CBTis 131",
+    "type": "control"
+  },
+  {
+    "school_id": "e28",
+    "name": "CECYTE Plantel X (Escalerillas y Soledad)",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e29",
+    "name": "Instituto de Formacion para el Trabajo Mexicano",
+    "type": "control"
+  },
+  {
+    "school_id": "e30",
+    "name": "J. Natividad Sánchez",
+    "type": "control"
+  },
+    {
+    "school_id": "e31",
+    "name": "CBTA 143",
+    "type": "control"
+  },
+  {
+    "school_id": "e32",
+    "name": "CECYTE XII Villa de Pozos",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e33",
+    "name": "Preparatoria Carlos Jonguitud Barrios",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e34",
+    "name": "Mtro. Javier Zamudio Cortes",
+    "type": "control"
+  },
+    {
+    "school_id": "e35",
+    "name": "Preparatoria Vasconcelos (CJV)",
+    "type": "control"
+  },
+  {
+    "school_id": "e36",
+    "name": "Lic. Jesus Silva Herzog",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e37",
+    "name": "CBTis 121",
+    "type": "control"
+  },
+  {
+    "school_id": "e38",
+    "name": "CBTis 125",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e39",
+    "name": "Lomas del Mezquital",
+    "type": "control"
+  },
+  {
+    "school_id": "e40",
+    "name": "Real de Minas",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e41",
+    "name": "Nuevo Progreso",
+    "type": "control"
+  },
+  {
+    "school_id": "e42",
+    "name": "Bocas",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e43",
+    "name": "Francisco Martínez de la Vega",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e44",
+    "name": "Lic. Antonio Rocha Cordero",
+    "type": "control"
+  },
+    {
+    "school_id": "e45",
+    "name": "Prof. Jesus R. Alderete",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e46",
+    "name": "Prof. Jose Juarez Barbosa",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e47",
+    "name": "Prof. Juan Gregorio Salinas Fuentes",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e48",
+    "name": "Prof. Pedro Vallejo",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e49",
+    "name": "Prof. Rafael Turrubiartes Macias",
+    "type": "control"
+  },
+  {
+    "school_id": "e50",
+    "name": "Prof. Jose Cesar Cruz Sandoval",
+    "type": "control"
+  },
+    {
+    "school_id": "e51",
+    "name": "Profra. Celia Lechon Noyola",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e52",
+    "name": "Solidaridad",
+    "type": "treatment"
+  },
+    {
+    "school_id": "e53",
+    "name": "Margarita Cardenas de Renteria",
+    "type": "control"
+  },
+  {
+    "school_id": "e54",
+    "name": "Tomas Miranda Leura",
+    "type": "control"
+  },
+    {
+    "school_id": "e55",
+    "name": "Profra. Celia Fernandez Capetillo",
+    "type": "control"
+  },
+  {
+    "school_id": "e56",
+    "name": "Rafael Nieto Compean",
+    "type": "control"
+  },
+    {
+    "school_id": "e57",
+    "name": "Instituto Salesiano Carlos Gomez",
+    "type": "treatment"
+  },
+  {
+    "school_id": "e58",
+    "name": "Preparatoria Universidad Cuauhtemoc",
+    "type": "treatment"
   }
 ]
