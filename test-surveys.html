@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Testing Tool</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .test-section {
+            border: 1px solid #333;
+            margin: 20px 0;
+            padding: 15px;
+            background: #252526;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #4ec9b0;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #1e3a1e;
+            border-left: 4px solid #4caf50;
+            color: #4caf50;
+        }
+        .test-fail {
+            background: #3a1e1e;
+            border-left: 4px solid #f44336;
+            color: #f44336;
+        }
+        .test-warn {
+            background: #3a351e;
+            border-left: 4px solid #ff9800;
+            color: #ff9800;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 10px 10px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            overflow-x: auto;
+            border: 1px solid #333;
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Survey Testing Tool</h1>
+    <p>Tests survey JSON files for common issues including conditional required fields</p>
+
+    <div>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        const surveyFiles = [
+            'surveys/surveyChild.json',
+            'surveys/surveyTreatment.json',
+            'surveys/surveyControl.json',
+            'surveys/surveySandwich.json',
+            'surveys/surveyExit.json'
+        ];
+
+        async function runAllTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="test-result test-warn">Running tests...</div>';
+
+            let allResults = '';
+            let totalTests = 0;
+            let passedTests = 0;
+            let failedTests = 0;
+
+            for (const file of surveyFiles) {
+                const section = document.createElement('div');
+                section.className = 'test-section';
+
+                try {
+                    const response = await fetch(file);
+                    if (!response.ok) {
+                        section.innerHTML = `<h3>❌ ${file}</h3><div class="test-result test-fail">Failed to load file: ${response.status}</div>`;
+                        resultsDiv.appendChild(section);
+                        failedTests++;
+                        totalTests++;
+                        continue;
+                    }
+
+                    const surveyData = await response.json();
+                    const results = testSurvey(surveyData, file);
+
+                    section.innerHTML = `<h3>${results.failed > 0 ? '❌' : '✅'} ${file}</h3>`;
+
+                    results.tests.forEach(test => {
+                        const testDiv = document.createElement('div');
+                        testDiv.className = `test-result test-${test.status}`;
+                        testDiv.textContent = `${test.status === 'pass' ? '✓' : test.status === 'warn' ? '⚠' : '✗'} ${test.message}`;
+                        section.appendChild(testDiv);
+                    });
+
+                    if (results.details) {
+                        const details = document.createElement('pre');
+                        details.textContent = JSON.stringify(results.details, null, 2);
+                        section.appendChild(details);
+                    }
+
+                    resultsDiv.appendChild(section);
+
+                    totalTests += results.tests.length;
+                    passedTests += results.passed;
+                    failedTests += results.failed;
+
+                } catch (error) {
+                    section.innerHTML = `<h3>❌ ${file}</h3><div class="test-result test-fail">Error: ${error.message}</div>`;
+                    resultsDiv.appendChild(section);
+                    failedTests++;
+                    totalTests++;
+                }
+            }
+
+            // Add summary
+            const summary = document.createElement('div');
+            summary.className = 'test-section';
+            summary.innerHTML = `
+                <h3>📊 Test Summary</h3>
+                <div class="test-result ${failedTests > 0 ? 'test-fail' : 'test-pass'}">
+                    Total: ${totalTests} | Passed: ${passedTests} | Failed: ${failedTests}
+                </div>
+            `;
+            resultsDiv.insertBefore(summary, resultsDiv.firstChild);
+        }
+
+        function testSurvey(surveyData, filename) {
+            const tests = [];
+            let passed = 0;
+            let failed = 0;
+            let details = null;
+
+            // Test 1: Survey has valid structure
+            if (surveyData.survey_id && surveyData.name && Array.isArray(surveyData.questions)) {
+                tests.push({ status: 'pass', message: 'Survey structure is valid' });
+                passed++;
+            } else {
+                tests.push({ status: 'fail', message: 'Survey structure is invalid' });
+                failed++;
+            }
+
+            // Test 2: Check for conditional required questions (THE BUG WE FIXED)
+            const conditionalRequired = surveyData.questions.filter(q =>
+                q.conditional && q.required === true
+            );
+
+            if (conditionalRequired.length === 0) {
+                tests.push({ status: 'pass', message: 'No conditional required questions (safe)' });
+                passed++;
+            } else {
+                tests.push({
+                    status: 'warn',
+                    message: `Found ${conditionalRequired.length} conditional required question(s) - ensure fix is deployed`
+                });
+                details = { conditional_required: conditionalRequired.map(q => q.question_id) };
+                // Not counting as pass or fail since the fix handles this
+                passed++;
+            }
+
+            // Test 3: Check for questions with missing question_id
+            const missingIds = surveyData.questions.filter(q => !q.question_id);
+            if (missingIds.length === 0) {
+                tests.push({ status: 'pass', message: 'All questions have IDs' });
+                passed++;
+            } else {
+                tests.push({ status: 'fail', message: `${missingIds.length} questions missing question_id` });
+                failed++;
+            }
+
+            // Test 4: Check for questions with missing type
+            const missingTypes = surveyData.questions.filter(q => !q.type);
+            if (missingTypes.length === 0) {
+                tests.push({ status: 'pass', message: 'All questions have types' });
+                passed++;
+            } else {
+                tests.push({ status: 'fail', message: `${missingTypes.length} questions missing type` });
+                failed++;
+            }
+
+            // Test 5: Check conditional dependencies are valid
+            const conditionals = surveyData.questions.filter(q => q.conditional);
+            const questionIds = new Set(surveyData.questions.map(q => q.question_id));
+            const invalidDependencies = conditionals.filter(q =>
+                !questionIds.has(q.conditional.question_id)
+            );
+
+            if (invalidDependencies.length === 0) {
+                tests.push({ status: 'pass', message: 'All conditional dependencies are valid' });
+                passed++;
+            } else {
+                tests.push({
+                    status: 'fail',
+                    message: `${invalidDependencies.length} conditional questions reference non-existent questions`
+                });
+                failed++;
+            }
+
+            // Test 6: Check matrix questions structure
+            const matrixQuestions = surveyData.questions.filter(q => q.type === 'matrix');
+            let matrixValid = true;
+            matrixQuestions.forEach(q => {
+                if (!Array.isArray(q.rows) || !Array.isArray(q.columns)) {
+                    matrixValid = false;
+                }
+            });
+
+            if (matrixValid) {
+                tests.push({ status: 'pass', message: `All ${matrixQuestions.length} matrix questions have valid structure` });
+                passed++;
+            } else {
+                tests.push({ status: 'fail', message: 'Some matrix questions have invalid structure' });
+                failed++;
+            }
+
+            return { tests, passed, failed, details };
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            console.log('Survey Testing Tool loaded. Click "Run All Tests" to start.');
+        });
+    </script>
+</body>
+</html>

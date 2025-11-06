@@ -1048,8 +1048,12 @@ export class Survey {
                 // Show/hide based on whether current value matches required values
                 if (currentValue && requiredValues.includes(currentValue)) {
                     conditionalDiv.style.display = 'block';
+                    // Re-enable required validation when shown
+                    this.enableRequiredValidation(conditionalDiv);
                 } else {
                     conditionalDiv.style.display = 'none';
+                    // Disable required validation when hidden to prevent HTML5 validation errors
+                    this.disableRequiredValidation(conditionalDiv);
                     // Clear the conditional question's value when hidden
                     this.clearQuestionValue(conditionalDiv);
                 }
@@ -1062,6 +1066,30 @@ export class Survey {
 
             // Check initial state
             checkConditional();
+        });
+    }
+
+    // Helper method to disable required validation on hidden conditional questions
+    disableRequiredValidation(conditionalDiv) {
+        const allInputs = conditionalDiv.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            if (input.hasAttribute('required')) {
+                // Store the fact that this was required
+                input.setAttribute('data-was-required', 'true');
+                // Remove the required attribute
+                input.removeAttribute('required');
+            }
+        });
+    }
+
+    // Helper method to re-enable required validation on shown conditional questions
+    enableRequiredValidation(conditionalDiv) {
+        const allInputs = conditionalDiv.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            if (input.getAttribute('data-was-required') === 'true') {
+                // Restore the required attribute
+                input.setAttribute('required', '');
+            }
         });
     }
 
