@@ -29,12 +29,26 @@ export class SurveyQuestion {
 
     // Validate the answer based on datatype and required status
     validate(answer) {
+        // Check required field validation
         if (this.required && (answer === null || answer === undefined || answer === '')) {
+            console.debug(`[Question.validate] Question "${this.questionId}": Required field is empty`, {
+                questionId: this.questionId,
+                required: this.required,
+                answer: answer,
+                reason: 'required field empty'
+            });
             return { valid: false, message: 'This field is required' };
         }
 
+        // Check datatype validation for non-empty values
         if (answer !== null && answer !== undefined && answer !== '') {
             if (this.datatype === 'number' && isNaN(answer)) {
+                console.debug(`[Question.validate] Question "${this.questionId}": Invalid number`, {
+                    questionId: this.questionId,
+                    datatype: this.datatype,
+                    answer: answer,
+                    reason: 'NaN value for number field'
+                });
                 return { valid: false, message: 'Please enter a valid number' };
             }
         }
@@ -979,7 +993,7 @@ export class Survey {
         let html = `
             <div class="survey-container">
                 <h2 class="mb-4">${this.name}</h2>
-                <form id="survey-form">
+                <form id="survey-form" novalidate>
         `;
 
         this.questions.forEach(question => {
@@ -1120,21 +1134,70 @@ export class Survey {
         });
     }
 
+    // Helper method to check if a conditional question is currently visible
+    isQuestionVisible(question) {
+        // Non-conditional questions are always visible
+        if (!question.conditional) {
+            return true;
+        }
+
+        // Check if the conditional wrapper div is currently displayed
+        const conditionalDiv = document.querySelector(
+            `.conditional-question[data-question-id="${question.questionId}"]`
+        );
+
+        if (!conditionalDiv) {
+            console.debug(`[Survey Validation] Conditional wrapper not found for question: ${question.questionId}, assuming visible`);
+            return true; // If wrapper not found, assume visible
+        }
+
+        // Check if the wrapper is hidden
+        const isVisible = conditionalDiv.style.display !== 'none';
+        console.debug(`[Survey Validation] Question ${question.questionId} visibility: ${isVisible ? 'VISIBLE' : 'HIDDEN'} (display: ${conditionalDiv.style.display})`);
+        return isVisible;
+    }
+
     // Collect all responses from the form
     getAllResponses() {
+        console.debug(`[Survey Validation] ========== Starting validation for ${this.questions.length} questions ==========`);
+
         const responses = {};
         let allValid = true;
         const errors = [];
+        let skippedCount = 0;
+        let validatedCount = 0;
 
         this.questions.forEach(question => {
+            // Skip validation for hidden conditional questions
+            if (!this.isQuestionVisible(question)) {
+                skippedCount++;
+                console.debug(`[Survey Validation] ⏭️  SKIPPED: Question "${question.questionId}" (hidden conditional, required=${question.required})`);
+                return; // Skip this question entirely
+            }
+
+            validatedCount++;
             const value = question.getValue();
             const validation = question.validate(value);
+
+            console.debug(`[Survey Validation] 🔍 VALIDATING: Question "${question.questionId}"`, {
+                type: question.type || question.constructor.name,
+                required: question.required,
+                datatype: question.datatype,
+                value: value,
+                isValid: validation.valid,
+                message: validation.message || 'OK'
+            });
 
             if (!validation.valid) {
                 allValid = false;
                 errors.push({
                     questionId: question.questionId,
                     message: validation.message
+                });
+                console.warn(`[Survey Validation] ❌ FAILED: Question "${question.questionId}" - ${validation.message}`, {
+                    expectedType: question.datatype,
+                    receivedValue: value,
+                    required: question.required
                 });
             }
 
@@ -1143,6 +1206,17 @@ export class Survey {
                 responses[question.questionId] = value;
             }
         });
+
+        console.debug(`[Survey Validation] ========== Validation Summary ==========`);
+        console.debug(`[Survey Validation] Total questions: ${this.questions.length}`);
+        console.debug(`[Survey Validation] Validated: ${validatedCount}`);
+        console.debug(`[Survey Validation] Skipped (hidden): ${skippedCount}`);
+        console.debug(`[Survey Validation] Errors: ${errors.length}`);
+        console.debug(`[Survey Validation] Result: ${allValid ? '✅ VALID' : '❌ INVALID'}`);
+
+        if (errors.length > 0) {
+            console.warn(`[Survey Validation] Failed questions:`, errors.map(e => `${e.questionId}: ${e.message}`));
+        }
 
         return {
             responses,
